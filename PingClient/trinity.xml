@@ -4,6 +4,6 @@
   </Local>
     <Cluster>
         <Server Endpoint="localhost:8133" />
-	<Server Endpoint="tr2:8134" />
+	      <Server Endpoint="tr2:8134" />
     </Cluster>
 </Trinity>

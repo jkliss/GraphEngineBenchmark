@@ -5,34 +5,38 @@ using System;
 using System.IO;
 using Trinity;
 
-namespace PingServer 
+namespace PingServer
 {
-  class SimplePingServer: PingServerBase {
+    class SimplePingServer : PingServerBase
+    {
 
-    private long max_edge = 0;
-    public override void SynPingHandler(PingMessageReader request) {
-      Console.WriteLine("Received SynPing: {0}", request.Message);
-      LoadGraph();
-      SimpleGraphNode rootNode = Global.CloudStorage.LoadSimpleGraphNode(287770);
-      bool dummy = true;
-      BFS(dummy, rootNode);
-    }
+        private long max_edge = 0;
+        public override void SynPingHandler(PingMessageReader request)
+        {
+            Console.WriteLine("Received SynPing: {0}", request.Message);
+            LoadGraph();
+            SimpleGraphNode rootNode = Global.CloudStorage.LoadSimpleGraphNode(287770);
+            bool dummy = true;
+            BFS(dummy, rootNode);
+        }
 
-    public override void SynEchoPingHandler(PingMessageReader request, PingMessageWriter response) {
-      Console.WriteLine("Received SynEchoPing: {0}", request.Message);
-      response.Message = request.Message;
-    }
+        public override void SynEchoPingHandler(PingMessageReader request, PingMessageWriter response)
+        {
+            Console.WriteLine("Received SynEchoPing: {0}", request.Message);
+            response.Message = request.Message;
+        }
 
-    public override void AsynPingHandler(PingMessageReader request) {
-      Console.WriteLine("Received AsynPing: {0}", request.Message);
-    }
-    
-    
+        public override void AsynPingHandler(PingMessageReader request)
+        {
+            Console.WriteLine("Received AsynPing: {0}", request.Message);
+        }
+
+
         void BFS(bool v, SimpleGraphNode root)
         {
             //init array with max distances --> requires amount of elements
-            int graph_size = (int) max_edge;
-            int[] depth = new int[graph_size+1];
+            int graph_size = (int)max_edge;
+            int[] depth = new int[graph_size + 1];
             for (int i = 1; i <= graph_size; i++)
             {
                 depth[i] = int.MaxValue;
@@ -54,9 +58,12 @@ namespace PingServer
                     if (depth[out_edge_id] == int.MaxValue)
                     {
                         depth[out_edge_id] = depth[current_node.CellId] + 1;
-                        try{
+                        try
+                        {
                             queue.Enqueue(Global.CloudStorage.LoadSimpleGraphNode(out_edge_id));
-                        } catch (Exception ex){
+                        }
+                        catch (Exception ex)
+                        {
                             Console.WriteLine("Cell not found Error: " + out_edge_id);
                         }
                     }
@@ -65,9 +72,10 @@ namespace PingServer
             Console.WriteLine("-------------------------------------------------------");
             for (int i = 1; i <= graph_size; i++)
             {
-                if(depth[i] != int.MaxValue){
+                if (depth[i] != int.MaxValue)
+                {
                     Console.WriteLine("Depth of " + i + " (from " + root.CellId + ") is " + depth[i]);
-                }                
+                }
             }
         }
 
@@ -114,7 +122,8 @@ namespace PingServer
                         }
                         long read_edge = long.Parse(fields[1]);
                         edges.Add(read_edge);
-                        if(read_edge > max_edge){
+                        if (read_edge > max_edge)
+                        {
                             max_edge = read_edge;
                         }
                         weights.Add(float.Parse(fields[2]));
@@ -134,5 +143,5 @@ namespace PingServer
                 Global.CloudStorage.SaveStorage();
             }
         }
-  }
+    }
 }
