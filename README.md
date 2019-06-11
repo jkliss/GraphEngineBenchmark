@@ -4,6 +4,8 @@ LDBC Graph Engine
 Client for LDBC Graphanalytics Benchmark
 
 TODO:
--> Testgraphs \n
+-> Testgraphs
 -> Implementation of required Functions
 -> Implementation of Algorithms
+
+
