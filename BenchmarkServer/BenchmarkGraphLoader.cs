@@ -16,6 +16,10 @@ namespace BenchmarkServer
             path = new_path;
         }
 
+        public long getMaxEdge(){
+            return max_edge;
+        }
+
         public void LoadGraph()
         {
             // If graph is undirected process file with 
