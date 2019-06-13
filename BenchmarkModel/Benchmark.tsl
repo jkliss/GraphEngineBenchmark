@@ -20,13 +20,26 @@ protocol AsynPing {
   Response: void;
 }
 
+struct ConfigurationMessage {
+  long StartNode;
+  String EdgePath;
+  String Algorithm;
+  long maxIteration;
+  double dampingFactor;
+}
+
+protocol Configuration {
+  Type: Asyn;
+  Request: ConfigurationMessage;
+  Response: void;
+}
 
 server BenchmarkServer {
   protocol SynPing;
   protocol SynEchoPing;
   protocol AsynPing;
+  protocol Configuration;
 }
-
 
 cell struct SimpleGraphNode
 {

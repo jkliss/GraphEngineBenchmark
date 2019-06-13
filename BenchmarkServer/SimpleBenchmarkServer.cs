@@ -14,6 +14,8 @@ namespace BenchmarkServer
         public String outputPath;
         public Boolean directed;
         public Boolean weighted;
+        public long startNode;
+        public String algorithm;
 
         public override void SynPingHandler(PingMessageReader request)
         {
@@ -22,7 +24,7 @@ namespace BenchmarkServer
 
         public override void SynEchoPingHandler(PingMessageReader request, PingMessageWriter response)
         {
-            Console.WriteLine("Received SynEchoPing: {0}", request.Message);
+            Console.WriteLine("Set Algorithm to {0}", request.Message);
             response.Message = request.Message;
         }
 
@@ -30,12 +32,24 @@ namespace BenchmarkServer
         {
             Console.WriteLine("Received AsynPing: {0}", request.Message);
             BenchmarkGraphLoader loader = new BenchmarkGraphLoader();
+            loader.setPath(edgePath);
             loader.LoadGraph();
-            SimpleGraphNode rootNode = Global.CloudStorage.LoadSimpleGraphNode(287770);
+            SimpleGraphNode rootNode = Global.CloudStorage.LoadSimpleGraphNode(startNode);
             bool dummy = true;
             BenchmarkAlgorithm benchmarkAlgorithm = new BenchmarkAlgorithm();
             benchmarkAlgorithm.setMaxEdge(loader.getMaxEdge());
             benchmarkAlgorithm.BFS(dummy, rootNode);
+        }
+
+        public override void ConfigurationHandler(ConfigurationMessageReader request)
+        {
+            Console.WriteLine("CONFIGURATION PACKET:");
+            Console.WriteLine("Set Algorithm to {0}", request.Algorithm);
+            Console.WriteLine("Set edgePath to {0}", request.EdgePath);
+            Console.WriteLine("Set StartNode to {0}", request.StartNode);
+            edgePath = request.EdgePath;
+            startNode = request.StartNode;
+            algorithm = request.Algorithm;
         }
     }
 }
