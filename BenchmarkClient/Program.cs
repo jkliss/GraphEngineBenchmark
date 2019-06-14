@@ -6,30 +6,29 @@ namespace BenchmarkClient
     class Program
     {
         // graph loading
-        static String graph_name;
-        static String input_vertex_path;
-        static String input_edge_path;
-        static String l_output_path;
-        static bool directed;
-        static bool weighted;
+        public String graph_name;
+        public String input_vertex_path;
+        public String input_edge_path;
+        public String l_output_path;
+        public bool directed;
+        public bool weighted;
 
         // execuing
-        static long e_job_id;
-        static String e_log_path;
-        static String algorithm;
-        static long source_vertex;
-        static long maxIteration;
-        static double damping_factor;
-        static String input_path;
-        static String e_output_path;
-        static String home_dir;
-        static int num_machines;
-        static int num_threads;
+        public long e_job_id;
+        public String e_log_path;
+        public String algorithm;
+        public long source_vertex;
+        public long maxIteration;
+        public double damping_factor;
+        public String input_path;
+        public String e_output_path;
+        public String home_dir;
+        public int num_machines;
+        public int num_threads;
 
         // termination
-        static long t_job_id;
-        static String t_log_path;
-
+        public long t_job_id;
+        public String t_log_path;
 
         static void Main(string[] args)
         {
@@ -37,34 +36,28 @@ namespace BenchmarkClient
             TrinityConfig.LoadConfig();
             TrinityConfig.CurrentRunningMode = RunningMode.Client;
 
-            setConfiguration(1000,"/asdt/","BFS");
+            Program program = new Program();
+            program.input_edge_path = "/asdf/";
+            program.algorithm = "BFS";
+            program.source_vertex = 1000;
+
+            // local object instance
+            program.setConfiguration();
         }
 
-        static void setConfiguration(long startNode, String edgePath, String algorithm){
-            using (var request = new ConfigurationMessageWriter(startNode,edgePath,algorithm))
+
+        void setConfiguration(){
+            using (var request = new ConfigurationMessageWriter(graph_name,input_vertex_path,input_edge_path,l_output_path,directed,weighted,e_job_id,e_log_path,algorithm,source_vertex,maxIteration,damping_factor,input_path,e_output_path,home_dir,num_machines,num_threads,t_job_id,t_log_path))
             {
                 Global.CloudStorage.ConfigurationToBenchmarkServer(0, request);
-            }            
+            }
         }
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-        static void examples(){
+        void examples(){
             using (var request = new PingMessageWriter("Ping!1"))
             {
                 Global.CloudStorage.SynPingToBenchmarkServer(0, request);

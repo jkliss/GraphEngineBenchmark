@@ -44,12 +44,12 @@ namespace BenchmarkServer
         public override void ConfigurationHandler(ConfigurationMessageReader request)
         {
             Console.WriteLine("CONFIGURATION PACKET:");
-            Console.WriteLine("Set Algorithm to {0}", request.Algorithm);
-            Console.WriteLine("Set edgePath to {0}", request.EdgePath);
-            Console.WriteLine("Set StartNode to {0}", request.StartNode);
-            edgePath = request.EdgePath;
-            startNode = request.StartNode;
-            algorithm = request.Algorithm;
+            Console.WriteLine("Set Algorithm to {0}", request.algorithm);
+            Console.WriteLine("Set edgePath to {0}", request.input_edge_path);
+            Console.WriteLine("Set StartNode to {0}", request.source_vertex);
+            edgePath = request.input_edge_path;
+            startNode = request.source_vertex;
+            algorithm = request.algorithm;
         }
     }
 }

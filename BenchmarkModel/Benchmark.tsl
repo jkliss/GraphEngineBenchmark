@@ -21,11 +21,25 @@ protocol AsynPing {
 }
 
 struct ConfigurationMessage {
-  long StartNode;
-  String EdgePath;
-  String Algorithm;
-  long maxIteration;
-  double dampingFactor;
+        String graph_name;
+        String input_vertex_path;
+        String input_edge_path;
+        String l_output_path;
+        bool directed;
+        bool weighted;
+        long e_job_id;
+        String e_log_path;
+        String algorithm;
+        long source_vertex;
+        long maxIteration;
+        double damping_factor;
+        String input_path;
+        String e_output_path;
+        String home_dir;
+        int num_machines;
+        int num_threads;
+        long t_job_id;
+        String t_log_path;
 }
 
 protocol Configuration {
