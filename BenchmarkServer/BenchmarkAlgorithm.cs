@@ -1,24 +1,29 @@
-using System.Collections.Generic;
-using System.Linq;
 using System.Collections;
 using System;
 using System.IO;
 using Trinity;
+using System.Collections.Generic;
 
-namespace BenchmarkServer 
+namespace BenchmarkServer
 {
     public class BenchmarkAlgorithm
     {
         public long max_edge = 1;
+        public Dictionary<long, long> mapping = new Dictionary<long, long>();
 
         public void setMaxEdge(long new_max_edge){
             max_edge = new_max_edge;
+        }
+
+        public void setMapping(Dictionary<long, long> new_map){
+            mapping = new_map;
         }
 
         public void BFS(bool v, SimpleGraphNode root)
         {
             //init array with max distances --> requires amount of elements
             int graph_size = (int)max_edge;
+
             int[] depth = new int[graph_size + 1];
             for (int i = 1; i <= graph_size; i++)
             {
@@ -59,7 +64,7 @@ namespace BenchmarkServer
             {
                 if (depth[i] != int.MaxValue)
                 {
-                    Console.WriteLine("Depth of " + i + " (from " + root.CellId + ") is " + depth[i]);
+                    Console.WriteLine("Depth of " + i + " (from " + root.CellId + ") is " + depth[i] + " Mapped to: " + mapping[i]);
                 }
             }
         }

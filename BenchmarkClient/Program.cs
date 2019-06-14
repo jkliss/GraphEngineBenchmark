@@ -32,15 +32,17 @@ namespace BenchmarkClient
 
         static void Main(string[] args)
         {
+
+
             // Trinity doesn't load the config file correctly if we don't tell it to.
             TrinityConfig.LoadConfig();
             TrinityConfig.CurrentRunningMode = RunningMode.Client;
 
             Program program = new Program();
-            program.input_edge_path = "/asdf/";
-            program.algorithm = "BFS";
-            program.source_vertex = 1000;
-
+            program.readCommandLineArguments(args);
+            //program.input_edge_path = "/asdf/";
+            //program.algorithm = "BFS";
+            //program.source_vertex = 1000;
             // local object instance
             program.setConfiguration();
         }
@@ -54,6 +56,67 @@ namespace BenchmarkClient
         }
 
 
+        void readCommandLineArguments(String[] args){
+          for(int i = 0; i < args.Length; i++){
+            if(args[i] == "--graph-name"){
+              graph_name = args[i+1];
+            }
+            else if(args[i] == "--input-vertex-path"){
+              input_vertex_path = args[i+1];
+            }
+            else if(args[i] == "--input-edge-path"){
+              input_edge_path = args[i+1];
+            }
+            else if(args[i] == "--loutput-path"){
+              l_output_path = args[i+1];
+            }
+            else if(args[i] == "--directed"){
+              directed = bool.Parse(args[i+1]);
+            }
+            else if(args[i] == "--weighted"){
+              weighted = bool.Parse(args[i+1]);
+            }
+            else if(args[i] == "--ejob-id"){
+              e_job_id = long.Parse(args[i+1]);
+            }
+            else if(args[i] == "--elog-path"){
+              e_log_path = args[i+1];
+            }
+            else if(args[i] == "--algorithm"){
+              algorithm = args[i+1];
+            }
+            else if(args[i] == "--source-vertex"){
+              source_vertex = long.Parse(args[i+1]);
+            }
+            else if(args[i] == "--max-iterations"){
+              maxIteration = long.Parse(args[i+1]);
+            }
+            else if(args[i] == "--damping-factor"){
+              damping_factor = double.Parse(args[i+1]);
+            }
+            else if(args[i] == "--input-path"){
+              input_path = args[i+1];
+            }
+            else if(args[i] == "--eoutput-path"){
+              e_output_path = args[i+1];
+            }
+            else if(args[i] == "--home-dir"){
+              home_dir = args[i+1];
+            }
+            else if(args[i] == "--num-machines"){
+              num_machines = int.Parse(args[i+1]);
+            }
+            else if(args[i] == "--num-threads"){
+              num_threads = int.Parse(args[i+1]);
+            }
+            else if(args[i] == "--tjob-id"){
+              input_path = args[i+1];
+            }
+            else if(args[i] == "--tlog-path"){
+              input_path = args[i+1];
+            }
+          }
+        }
 
 
 

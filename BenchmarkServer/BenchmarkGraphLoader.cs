@@ -3,14 +3,16 @@ using System.Collections.Generic;
 using System.IO;
 using Trinity;
 
-namespace BenchmarkServer 
+namespace BenchmarkServer
 {
     public class BenchmarkGraphLoader
     {
 
         public long max_edge;
+        public Dictionary<long, long> mapping = new Dictionary<long, long>();
+        public String path = "/home/jkliss/";
+        public long already_read_nodes = 0;
 
-        public String path = "/home/jkliss/datagen-7_9-fb/datagen-7_9-fb.e_undirected";
 
         public void setPath(String new_path){
             path = new_path;
@@ -20,9 +22,17 @@ namespace BenchmarkServer
             return max_edge;
         }
 
+        public Dictionary<long, long> getMapping(){
+          return mapping;
+        }
+
+        public long getAlreadyReadNodes(){
+          return already_read_nodes;
+        }
+
         public void LoadGraph()
         {
-            // If graph is undirected process file with 
+            // If graph is undirected process file with
             //using (StreamReader reader = new StreamReader("/home/jkliss/dota-league.e_undirected"))
             using (StreamReader reader = new StreamReader(path))
             {
@@ -33,6 +43,7 @@ namespace BenchmarkServer
                 long current_node = -1;
                 List<long> edges = new List<long>();
                 List<float> weights = new List<float>();
+                already_read_nodes = 0;
                 long read_lines = 0;
                 while (null != (line = reader.ReadLine()))
                 {
@@ -44,11 +55,13 @@ namespace BenchmarkServer
                     try
                     {
                         fields = line.Split(' ');
+                        already_read_nodes++;
                         long read_node = long.Parse(fields[0]);
+                        mapping[already_read_nodes] = current_node;
                         if (current_node != read_node && !first)
                         {
                             Global.CloudStorage.SaveSimpleGraphNode(
-                              current_node,
+                              already_read_nodes,
                               edges,
                               weights);
                             edges = new List<long>();

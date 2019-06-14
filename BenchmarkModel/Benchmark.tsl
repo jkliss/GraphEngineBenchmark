@@ -59,4 +59,5 @@ cell struct SimpleGraphNode
 {
     List<CellId> Outlinks;
     List<float> Weights;
+    int Depth;
 }
