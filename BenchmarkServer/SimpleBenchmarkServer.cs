@@ -36,13 +36,30 @@ namespace BenchmarkServer
 
         public override void SynPingHandler(PingMessageReader request)
         {
-            Console.WriteLine("Received SynPing: {0}", request.Message);
+          Console.WriteLine("Received AsynPing: {0}", request.Message);
+          BenchmarkGraphLoader loader = new BenchmarkGraphLoader();
+          loader.setPath(this.input_vertex_path);
+          loader.LoadGraph();
+          SimpleGraphNode rootNode = Global.CloudStorage.LoadSimpleGraphNode(this.source_vertex);
+          bool dummy = true;
+          BenchmarkAlgorithm benchmarkAlgorithm = new BenchmarkAlgorithm();
+          benchmarkAlgorithm.setMaxEdge(loader.getAlreadyReadNodes());
+          benchmarkAlgorithm.setMapping(loader.getMapping());
+          benchmarkAlgorithm.BFS(dummy, rootNode);
         }
 
         public override void SynEchoPingHandler(PingMessageReader request, PingMessageWriter response)
         {
-            Console.WriteLine("Set Algorithm to {0}", request.Message);
-            response.Message = request.Message;
+          Console.WriteLine("Received AsynPing: {0}", request.Message);
+          BenchmarkGraphLoader loader = new BenchmarkGraphLoader();
+          loader.setPath(this.input_vertex_path);
+          loader.LoadGraph();
+          SimpleGraphNode rootNode = Global.CloudStorage.LoadSimpleGraphNode(this.source_vertex);
+          bool dummy = true;
+          BenchmarkAlgorithm benchmarkAlgorithm = new BenchmarkAlgorithm();
+          benchmarkAlgorithm.setMaxEdge(loader.getAlreadyReadNodes());
+          benchmarkAlgorithm.setMapping(loader.getMapping());
+          benchmarkAlgorithm.BFS(dummy, rootNode);
         }
 
         public override void AsynPingHandler(PingMessageReader request)

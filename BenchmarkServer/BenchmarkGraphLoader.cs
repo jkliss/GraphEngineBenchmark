@@ -33,6 +33,7 @@ namespace BenchmarkServer
         public void LoadGraph()
         {
             // If graph is undirected process file with
+            Console.WriteLine("Read File at: {0}", path);
             //using (StreamReader reader = new StreamReader("/home/jkliss/dota-league.e_undirected"))
             using (StreamReader reader = new StreamReader(path))
             {
@@ -57,7 +58,7 @@ namespace BenchmarkServer
                         fields = line.Split(' ');
                         already_read_nodes++;
                         long read_node = long.Parse(fields[0]);
-                        mapping[already_read_nodes] = current_node;
+                        //mapping[already_read_nodes] = current_node;
                         if (current_node != read_node && !first)
                         {
                             Global.CloudStorage.SaveSimpleGraphNode(

@@ -40,11 +40,17 @@ namespace BenchmarkClient
 
             Program program = new Program();
             program.readCommandLineArguments(args);
+            program.setConfiguration();
+            if(args.Length > 0 && args[0] == "run"){
+              using (var request = new PingMessageWriter("Start/Loader"))
+              {
+                  Global.CloudStorage.SynPingToBenchmarkServer(0, request);
+              }
+            }
             //program.input_edge_path = "/asdf/";
             //program.algorithm = "BFS";
             //program.source_vertex = 1000;
             // local object instance
-            program.setConfiguration();
         }
 
 
