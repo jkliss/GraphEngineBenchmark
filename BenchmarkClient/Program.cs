@@ -46,6 +46,28 @@ namespace BenchmarkClient
               {
                   Global.CloudStorage.SynPingToBenchmarkServer(0, request);
               }
+            } else {
+              Console.WriteLine("#######################################################################");
+              Console.WriteLine("Options: (to run with configuration add run [dotnet run run [OPTIONS]])");
+              Console.WriteLine("--graph-name");
+              Console.WriteLine("--input-vertex-path");
+              Console.WriteLine("--input-edge-path");
+              Console.WriteLine("--loutput-path");
+              Console.WriteLine("--directed");
+              Console.WriteLine("--weighted");
+              Console.WriteLine("--ejob-id");
+              Console.WriteLine("--elog-path");
+              Console.WriteLine("--algorithm");
+              Console.WriteLine("--source-vertex");
+              Console.WriteLine("--max-iterations");
+              Console.WriteLine("--damping-factor");
+              Console.WriteLine("--input-path");
+              Console.WriteLine("--eoutput-path");
+              Console.WriteLine("--home-dir");
+              Console.WriteLine("--num-machines");
+              Console.WriteLine("--num-threads");
+              Console.WriteLine("--tjob-id");
+              Console.WriteLine("--tlog-path");
             }
             //program.input_edge_path = "/asdf/";
             //program.algorithm = "BFS";

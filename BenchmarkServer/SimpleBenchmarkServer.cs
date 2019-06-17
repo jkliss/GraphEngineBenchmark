@@ -38,27 +38,37 @@ namespace BenchmarkServer
         {
           Console.WriteLine("Received AsynPing: {0}", request.Message);
           BenchmarkGraphLoader loader = new BenchmarkGraphLoader();
-          loader.setPath(this.input_vertex_path);
-          loader.LoadGraph();
-          SimpleGraphNode rootNode = Global.CloudStorage.LoadSimpleGraphNode(this.source_vertex);
-          bool dummy = true;
+          loader.setPath(this.input_edge_path);
+          loader.vpath = this.input_vertex_path;
+          loader.loadVertices();
           BenchmarkAlgorithm benchmarkAlgorithm = new BenchmarkAlgorithm();
-          benchmarkAlgorithm.setMaxEdge(loader.getAlreadyReadNodes());
-          benchmarkAlgorithm.setMapping(loader.getMapping());
+          benchmarkAlgorithm.setMaxNode(loader.getMaxNode());
+          loader.LoadGraph();
+          benchmarkAlgorithm.mapping1 = loader.mapping1;
+          benchmarkAlgorithm.mapping2 = loader.mapping2;
+          bool dummy = true;
+          int mapped_node = (int) loader.mapping2[this.source_vertex];
+          Console.WriteLine("Start at {0}", mapped_node);
+          SimpleGraphNode rootNode = Global.CloudStorage.LoadSimpleGraphNode(mapped_node);
           benchmarkAlgorithm.BFS(dummy, rootNode);
         }
 
+        public override void SynEchoPingHandler(PingMessageReader request, PingMessageWriter response){}
+        public override void AsynPingHandler(PingMessageReader request){}
+
+/**
         public override void SynEchoPingHandler(PingMessageReader request, PingMessageWriter response)
         {
           Console.WriteLine("Received AsynPing: {0}", request.Message);
           BenchmarkGraphLoader loader = new BenchmarkGraphLoader();
           loader.setPath(this.input_vertex_path);
           loader.LoadGraph();
-          SimpleGraphNode rootNode = Global.CloudStorage.LoadSimpleGraphNode(this.source_vertex);
           bool dummy = true;
           BenchmarkAlgorithm benchmarkAlgorithm = new BenchmarkAlgorithm();
-          benchmarkAlgorithm.setMaxEdge(loader.getAlreadyReadNodes());
-          benchmarkAlgorithm.setMapping(loader.getMapping());
+          benchmarkAlgorithm.setMaxNode(loader.getMaxNode());
+          List<long> mapping = loader.getMapping();
+          int mapped_node = (int) mapping.Find(x => x == this.source_vertex);
+          SimpleGraphNode rootNode = Global.CloudStorage.LoadSimpleGraphNode(mapped_node);
           benchmarkAlgorithm.BFS(dummy, rootNode);
         }
 
@@ -68,14 +78,15 @@ namespace BenchmarkServer
             BenchmarkGraphLoader loader = new BenchmarkGraphLoader();
             loader.setPath(this.input_vertex_path);
             loader.LoadGraph();
-            SimpleGraphNode rootNode = Global.CloudStorage.LoadSimpleGraphNode(this.source_vertex);
             bool dummy = true;
             BenchmarkAlgorithm benchmarkAlgorithm = new BenchmarkAlgorithm();
-            benchmarkAlgorithm.setMaxEdge(loader.getAlreadyReadNodes());
-            benchmarkAlgorithm.setMapping(loader.getMapping());
+            benchmarkAlgorithm.setMaxNode(loader.getMaxNode());
+            List<long> mapping = loader.getMapping();
+            int mapped_node = (int) mapping.Find(x => x == this.source_vertex);
+            SimpleGraphNode rootNode = Global.CloudStorage.LoadSimpleGraphNode(mapped_node);
             benchmarkAlgorithm.BFS(dummy, rootNode);
         }
-
+**/
         public override void ConfigurationHandler(ConfigurationMessageReader request)
         {
           // graph loading

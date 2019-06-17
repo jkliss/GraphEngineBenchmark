@@ -8,21 +8,25 @@ namespace BenchmarkServer
 {
     public class BenchmarkAlgorithm
     {
-        public long max_edge = 1;
-        public Dictionary<long, long> mapping = new Dictionary<long, long>();
+        public long max_node = 1;
+        public Dictionary<long, long> mapping1 = new Dictionary<long, long>();
+        public Dictionary<long, long> mapping2 = new Dictionary<long, long>();
 
-        public void setMaxEdge(long new_max_edge){
-            max_edge = new_max_edge;
+
+        public void setMaxNode(long new_max_node){
+            max_node = new_max_node;
         }
 
         public void setMapping(Dictionary<long, long> new_map){
-            mapping = new_map;
+            mapping2 = new_map;
         }
 
         public void BFS(bool v, SimpleGraphNode root)
         {
             //init array with max distances --> requires amount of elements
-            int graph_size = (int)max_edge;
+            int graph_size = (int) max_node;
+            Console.WriteLine("Size of Array: {0}", graph_size);
+            Console.WriteLine("Try to access: {0}", root.CellId);
 
             int[] depth = new int[graph_size + 1];
             for (int i = 1; i <= graph_size; i++)
@@ -62,10 +66,17 @@ namespace BenchmarkServer
             Console.WriteLine("-------------------------------------------------------");
             for (int i = 1; i <= graph_size; i++)
             {
+              try{
                 if (depth[i] != int.MaxValue)
                 {
-                    Console.WriteLine("Depth of " + i + " (from " + root.CellId + ") is " + depth[i] + " Mapped to: " + mapping[i]);
+                    Console.WriteLine("Depth of " + i + " (from " + root.CellId + ") is " + depth[i] + " Mapped to: " + mapping1[i]);
+                    //Console.WriteLine("Depth of " + i + " is " + depth[i]);
+
                 }
+              } catch (Exception ex){
+                TextWriter errorWriter = Console.Error;
+                errorWriter.WriteLine(ex.Message);
+              }
             }
         }
     }
