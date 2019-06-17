@@ -43,10 +43,10 @@ namespace BenchmarkServer
             while (queue.Count > 0)
             {
                 SimpleGraphNode current_node = (SimpleGraphNode)queue.Dequeue();
-                //Console.WriteLine(current_node.CellId);
+                Console.WriteLine(current_node.CellId);
                 foreach (var out_edge_id in current_node.Outlinks)
                 {
-                    //Console.WriteLine("Outgoing: " + out_edge_id);
+                    Console.WriteLine("Outgoing: " + out_edge_id);
                     if (nodes_visited % 1000 == 0)
                     {
                         Console.Write(" Nodes Visited: " + nodes_visited / 1000 + "K\r");
