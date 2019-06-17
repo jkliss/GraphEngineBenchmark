@@ -39,7 +39,7 @@ namespace BenchmarkServer
             queue.Enqueue(root);
 
             depth[root.CellId] = 0;
-
+            long nodes_visited = 0;
             while (queue.Count > 0)
             {
                 SimpleGraphNode current_node = (SimpleGraphNode)queue.Dequeue();
@@ -47,6 +47,10 @@ namespace BenchmarkServer
                 foreach (var out_edge_id in current_node.Outlinks)
                 {
                     //Console.WriteLine("Outgoing: " + out_edge_id);
+                    if (nodes_visited % 1000 == 0)
+                    {
+                        Console.Write(" Nodes Visited: " + nodes_visited / 1000 + "K\r");
+                    }
                     if (depth[out_edge_id] == int.MaxValue)
                     {
                         depth[out_edge_id] = depth[current_node.CellId] + 1;
@@ -64,14 +68,21 @@ namespace BenchmarkServer
                 }
             }
             Console.WriteLine("-------------------------------------------------------");
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"output.txt"))
+            {
+                  file.WriteLine("Algorithm XXX");
+            }
+
             for (int i = 1; i <= graph_size; i++)
             {
               try{
-                if (depth[i] != int.MaxValue)
+                using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"output.txt",true))
                 {
-                    Console.WriteLine("Depth of " + i + " (from " + root.CellId + ") is " + depth[i] + " Mapped to: " + mapping1[i]);
-                    //Console.WriteLine("Depth of " + i + " is " + depth[i]);
-
+                  if (depth[i] != int.MaxValue)
+                  {
+                      Console.WriteLine("Depth of " + i + " (from " + root.CellId + ") is " + depth[i] + " Mapped to: " + mapping1[i]);
+                      file.WriteLine("Depth of " + i + " (from " + root.CellId + ") is " + depth[i] + " Mapped to: " + mapping1[i]);
+                  }
                 }
               } catch (Exception ex){
                 TextWriter errorWriter = Console.Error;
