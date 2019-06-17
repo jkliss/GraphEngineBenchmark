@@ -25,7 +25,7 @@ namespace BenchmarkServer
       public long maxIteration;
       public double damping_factor;
       public String input_path;
-      public String e_output_path;
+      public String e_output_path = "output.txt";
       public String home_dir;
       public int num_machines;
       public int num_threads;
@@ -46,6 +46,7 @@ namespace BenchmarkServer
           loader.LoadGraph();
           benchmarkAlgorithm.mapping1 = loader.mapping1;
           benchmarkAlgorithm.mapping2 = loader.mapping2;
+          benchmarkAlgorithm.setOutputPath(e_output_path);
           bool dummy = true;
           int mapped_node = (int) loader.mapping2[this.source_vertex];
           Console.WriteLine("Start at {0}", mapped_node);

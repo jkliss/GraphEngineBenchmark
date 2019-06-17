@@ -11,7 +11,7 @@ namespace BenchmarkServer
         public long max_node = 1;
         public Dictionary<long, long> mapping1 = new Dictionary<long, long>();
         public Dictionary<long, long> mapping2 = new Dictionary<long, long>();
-
+        public String output_path = "output.txt";
 
         public void setMaxNode(long new_max_node){
             max_node = new_max_node;
@@ -19,6 +19,10 @@ namespace BenchmarkServer
 
         public void setMapping(Dictionary<long, long> new_map){
             mapping2 = new_map;
+        }
+
+        public void setOutputPath(String new_path){
+          output_path = new_path;
         }
 
         public void BFS(bool v, SimpleGraphNode root)
@@ -43,10 +47,10 @@ namespace BenchmarkServer
             while (queue.Count > 0)
             {
                 SimpleGraphNode current_node = (SimpleGraphNode)queue.Dequeue();
-                Console.WriteLine(current_node.CellId);
+                //Console.WriteLine(current_node.CellId);
                 foreach (var out_edge_id in current_node.Outlinks)
                 {
-                    Console.WriteLine("Outgoing: " + out_edge_id);
+                    //Console.WriteLine("Outgoing: " + out_edge_id);
                     if (nodes_visited % 1000 == 0)
                     {
                         Console.Write(" Nodes Visited: " + nodes_visited / 1000 + "K\r");
@@ -68,7 +72,7 @@ namespace BenchmarkServer
                 }
             }
             Console.WriteLine("-------------------------------------------------------");
-            using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"output.txt"))
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(@output_path))
             {
                   file.WriteLine("Algorithm XXX");
             }
@@ -76,7 +80,7 @@ namespace BenchmarkServer
             for (int i = 1; i <= graph_size; i++)
             {
               try{
-                using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"output.txt",true))
+                using (System.IO.StreamWriter file = new System.IO.StreamWriter(@output_path,true))
                 {
                   if (depth[i] != int.MaxValue)
                   {
