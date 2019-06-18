@@ -6,7 +6,7 @@ namespace BenchmarkClient
     class Program
     {
         // graph loading
-        public String graph_name;
+        public String graph_name = "BFS";
         public String input_vertex_path;
         public String input_edge_path;
         public String l_output_path;
@@ -41,10 +41,21 @@ namespace BenchmarkClient
             Program program = new Program();
             program.readCommandLineArguments(args);
             program.setConfiguration();
-            if(args.Length > 0 && args[0] == "run"){
-              using (var request = new PingMessageWriter("Start/Loader"))
-              {
-                  Global.CloudStorage.SynPingToBenchmarkServer(0, request);
+            if(args.Length > 0){
+              if(args[0]=="run_all"){
+                using (var request = new ConfigurationMessageWriter("Start/Loader"))
+                {
+                    Global.CloudStorage.SynPingToBenchmarkServer(0, request);
+                }
+              }
+              if(args[0]=="run"){
+                program.Run();
+              }
+              if(args[0]=="verifysetup"){
+                program.verifySetup();
+              }
+              if(args[0]=="loadgraph"){
+                program.LoadGraph();
               }
             } else {
               Console.WriteLine("#######################################################################");
@@ -149,7 +160,7 @@ namespace BenchmarkClient
 
 
         void examples(){
-            using (var request = new PingMessageWriter("Ping!1"))
+            using (var request = new ConfigurationMessageWriter("Ping!1"))
             {
                 Global.CloudStorage.SynPingToBenchmarkServer(0, request);
             }
@@ -166,6 +177,48 @@ namespace BenchmarkClient
                     Console.WriteLine("Server Response: {0}", response.Message);
                 }
             }
+
+
+
+        }
+/**
+        public override void LoadGraphHandler(ConfigurationMessageReader request){}
+
+        public override void PrepareHandler(ConfigurationMessageReader request){}
+
+        public override void SetupHandler(ConfigurationMessageReader request){}
+
+        public override void RunHandler(ConfigurationMessageReader request){}
+
+        public override void FinalizeHandler(ConfigurationMessageReader request){}
+
+        public override void TerminateHandler(ConfigurationMessageReader request){}
+
+        public override void DeleteGraphHandler(ConfigurationMessageReader request){}
+**/
+
+        public void verifySetup(){
+          using (var request = new PingMessageWriter("Ask server for status"))
+          {
+              using (var response = Global.CloudStorage.VerifySetupToBenchmarkServer(0, request))
+              {
+                  Console.WriteLine("Server Response: {0}", response.Message);
+              }
+          }
+        }
+
+        public void LoadGraph(){
+          using (var request = new ConfigurationMessageWriter(graph_name,input_vertex_path,input_edge_path,l_output_path,directed,weighted,e_job_id,e_log_path,algorithm,source_vertex,maxIteration,damping_factor,input_path,e_output_path,home_dir,num_machines,num_threads,t_job_id,t_log_path))
+          {
+              Global.CloudStorage.LoadGraphToBenchmarkServer(0, request);
+          }
+        }
+
+        public void Run(){
+          using (var request = new ConfigurationMessageWriter(graph_name,input_vertex_path,input_edge_path,l_output_path,directed,weighted,e_job_id,e_log_path,algorithm,source_vertex,maxIteration,damping_factor,input_path,e_output_path,home_dir,num_machines,num_threads,t_job_id,t_log_path))
+          {
+              Global.CloudStorage.RunToBenchmarkServer(0, request);
+          }
         }
     }
 }

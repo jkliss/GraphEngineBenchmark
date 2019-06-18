@@ -4,7 +4,7 @@ struct PingMessage {
 
 protocol SynPing {
   Type: Syn;
-  Request: PingMessage;
+  Request: ConfigurationMessage;
   Response: void;
 }
 
@@ -48,11 +48,67 @@ protocol Configuration {
   Response: void;
 }
 
+protocol VerifySetup {
+  Type: Syn;
+  Request: PingMessage;
+  Response: PingMessage;
+}
+
+protocol LoadGraph {
+  Type: Syn;
+  Request: ConfigurationMessage;
+  Response: void;
+}
+
+protocol Prepare {
+  Type: Syn;
+  Request: ConfigurationMessage;
+  Response: void;
+}
+
+protocol Setup {
+  Type: Syn;
+  Request: ConfigurationMessage;
+  Response: void;
+}
+
+protocol Run {
+  Type: Syn;
+  Request: ConfigurationMessage;
+  Response: void;
+}
+
+protocol Finalize {
+  Type: Syn;
+  Request: ConfigurationMessage;
+  Response: void;
+}
+
+protocol Terminate {
+  Type: Syn;
+  Request: ConfigurationMessage;
+  Response: void;
+}
+
+protocol DeleteGraph {
+  Type: Syn;
+  Request: ConfigurationMessage;
+  Response: void;
+}
+
 server BenchmarkServer {
   protocol SynPing;
   protocol SynEchoPing;
   protocol AsynPing;
   protocol Configuration;
+  protocol VerifySetup;
+  protocol LoadGraph;
+  protocol Prepare;
+  protocol Setup;
+  protocol Run;
+  protocol Finalize;
+  protocol Terminate;
+  protocol DeleteGraph;
 }
 
 cell struct SimpleGraphNode

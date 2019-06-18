@@ -34,28 +34,75 @@ namespace BenchmarkServer
       public long t_job_id;
       public String t_log_path;
 
-        public override void SynPingHandler(PingMessageReader request)
+      //references_to_values
+      public BenchmarkGraphLoader loader = new BenchmarkGraphLoader();
+      public bool ranLoader = false;
+      public BenchmarkAlgorithm benchmarkAlgorithm = new BenchmarkAlgorithm();
+      public bool ranRun = false;
+
+        public override void SynPingHandler(ConfigurationMessageReader request)
         {
-          Console.WriteLine("Received AsynPing: {0}", request.Message);
-          BenchmarkGraphLoader loader = new BenchmarkGraphLoader();
-          loader.setPath(this.input_edge_path);
-          loader.vpath = this.input_vertex_path;
-          loader.loadVertices();
-          BenchmarkAlgorithm benchmarkAlgorithm = new BenchmarkAlgorithm();
-          benchmarkAlgorithm.setMaxNode(loader.getMaxNode());
-          loader.LoadGraph();
-          benchmarkAlgorithm.mapping1 = loader.mapping1;
-          benchmarkAlgorithm.mapping2 = loader.mapping2;
-          benchmarkAlgorithm.setOutputPath(e_output_path);
-          bool dummy = true;
-          int mapped_node = (int) loader.mapping2[this.source_vertex];
-          Console.WriteLine("Start at {0}", mapped_node);
-          SimpleGraphNode rootNode = Global.CloudStorage.LoadSimpleGraphNode(mapped_node);
-          benchmarkAlgorithm.BFS(dummy, rootNode);
+          Console.WriteLine("Received Graph: {0}", request.graph_name);
+          LoadGraphHandler(request);
+          Console.WriteLine("Ran Loader!");
+          RunHandler(request);
         }
 
         public override void SynEchoPingHandler(PingMessageReader request, PingMessageWriter response){}
+
         public override void AsynPingHandler(PingMessageReader request){}
+
+        public override void VerifySetupHandler(PingMessageReader request, PingMessageWriter response){
+            response.Message = "Everything up and running!";
+        }
+
+        public override void LoadGraphHandler(ConfigurationMessageReader request){
+          Console.WriteLine("Started LOAD");
+          loader.setPath(this.input_edge_path);
+          loader.vpath = this.input_vertex_path;
+          loader.loadVertices();
+          loader.LoadGraph();
+          ranLoader = true;
+        }
+
+        public override void PrepareHandler(ConfigurationMessageReader request){
+
+        }
+
+        public override void SetupHandler(ConfigurationMessageReader request){
+
+        }
+
+        public override void RunHandler(ConfigurationMessageReader request){
+          Console.WriteLine("Started RUN");
+          if(ranLoader == false){
+            Console.WriteLine("Loader not run before");
+          } else {
+            benchmarkAlgorithm.setMaxNode(loader.getMaxNode());
+            benchmarkAlgorithm.mapping1 = loader.mapping1;
+            benchmarkAlgorithm.mapping2 = loader.mapping2;
+            benchmarkAlgorithm.graph_name = graph_name;
+            benchmarkAlgorithm.setOutputPath(e_output_path);
+            int mapped_node = (int) loader.mapping2[this.source_vertex];
+            Console.WriteLine("Start at {0}", mapped_node);
+            SimpleGraphNode rootNode = Global.CloudStorage.LoadSimpleGraphNode(mapped_node);
+            benchmarkAlgorithm.BFS(rootNode);
+            ranLoader = true;
+          }
+        }
+
+        public override void FinalizeHandler(ConfigurationMessageReader request){
+
+        }
+
+        public override void TerminateHandler(ConfigurationMessageReader request){
+
+        }
+
+        public override void DeleteGraphHandler(ConfigurationMessageReader request){
+
+        }
+
 
 /**
         public override void SynEchoPingHandler(PingMessageReader request, PingMessageWriter response)
@@ -115,8 +162,10 @@ namespace BenchmarkServer
           t_job_id = request.t_job_id;
           t_log_path = request.t_log_path;
 
+          Console.WriteLine("############################################");
           Console.WriteLine("SENT CONFIGURATION PACKET:");
           showConfiguration();
+          Console.WriteLine("############################################");
         }
 
         public void showConfiguration(){

@@ -9,6 +9,7 @@ namespace BenchmarkServer
     public class BenchmarkAlgorithm
     {
         public long max_node = 1;
+        public String graph_name = "XXX";
         public Dictionary<long, long> mapping1 = new Dictionary<long, long>();
         public Dictionary<long, long> mapping2 = new Dictionary<long, long>();
         public String output_path = "output.txt";
@@ -25,7 +26,7 @@ namespace BenchmarkServer
           output_path = new_path;
         }
 
-        public void BFS(bool v, SimpleGraphNode root)
+        public void BFS(SimpleGraphNode root)
         {
             //init array with max distances --> requires amount of elements
             int graph_size = (int) max_node;
@@ -74,7 +75,7 @@ namespace BenchmarkServer
             Console.WriteLine("-------------------------------------------------------");
             using (System.IO.StreamWriter file = new System.IO.StreamWriter(@output_path))
             {
-                  file.WriteLine("Algorithm XXX");
+                  file.WriteLine("Algorithm: " + graph_name);
             }
 
             for (int i = 1; i <= graph_size; i++)
