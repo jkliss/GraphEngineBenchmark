@@ -44,7 +44,6 @@ namespace BenchmarkServer
         {
           Console.WriteLine("Received Graph: {0}", request.graph_name);
           LoadGraphHandler(request);
-          Console.WriteLine("Ran Loader!");
           RunHandler(request);
         }
 
@@ -162,10 +161,10 @@ namespace BenchmarkServer
           t_job_id = request.t_job_id;
           t_log_path = request.t_log_path;
 
-          Console.WriteLine("############################################");
+          Console.WriteLine("##################################");
           Console.WriteLine("SENT CONFIGURATION PACKET:");
           showConfiguration();
-          Console.WriteLine("############################################");
+          Console.WriteLine("##################################");
         }
 
         public void showConfiguration(){

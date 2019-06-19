@@ -43,7 +43,7 @@ struct ConfigurationMessage {
 }
 
 protocol Configuration {
-  Type: Asyn;
+  Type: Syn;
   Request: ConfigurationMessage;
   Response: void;
 }

@@ -94,6 +94,9 @@ namespace BenchmarkServer
                   weights);
                 Global.CloudStorage.SaveStorage();
             }
+            Console.WriteLine("##################################");
+            Console.WriteLine("#######  All edges loaded  #######");
+            Console.WriteLine("##################################");
         }
 
         public void loadVertices(){
@@ -126,7 +129,9 @@ namespace BenchmarkServer
               }
               max_node = read_lines;
           }
-          Console.WriteLine("Read All Vertices!");
+          Console.WriteLine("##################################");
+          Console.WriteLine("####### All vertices loaded ######");
+          Console.WriteLine("##################################");
         }
     }
 }

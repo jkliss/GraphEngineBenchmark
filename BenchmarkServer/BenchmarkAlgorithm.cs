@@ -9,6 +9,7 @@ namespace BenchmarkServer
     public class BenchmarkAlgorithm
     {
         public long max_node = 1;
+        public bool silent = true;
         public String graph_name = "XXX";
         public Dictionary<long, long> mapping1 = new Dictionary<long, long>();
         public Dictionary<long, long> mapping2 = new Dictionary<long, long>();
@@ -85,7 +86,9 @@ namespace BenchmarkServer
                 {
                   if (depth[i] != int.MaxValue)
                   {
-                      Console.WriteLine("Depth of " + i + " (from " + root.CellId + ") is " + depth[i] + " Mapped to: " + mapping1[i]);
+                      if(!silent){
+                        Console.WriteLine("Depth of " + i + " (from " + root.CellId + ") is " + depth[i] + " Mapped to: " + mapping1[i]);
+                      }
                       file.WriteLine("Depth of " + i + " (from " + root.CellId + ") is " + depth[i] + " Mapped to: " + mapping1[i]);
                   }
                 }
@@ -93,7 +96,10 @@ namespace BenchmarkServer
                 TextWriter errorWriter = Console.Error;
                 errorWriter.WriteLine(ex.Message);
               }
-            }
+           }
+            Console.WriteLine("##################################");
+            Console.WriteLine("#######    Finished Run    #######");
+            Console.WriteLine("##################################");
         }
     }
 }
