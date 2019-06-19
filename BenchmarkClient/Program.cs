@@ -182,13 +182,9 @@ namespace BenchmarkClient
 
         }
 /**
-        public override void LoadGraphHandler(ConfigurationMessageReader request){}
-
         public override void PrepareHandler(ConfigurationMessageReader request){}
 
         public override void SetupHandler(ConfigurationMessageReader request){}
-
-        public override void RunHandler(ConfigurationMessageReader request){}
 
         public override void FinalizeHandler(ConfigurationMessageReader request){}
 
@@ -220,5 +216,7 @@ namespace BenchmarkClient
               Global.CloudStorage.RunToBenchmarkServer(0, request);
           }
         }
+
+
     }
 }

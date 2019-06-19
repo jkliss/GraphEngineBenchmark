@@ -12,7 +12,14 @@ sudo apt update
 sudo apt install -y dotnet-sdk-2.2
 
 #Git clone
-rm -rf ./GraphEngine/
+echo "Delete GraphEngine Directory (if exists)?"
+select yn in "Y" "N"; do
+    case $yn in
+        Y ) make rm -rf ./GraphEngine/; break;;
+        N ) exit;
+    esac
+done
+
 git clone https://github.com/Microsoft/GraphEngine.git
 #git clone https://github.com/ToxicJojo/graph-engine-samples.git
 git clone https://github.com/jkliss/GraphEngineBenchmark.git
