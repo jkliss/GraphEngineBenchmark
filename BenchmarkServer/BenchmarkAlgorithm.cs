@@ -14,6 +14,7 @@ namespace BenchmarkServer
     public Dictionary<long, long> mapping1 = new Dictionary<long, long>();
     public Dictionary<long, long> mapping2 = new Dictionary<long, long>();
     public String output_path = "output.txt";
+    public long elapsedTime_lastRun;
 
     public void setMaxNode(long new_max_node){
       max_node = new_max_node;
@@ -29,6 +30,7 @@ namespace BenchmarkServer
 
     public void BFS(SimpleGraphNode root)
     {
+      var watch = System.Diagnostics.Stopwatch.StartNew();
       //init array with max distances --> requires amount of elements
       int graph_size = (int) max_node;
       Console.WriteLine("Size of Array: {0}", graph_size);
@@ -53,9 +55,10 @@ namespace BenchmarkServer
         foreach (var out_edge_id in current_node.Outlinks)
         {
           //Console.WriteLine("Outgoing: " + out_edge_id);
-          if (nodes_visited % 1000 == 0)
+          nodes_visited++;
+          if (nodes_visited % 1000000 == 0)
           {
-            Console.Write(" Nodes Visited: " + nodes_visited / 1000 + "K\r");
+            Console.Write(" Nodes Visited: " + nodes_visited / 1000000 + "M\r");
           }
           if (depth[out_edge_id] == int.MaxValue)
           {
@@ -73,7 +76,16 @@ namespace BenchmarkServer
           }
         }
       }
-      Console.WriteLine("-------------------------------------------------------");
+      watch.Stop();
+      var elapsedMs = watch.ElapsedMilliseconds;
+      elapsedTime_lastRun = elapsedMs;
+      Console.WriteLine("----------------------------------");
+      Console.WriteLine("Runtime: {0} (ms)", elapsedTime_lastRun);
+      using (System.IO.StreamWriter file = new System.IO.StreamWriter("benchmark.info"))
+      {
+        file.WriteLine("Algorithm: " + graph_name + " Runtime:" + elapsedTime_lastRun);
+      }
+
       using (System.IO.StreamWriter file = new System.IO.StreamWriter(@output_path))
       {
         file.WriteLine("Algorithm: " + graph_name);

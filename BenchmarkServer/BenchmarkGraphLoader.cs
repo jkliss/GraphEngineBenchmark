@@ -14,6 +14,8 @@ namespace BenchmarkServer
         public String vpath = "";
         public Dictionary<long, long> mapping1 = new Dictionary<long, long>();
         public Dictionary<long, long> mapping2 = new Dictionary<long, long>();
+        public long elapsedTime_lastLoadEdge = 0;
+        public long elapsedTime_lastLoadVertex = 0;
 
         public void setPath(String new_path){
             path = new_path;
@@ -33,6 +35,7 @@ namespace BenchmarkServer
 
         public void LoadGraph()
         {
+            var watch = System.Diagnostics.Stopwatch.StartNew();
             // If graph is undirected process file with
             Console.WriteLine("Read File at: {0}", path);
             using (StreamReader reader = new StreamReader(path))
@@ -93,6 +96,11 @@ namespace BenchmarkServer
                   weights);
                 Global.CloudStorage.SaveStorage();
             }
+            watch.Stop();
+            var elapsedMs = watch.ElapsedMilliseconds;
+            elapsedTime_lastLoadEdge = elapsedMs;
+            Console.WriteLine("----------------------------------");
+            Console.WriteLine("Runtime: {0} (ms)", elapsedTime_lastLoadEdge);
             Console.WriteLine("##################################");
             Console.WriteLine("#######  All edges loaded  #######");
             Console.WriteLine("##################################");
@@ -100,6 +108,7 @@ namespace BenchmarkServer
 
         public void loadVertices(){
           // If graph is undirected process file with
+          var watch = System.Diagnostics.Stopwatch.StartNew();
           Console.WriteLine("Read Vertex File at: {0}", vpath);
           using (StreamReader reader = new StreamReader(vpath))
           {
@@ -128,6 +137,10 @@ namespace BenchmarkServer
               }
               max_node = read_lines;
           }
+          var elapsedMs = watch.ElapsedMilliseconds;
+          elapsedTime_lastLoadVertex = elapsedMs;
+          Console.WriteLine("----------------------------------");
+          Console.WriteLine("Runtime: {0} (ms)", elapsedTime_lastLoadVertex);
           Console.WriteLine("##################################");
           Console.WriteLine("####### All vertices loaded ######");
           Console.WriteLine("##################################");
