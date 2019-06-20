@@ -35,7 +35,6 @@ namespace BenchmarkServer
         {
             // If graph is undirected process file with
             Console.WriteLine("Read File at: {0}", path);
-            //using (StreamReader reader = new StreamReader("/home/jkliss/dota-league.e_undirected"))
             using (StreamReader reader = new StreamReader(path))
             {
                 string line;

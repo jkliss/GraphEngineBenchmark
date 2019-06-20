@@ -32,8 +32,6 @@ namespace BenchmarkClient
 
     static void Main(string[] args)
     {
-
-
       // Trinity doesn't load the config file correctly if we don't tell it to.
       TrinityConfig.LoadConfig();
       TrinityConfig.CurrentRunningMode = RunningMode.Client;
@@ -80,12 +78,7 @@ namespace BenchmarkClient
         Console.WriteLine("--tjob-id");
         Console.WriteLine("--tlog-path");
       }
-      //program.input_edge_path = "/asdf/";
-      //program.algorithm = "BFS";
-      //program.source_vertex = 1000;
-      // local object instance
     }
-
 
     void setConfiguration(){
       using (var request = new ConfigurationMessageWriter(graph_name,input_vertex_path,input_edge_path,l_output_path,directed,weighted,e_job_id,e_log_path,algorithm,source_vertex,maxIteration,damping_factor,input_path,e_output_path,home_dir,num_machines,num_threads,t_job_id,t_log_path))
@@ -93,7 +86,6 @@ namespace BenchmarkClient
         Global.CloudStorage.ConfigurationToBenchmarkServer(0, request);
       }
     }
-
 
     void readCommandLineArguments(String[] args){
       for(int i = 0; i < args.Length; i++){
@@ -157,8 +149,6 @@ namespace BenchmarkClient
       }
     }
 
-
-
     void examples(){
       using (var request = new ConfigurationMessageWriter("Ping!1"))
       {
@@ -177,9 +167,6 @@ namespace BenchmarkClient
           Console.WriteLine("Server Response: {0}", response.Message);
         }
       }
-
-
-
     }
     /**
     public override void PrepareHandler(ConfigurationMessageReader request){}
@@ -216,7 +203,5 @@ namespace BenchmarkClient
         Global.CloudStorage.RunToBenchmarkServer(0, request);
       }
     }
-
-
   }
 }
