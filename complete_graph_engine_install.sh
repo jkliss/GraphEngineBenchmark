@@ -19,7 +19,7 @@ git clone https://github.com/Microsoft/GraphEngine.git
 git clone https://github.com/jkliss/GraphEngineBenchmark.git
 
 #Update build.sh
-sed -i 's/make -j/make -j `nproc`/g' ~/GraphEngine/tools/build.sh
+sed -i 's/make -j/make -j `nproc`/g' ./GraphEngine/tools/build.sh
 
 #Building
 ~/GraphEngine/tools/build.sh

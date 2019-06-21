@@ -65,11 +65,9 @@ namespace BenchmarkServer
     }
 
     public override void PrepareHandler(ConfigurationMessageReader request){
-
     }
 
     public override void SetupHandler(ConfigurationMessageReader request){
-
     }
 
     public override void RunHandler(ConfigurationMessageReader request){
@@ -91,18 +89,15 @@ namespace BenchmarkServer
     }
 
     public override void FinalizeHandler(ConfigurationMessageReader request){
-
     }
 
     public override void TerminateHandler(ConfigurationMessageReader request){
-
     }
 
     public override void DeleteGraphHandler(ConfigurationMessageReader request){
-
     }
 
-    
+
     public override void ConfigurationHandler(ConfigurationMessageReader request)
     {
       // graph loading
