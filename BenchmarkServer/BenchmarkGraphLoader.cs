@@ -7,7 +7,6 @@ namespace BenchmarkServer
 {
     public class BenchmarkGraphLoader
     {
-
         public long max_node;
         public List<long> mapping = new List<long>();
         public String path = "/home/jkliss/";

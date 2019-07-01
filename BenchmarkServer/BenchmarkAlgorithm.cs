@@ -86,10 +86,10 @@ namespace BenchmarkServer
         file.WriteLine("Algorithm: " + graph_name + " Runtime:" + elapsedTime_lastRun);
       }
 
-      using (System.IO.StreamWriter file = new System.IO.StreamWriter(@output_path))
+      /**using (System.IO.StreamWriter file = new System.IO.StreamWriter(@output_path))
       {
         file.WriteLine("Algorithm: " + graph_name);
-      }
+      }**/
 
       for (int i = 1; i <= graph_size; i++)
       {
@@ -101,7 +101,8 @@ namespace BenchmarkServer
               if(!silent){
                 Console.WriteLine("Depth of " + i + " (from " + root.CellId + ") is " + depth[i] + " Mapped to: " + mapping1[i]);
               }
-              file.WriteLine("Depth of " + i + " (from " + root.CellId + ") is " + depth[i] + " Mapped to: " + mapping1[i]);
+              //file.WriteLine("Depth of " + i + " (from " + root.CellId + ") is " + depth[i] + " Mapped to: " + mapping1[i]);
+              file.WriteLine(mapping1[1] + " " + depth[i]);
             }
           }
         } catch (Exception ex){

@@ -56,7 +56,7 @@ namespace BenchmarkServer
     }
 
     public override void LoadGraphHandler(ConfigurationMessageReader request){
-      Console.WriteLine("Started LOAD");
+      Console.WriteLine("Started Load");
       loader.setPath(this.input_edge_path);
       loader.vpath = this.input_vertex_path;
       loader.loadVertices();
@@ -65,13 +65,14 @@ namespace BenchmarkServer
     }
 
     public override void PrepareHandler(ConfigurationMessageReader request){
+      // The platform requests computation resources from the cluster environment and makes the background applications ready.
     }
 
     public override void SetupHandler(ConfigurationMessageReader request){
     }
 
     public override void RunHandler(ConfigurationMessageReader request){
-      Console.WriteLine("Started RUN");
+      Console.WriteLine("Started Run");
       if(ranLoader == false){
         Console.WriteLine("Loader not run before");
       } else {
@@ -89,12 +90,16 @@ namespace BenchmarkServer
     }
 
     public override void FinalizeHandler(ConfigurationMessageReader request){
+      // The platform reports the benchmark information and makes the environment ready for the next benchmark run.
     }
 
     public override void TerminateHandler(ConfigurationMessageReader request){
+      // The platform forcibly stops the benchmark job and clean up the environment, given that the time-out has been reached.
     }
 
     public override void DeleteGraphHandler(ConfigurationMessageReader request){
+      //Console.WriteLine(Global.GetTotalMemoryUsage());
+      Global.CloudStorage.ResetStorage();
     }
 
 
