@@ -59,6 +59,8 @@ namespace BenchmarkServer
       Console.WriteLine("Started Load");
       loader.setPath(this.input_edge_path);
       loader.vpath = this.input_vertex_path;
+      loader.hasWeight = this.weighted;
+      loader.directed = directed;
       loader.loadVertices();
       loader.LoadGraph();
       ranLoader = true;
@@ -80,6 +82,7 @@ namespace BenchmarkServer
         benchmarkAlgorithm.mapping1 = loader.mapping1;
         benchmarkAlgorithm.mapping2 = loader.mapping2;
         benchmarkAlgorithm.graph_name = graph_name;
+        benchmarkAlgorithm.e_log_path = e_log_path;
         benchmarkAlgorithm.setOutputPath(e_output_path);
         int mapped_node = (int) loader.mapping2[this.source_vertex];
         Console.WriteLine("Start at {0}", mapped_node);

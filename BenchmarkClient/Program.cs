@@ -111,7 +111,7 @@ namespace BenchmarkClient
           weighted = bool.Parse(args[i+1]);
         }
         else if(args[i] == "--ejob-id"){
-          e_job_id = long.Parse(args[i+1]);
+          //e_job_id = long.Parse(args[i+1]);
         }
         else if(args[i] == "--elog-path"){
           e_log_path = args[i+1];
@@ -126,7 +126,8 @@ namespace BenchmarkClient
           maxIteration = long.Parse(args[i+1]);
         }
         else if(args[i] == "--damping-factor"){
-          damping_factor = double.Parse(args[i+1]);
+          // not working!!!
+          //damping_factor = double.Parse(args[i+1]);
         }
         else if(args[i] == "--input-path"){
           input_path = args[i+1];
