@@ -64,7 +64,7 @@ namespace BenchmarkServer
           nodes_visited++;
           if (nodes_visited % 1000000 == 0)
           {
-            Console.Write(" Nodes Visited: " + nodes_visited / 1000000 + "M\r");
+            //Console.Write(" Nodes Visited: " + nodes_visited / 1000000 + "M\r");
           }
           if (depth[out_edge_id] == Int64.MaxValue)
           {
