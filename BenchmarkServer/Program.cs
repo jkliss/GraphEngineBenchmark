@@ -1,5 +1,6 @@
 using System;
 using Trinity;
+using System.Threading;
 
 namespace BenchmarkServer
 {
@@ -12,7 +13,9 @@ namespace BenchmarkServer
       TrinityConfig.CurrentRunningMode = RunningMode.Server;
       SimpleBenchmarkServer server = new SimpleBenchmarkServer();
       server.Start();
-      Console.ReadKey();
+      while(true){
+         Thread.Sleep(2000);
+      }
     }
   }
 }

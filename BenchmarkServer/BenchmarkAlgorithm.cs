@@ -14,7 +14,6 @@ namespace BenchmarkServer
     public bool silent = true;
     public String graph_name = "XXX";
     public Dictionary<long, long> mapping1 = new Dictionary<long, long>();
-    public long[] mapping1_array;
     public Dictionary<long, long> mapping2 = new Dictionary<long, long>();
     public String output_path = "output.txt";
     public long elapsedTime_lastRun;
@@ -118,8 +117,8 @@ namespace BenchmarkServer
             }**/
             for (int i = 1; i <= graph_size; i++)
             {
-              file.WriteLine(mapping1_array[i] + " " + depth[i]);
-            //file.WriteLine(mapping1[i] + " " + depth[i]); // hash alternative
+              //file.WriteLine(mapping1_array[i] + " " + depth[i]);
+              file.WriteLine(mapping1[i] + " " + depth[i]); // hash alternative
             }
           }
         } catch (Exception ex){

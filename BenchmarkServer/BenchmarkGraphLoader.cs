@@ -21,7 +21,7 @@ namespace BenchmarkServer
         public String vpath = "";
         public Dictionary<long, long> mapping1 = new Dictionary<long, long>();
         public Dictionary<long, long> mapping2 = new Dictionary<long, long>();
-        public long[] mapping1_array;
+        //public long[] mapping1_array;
         public long elapsedTime_lastLoadEdge = 0;
         public long elapsedTime_lastLoadVertex = 0;
         public bool hasWeight = false;
@@ -85,7 +85,7 @@ namespace BenchmarkServer
                       Console.Error.WriteLine(line);
                   }
               }
-              mapping1_array = vertex_queue.ToArray();
+              //mapping1_array = vertex_queue.ToArray();
               max_node = read_lines;
           }
           var elapsedMs = watch.ElapsedMilliseconds;
