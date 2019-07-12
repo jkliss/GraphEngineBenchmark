@@ -81,6 +81,7 @@ namespace BenchmarkServer
         benchmarkAlgorithm.setMaxNode(loader.getMaxNode());
         benchmarkAlgorithm.mapping1 = loader.mapping1;
         benchmarkAlgorithm.mapping2 = loader.mapping2;
+        benchmarkAlgorithm.mapping1_array = loader.mapping1_array;
         benchmarkAlgorithm.graph_name = graph_name;
         benchmarkAlgorithm.e_log_path = e_log_path;
         benchmarkAlgorithm.setOutputPath(e_output_path);

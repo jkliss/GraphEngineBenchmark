@@ -4,6 +4,7 @@ using System.IO;
 using Trinity;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Threading;
 
 namespace BenchmarkServer
 {
@@ -13,6 +14,7 @@ namespace BenchmarkServer
     public bool silent = true;
     public String graph_name = "XXX";
     public Dictionary<long, long> mapping1 = new Dictionary<long, long>();
+    public long[] mapping1_array;
     public Dictionary<long, long> mapping2 = new Dictionary<long, long>();
     public String output_path = "output.txt";
     public long elapsedTime_lastRun;
@@ -20,6 +22,8 @@ namespace BenchmarkServer
     public long Start_time_Stamp;
     public long End_time_Stamp;
     public bool directed;
+    public static int num_threads = Environment.ProcessorCount;
+    public Thread[] threads = new Thread[num_threads];
 
     public void setMaxNode(long new_max_node){
       max_node = new_max_node;
@@ -101,25 +105,28 @@ namespace BenchmarkServer
         output_path = "output.txt";
       }
       Console.WriteLine("Write File to " + output_path);
-      for (int i = 1; i <= graph_size; i++)
-      {
+
         try{
           using (System.IO.StreamWriter file = new System.IO.StreamWriter(@output_path,true))
           {
-            if (depth[i] != Int64.MaxValue)
+            /**if(!silent)
             {
-              if(!silent){
+              if (depth[i] != Int64.MaxValue){
                 Console.WriteLine("Depth of " + i + " (from " + root.CellId + ") is " + depth[i] + " Mapped to: " + mapping1[i]);
               }
               //file.WriteLine("Depth of " + i + " (from " + root.CellId + ") is " + depth[i] + " Mapped to: " + mapping1[i]);
+            }**/
+            for (int i = 1; i <= graph_size; i++)
+            {
+              file.WriteLine(mapping1_array[i] + " " + depth[i]);
+            //file.WriteLine(mapping1[i] + " " + depth[i]); // hash alternative
             }
-            file.WriteLine(mapping1[i] + " " + depth[i]);
           }
         } catch (Exception ex){
           TextWriter errorWriter = Console.Error;
           errorWriter.WriteLine(ex.Message);
         }
-      }
+
 
       if(e_log_path == null || e_log_path == ""){
         e_log_path = "metrics.txt";

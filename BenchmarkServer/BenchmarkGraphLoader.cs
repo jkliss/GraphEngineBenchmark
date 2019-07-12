@@ -21,11 +21,12 @@ namespace BenchmarkServer
         public String vpath = "";
         public Dictionary<long, long> mapping1 = new Dictionary<long, long>();
         public Dictionary<long, long> mapping2 = new Dictionary<long, long>();
+        public long[] mapping1_array;
         public long elapsedTime_lastLoadEdge = 0;
         public long elapsedTime_lastLoadVertex = 0;
         public bool hasWeight = false;
         public bool directed = false;
-        public static int num_threads = 3;
+        public static int num_threads = Environment.ProcessorCount;
         public Thread[] threads = new Thread[num_threads];
         public ConcurrentQueue<long>[] thread_single_cellid1 = new ConcurrentQueue<long>[num_threads];
         public ConcurrentQueue<long>[] thread_single_cellid2 = new ConcurrentQueue<long>[num_threads];
@@ -84,6 +85,7 @@ namespace BenchmarkServer
                       Console.Error.WriteLine(line);
                   }
               }
+              mapping1_array = vertex_queue.ToArray();
               max_node = read_lines;
           }
           var elapsedMs = watch.ElapsedMilliseconds;
