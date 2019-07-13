@@ -341,10 +341,14 @@ namespace BenchmarkServer
         }
 
         public void ConsumerThread(object nthread){
+          int exponential_delay = 1;
+          bool no_action = true;
           int ThreadNumber = (int) nthread;
           long dequeued_cellid1;
           while(!finished || thread_single_cellid1[ThreadNumber].Count > 0 || thread_cache_cellid1[ThreadNumber].Count > 0){
+            no_action = true;
             while(thread_cache_cellid1[ThreadNumber].TryDequeue(out dequeued_cellid1)){
+                no_action = false;
                 //Console.WriteLine("["+ ThreadNumber +"] Clear Cache of " + thread_cache_cellid1[ThreadNumber].Peek());
 
                 Queue<long> cellid2s;
@@ -362,6 +366,7 @@ namespace BenchmarkServer
                 }
             }
             while(thread_single_cellid1[ThreadNumber].TryDequeue(out dequeued_cellid1)){
+                no_action = false;
                 //Console.WriteLine("["+ ThreadNumber +"] Insert of " + thread_single_cellid1[ThreadNumber].Peek() + "->" + thread_single_cellid2[ThreadNumber].Peek());
                 long cellid2;
                 while(!thread_single_cellid2[ThreadNumber].TryDequeue(out cellid2)){
@@ -377,7 +382,12 @@ namespace BenchmarkServer
                   AddEdgeBasic(dequeued_cellid1, cellid2, -1);
                 }
             }
-            Thread.Sleep(2);
+            if(no_action && exponential_delay <= 8192){
+              exponential_delay = exponential_delay * 2;
+            } else if (!no_action){
+              exponential_delay = 1;
+            }
+            Thread.Sleep(exponential_delay);
           }
         }
 
