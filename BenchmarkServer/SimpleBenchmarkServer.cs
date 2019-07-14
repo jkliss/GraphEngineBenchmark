@@ -4,6 +4,7 @@ using System.Collections;
 using System;
 using System.IO;
 using Trinity;
+using Trinity.Network;
 
 namespace BenchmarkServer
 {
