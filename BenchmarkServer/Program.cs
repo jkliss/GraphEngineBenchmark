@@ -14,7 +14,7 @@ namespace BenchmarkServer
       SimpleBenchmarkServer server = new SimpleBenchmarkServer();
       server.Start();
       while(true){
-         Thread.Sleep(2000);
+         Thread.Sleep(200);
       }
     }
   }

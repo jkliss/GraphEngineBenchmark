@@ -17,7 +17,7 @@ namespace BenchmarkServer
     public String l_output_path;
     public bool directed;
     public bool weighted;
-    public int num_servers = Global.ServerCount;
+    //public int num_servers = Global.ServerCount;
 
     // execuing
     public long e_job_id;
