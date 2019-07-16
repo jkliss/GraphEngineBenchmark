@@ -58,7 +58,7 @@ namespace BenchmarkServer
     }
 
     public override void LoadGraphHandler(ConfigurationMessageReader request){
-      Console.WriteLine("Servers:" + num_servers);
+      //Console.WriteLine("Servers:" + num_servers);
       Console.WriteLine("Started Load");
       loader.setPath(this.input_edge_path);
       loader.vpath = this.input_vertex_path;
