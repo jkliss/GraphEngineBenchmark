@@ -96,8 +96,7 @@ namespace BenchmarkServer
       }
     }
 
-    public override void DistributedLoadMessageHandler(DistributedLoad request){
-       SimpleBenchmarkServer SimpleBenchmarkServer = new SimpleBenchmarkServer();
+    public override void DistributedLoadMessageHandler(DistributedLoadReader request){
     }
 
     public override void FinalizeHandler(ConfigurationMessageReader request){
