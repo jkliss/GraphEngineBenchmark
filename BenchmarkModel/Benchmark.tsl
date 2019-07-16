@@ -2,6 +2,20 @@ struct PingMessage {
   string Message;
 }
 
+struct DistributedLoad {
+  int serverID;
+  long[32768] cellid1s;
+  long[32768] cellid2s;
+  float[32768] weights;
+  bool[32768] single_element;
+}
+
+protocol DistributedLoadMessage {
+  Type: Asyn;
+  Request: DistributedLoad;
+  Response: void;
+}
+
 protocol SynPing {
   Type: Syn;
   Request: ConfigurationMessage;
@@ -109,6 +123,7 @@ server BenchmarkServer {
   protocol Finalize;
   protocol Terminate;
   protocol DeleteGraph;
+  protocol DistributedLoadMessage;
 }
 
 cell struct SimpleGraphNode

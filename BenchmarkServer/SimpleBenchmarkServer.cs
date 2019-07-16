@@ -17,6 +17,7 @@ namespace BenchmarkServer
     public String l_output_path;
     public bool directed;
     public bool weighted;
+    public int num_servers = Global.ServerCount;
 
     // execuing
     public long e_job_id;
@@ -57,6 +58,7 @@ namespace BenchmarkServer
     }
 
     public override void LoadGraphHandler(ConfigurationMessageReader request){
+      Console.WriteLine("Servers:" + num_servers);
       Console.WriteLine("Started Load");
       loader.setPath(this.input_edge_path);
       loader.vpath = this.input_vertex_path;
@@ -92,6 +94,10 @@ namespace BenchmarkServer
         benchmarkAlgorithm.BFS(rootNode);
         ranLoader = true;
       }
+    }
+
+    public override void DistributedLoadMessageHandler(DistributedLoad request){
+       SimpleBenchmarkServer SimpleBenchmarkServer = new SimpleBenchmarkServer();
     }
 
     public override void FinalizeHandler(ConfigurationMessageReader request){

@@ -35,6 +35,7 @@ namespace BenchmarkServer
         public ConcurrentQueue<Queue<long>>[] thread_cache_cellid2s = new ConcurrentQueue<Queue<long>>[num_threads];
         public ConcurrentQueue<Queue<float>>[] thread_cache_weights = new ConcurrentQueue<Queue<float>>[num_threads];
         public bool finished = false;
+        public int num_servers = Global.ServerCount;
 
         public void setPath(String new_path){
             path = new_path;
