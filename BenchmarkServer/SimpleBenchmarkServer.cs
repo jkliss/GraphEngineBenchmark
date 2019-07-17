@@ -96,8 +96,8 @@ namespace BenchmarkServer
       }
     }
 
-    public override void DistributedLoadMessageHandler(DistributedLoadReader request){
-    }
+    /**public override void DistributedLoadMessageHandler(DistributedLoadReader request){
+    }**/
 
     public override void FinalizeHandler(ConfigurationMessageReader request){
       // The platform reports the benchmark information and makes the environment ready for the next benchmark run.
