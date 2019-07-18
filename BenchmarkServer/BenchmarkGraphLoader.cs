@@ -197,7 +197,6 @@ namespace BenchmarkServer
                 //AddNodesWithoutEdges(current_node);
                 //Console.WriteLine("Counted Node:" + current_node);
                 //Console.WriteLine("Mapped  Node:" +mapping2[current_node]);
-                Global.LocalStorage.SaveStorage();
             }
             watch.Stop();
             vertex_queue = null;
@@ -208,6 +207,7 @@ namespace BenchmarkServer
             Console.WriteLine("##################################");
             Console.WriteLine("#######  All edges loaded  #######");
             Console.WriteLine("##################################");
+            Global.LocalStorage.SaveStorage();
         }
 
         public long last_added     = -1;
