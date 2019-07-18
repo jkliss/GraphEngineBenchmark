@@ -392,8 +392,9 @@ namespace BenchmarkServer
             Thread.Sleep(exponential_delay);
           }
           // transfer all cells to global space
+          Console.WriteLine("["+ ThreadNumber +"] Start Saving to Cloud");
           foreach (long i in set){
-            Global.CloudStorage.SaveSimpleGraphNode(i, Global.CloudStorage.LoadSimpleGraphNode(i));
+            Global.CloudStorage.SaveSimpleGraphNode(i, Global.LocalStorage.LoadSimpleGraphNode(i));
           }
         }
 
