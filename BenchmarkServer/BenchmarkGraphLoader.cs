@@ -206,7 +206,7 @@ namespace BenchmarkServer
             Console.WriteLine("##################################");
             Console.WriteLine("#######  All edges loaded  #######");
             Console.WriteLine("##################################");
-            Global.CloudStorage.SaveStorage();
+            Global.LocalStorage.SaveStorage();
         }
 
         public long last_added     = -1;
@@ -247,8 +247,8 @@ namespace BenchmarkServer
 
         public void AddEdgeBasic(long cellid1, long cellid2, float weight){
           SimpleGraphNode simpleGraphNode;
-          if(!Global.CloudStorage.Contains(cellid1)){
-            Global.CloudStorage.SaveSimpleGraphNode(
+          if(!Global.LocalStorage.Contains(cellid1)){
+            Global.LocalStorage.SaveSimpleGraphNode(
               cellid1,
               new List<long>(),
               new List<float>());
@@ -256,25 +256,25 @@ namespace BenchmarkServer
           if(cellid2 == -1 && weight == -1){
             return;
           } else if(weight == -1) {
-            simpleGraphNode = Global.CloudStorage.LoadSimpleGraphNode(cellid1);
+            simpleGraphNode = Global.LocalStorage.LoadSimpleGraphNode(cellid1);
             simpleGraphNode.Outlinks.Add(cellid2);
           } else {
-            simpleGraphNode = Global.CloudStorage.LoadSimpleGraphNode(cellid1);
+            simpleGraphNode = Global.LocalStorage.LoadSimpleGraphNode(cellid1);
             simpleGraphNode.Outlinks.Add(cellid2);
             simpleGraphNode.Weights.Add(weight);
           }
-          Global.CloudStorage.SaveSimpleGraphNode(simpleGraphNode);
+          Global.LocalStorage.SaveSimpleGraphNode(simpleGraphNode);
         }
 
         public void AddEdgeQueueCache(){
           //Console.WriteLine("Add " + cellid1 + " to " + cellid2);
           SimpleGraphNode simpleGraphNode = new SimpleGraphNode();
-          if(!Global.CloudStorage.Contains(last_added)){
+          if(!Global.LocalStorage.Contains(last_added)){
             simpleGraphNode.CellId = last_added;
             simpleGraphNode.Weights = new List<float>();
             simpleGraphNode.Outlinks = new List<long>();
           } else {
-            simpleGraphNode = Global.CloudStorage.LoadSimpleGraphNode(last_added);
+            simpleGraphNode = Global.LocalStorage.LoadSimpleGraphNode(last_added);
           }
           if(hasWeight) {
             while(outlinks_cache.Count > 0){
@@ -287,7 +287,7 @@ namespace BenchmarkServer
             }
           }
           // printGraphNode(simpleGraphNode);
-          Global.CloudStorage.SaveSimpleGraphNode(simpleGraphNode);
+          Global.LocalStorage.SaveSimpleGraphNode(simpleGraphNode);
         }
 
         public void printGraphNode(SimpleGraphNode node){
@@ -394,36 +394,36 @@ namespace BenchmarkServer
         public void AddEdgeQueue(long cellid1, Queue<long> cellid2s, Queue<float> weights){
           //Console.WriteLine("Add " + cellid1 + " to " + cellid2);
           SimpleGraphNode simpleGraphNode = new SimpleGraphNode();
-          if(!Global.CloudStorage.Contains(cellid1)){
+          if(!Global.LocalStorage.Contains(cellid1)){
             simpleGraphNode.CellId = cellid1;
             simpleGraphNode.Weights = new List<float>();
             simpleGraphNode.Outlinks = new List<long>();
           } else {
-            simpleGraphNode = Global.CloudStorage.LoadSimpleGraphNode(cellid1);
+            simpleGraphNode = Global.LocalStorage.LoadSimpleGraphNode(cellid1);
           }
           while(cellid2s.Count > 0){
             simpleGraphNode.Outlinks.Add(cellid2s.Dequeue());
             simpleGraphNode.Weights.Add(weights.Dequeue());
           }
           // printGraphNode(simpleGraphNode);
-          Global.CloudStorage.SaveSimpleGraphNode(simpleGraphNode);
+          Global.LocalStorage.SaveSimpleGraphNode(simpleGraphNode);
         }
 
         public void AddEdgeQueue(long cellid1, Queue<long> cellid2s){
           //Console.WriteLine("Add " + cellid1 + " to " + cellid2);
           SimpleGraphNode simpleGraphNode = new SimpleGraphNode();
-          if(!Global.CloudStorage.Contains(cellid1)){
+          if(!Global.LocalStorage.Contains(cellid1)){
             simpleGraphNode.CellId = cellid1;
             simpleGraphNode.Weights = new List<float>();
             simpleGraphNode.Outlinks = new List<long>();
           } else {
-            simpleGraphNode = Global.CloudStorage.LoadSimpleGraphNode(cellid1);
+            simpleGraphNode = Global.LocalStorage.LoadSimpleGraphNode(cellid1);
           }
           while(cellid2s.Count > 0){
             simpleGraphNode.Outlinks.Add(cellid2s.Dequeue());
           }
           // printGraphNode(simpleGraphNode);
-          Global.CloudStorage.SaveSimpleGraphNode(simpleGraphNode);
+          Global.LocalStorage.SaveSimpleGraphNode(simpleGraphNode);
         }
     }
 }
