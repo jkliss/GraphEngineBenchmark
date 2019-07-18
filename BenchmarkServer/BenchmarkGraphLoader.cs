@@ -341,6 +341,7 @@ namespace BenchmarkServer
         }
 
         public void ConsumerThread(object nthread){
+          HashSet<long> set = new HashSet<long>();
           int exponential_delay = 1;
           bool no_action = true;
           int ThreadNumber = (int) nthread;
@@ -350,7 +351,6 @@ namespace BenchmarkServer
             while(thread_cache_cellid1[ThreadNumber].TryDequeue(out dequeued_cellid1)){
                 no_action = false;
                 //Console.WriteLine("["+ ThreadNumber +"] Clear Cache of " + thread_cache_cellid1[ThreadNumber].Peek());
-
                 Queue<long> cellid2s;
                 while(!thread_cache_cellid2s[ThreadNumber].TryDequeue(out cellid2s)){
                   Thread.Sleep(1);
@@ -364,6 +364,7 @@ namespace BenchmarkServer
                 } else {
                   AddEdgeQueue(dequeued_cellid1, cellid2s);
                 }
+                set.Add(dequeued_cellid1);
             }
             while(thread_single_cellid1[ThreadNumber].TryDequeue(out dequeued_cellid1)){
                 no_action = false;
@@ -381,6 +382,7 @@ namespace BenchmarkServer
                 } else {
                   AddEdgeBasic(dequeued_cellid1, cellid2, -1);
                 }
+                set.Add(dequeued_cellid1);
             }
             if(no_action && exponential_delay <= 8192){
               exponential_delay = exponential_delay * 2;
@@ -388,6 +390,10 @@ namespace BenchmarkServer
               exponential_delay = 1;
             }
             Thread.Sleep(exponential_delay);
+          }
+          // transfer all cells to global space
+          foreach (long i in set){
+            Global.CloudStorage.SaveSimpleGraphNode(i, Global.CloudStorage.LoadSimpleGraphNode(i));
           }
         }
 
