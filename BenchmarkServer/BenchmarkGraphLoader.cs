@@ -357,7 +357,7 @@ namespace BenchmarkServer
 
         public void AddEdgeBasicThreaded(long cellid1, long cellid2, float weight){
           int index = (int) cellid1%(num_threads*num_servers)-(this_server_id*num_threads);
-          Console.WriteLine("[>] Add " + cellid1 + " at Thread: " + index);
+          Console.WriteLine("[>] Add " + cellid1 + " at Thread: " + index + " on Server " + this_server_id);
           thread_single_cellid2[index].Enqueue(cellid2);
           if(hasWeight) thread_single_weight[index].Enqueue(weight);
           thread_single_cellid1[index].Enqueue(cellid1);
@@ -493,7 +493,8 @@ namespace BenchmarkServer
             }
         }
 
-        public void startServerConsumerThreads(){
+        public void startServerConsumerThreads(int serverid){
+          this_server_id = serverid;
           threads = new Thread[num_threads];
           for(int i = 0; i < num_threads; i++){
             Console.WriteLine("[" + i + "]Start Remote Consumer Thread");
