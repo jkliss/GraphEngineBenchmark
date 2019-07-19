@@ -356,12 +356,14 @@ namespace BenchmarkServer
         }
 
         public void AddEdgeBasicThreaded(long cellid1, long cellid2, float weight){
+          Console.WriteLine("[>] Add " + cellid1 + " at Thread: " + cellid1%(num_threads*num_servers)-(this_server_id*num_threads));
           thread_single_cellid2[cellid1%(num_threads*num_servers)-(this_server_id*num_threads)].Enqueue(cellid2);
           if(hasWeight) thread_single_weight[cellid1%(num_threads*num_servers)-(this_server_id*num_threads)].Enqueue(weight);
           thread_single_cellid1[cellid1%(num_threads*num_servers)-(this_server_id*num_threads)].Enqueue(cellid1);
         }
 
         public void AddEdgeQueueCacheThreaded(){
+          Console.WriteLine("[>] Add " + last_added + " at Thread: " + last_added%(num_threads*num_servers)-(this_server_id*num_threads));
           thread_cache_cellid2s[last_added%(num_threads*num_servers)-(this_server_id*num_threads)].Enqueue(new Queue<long>(outlinks_cache.ToArray()));
           if(hasWeight) thread_cache_weights[last_added%(num_threads*num_servers)-(this_server_id*num_threads)].Enqueue(new Queue<float>(weights_cache.ToArray()));
           thread_cache_cellid1[last_added%(num_threads*num_servers)-(this_server_id*num_threads)].Enqueue(last_added);
