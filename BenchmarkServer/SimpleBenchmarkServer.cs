@@ -111,6 +111,7 @@ namespace BenchmarkServer
           loader = new BenchmarkGraphLoader();
           // start local consumer threads
           loader.startServerConsumerThreads();
+          isDedicatedLoader = true;
       }
       loader.addDistributedLoadToServer(request);
       /**
