@@ -112,6 +112,7 @@ namespace BenchmarkServer
             threads = new Thread[num_threads];
             for(int i = 0; i < num_servers; i++){
               serverFinished[i] = false;
+              createDistributedLoad(i);
             }
             for(int i = 0; i < num_threads; i++){
               threads[i] = new Thread(new ParameterizedThreadStart(ConsumerThread));
