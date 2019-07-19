@@ -126,6 +126,7 @@ namespace BenchmarkServer
             }
             for(int i = 0; i < num_servers; i++){
               createDistributedLoad(i);
+              distributed_load_current_index[i] = 0;
             }
             using (StreamReader reader = new StreamReader(path))
             {
