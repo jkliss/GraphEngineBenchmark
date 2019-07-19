@@ -39,6 +39,7 @@ namespace BenchmarkServer
         public DistributedLoad[] distributedLoads = new DistributedLoad[num_servers];
         public int[] distributed_load_current_index = new int[num_servers];
         public bool[] serverFinished = new bool[num_servers];
+        public int this_server_id;
 
         public void setPath(String new_path){
             path = new_path;
@@ -103,6 +104,7 @@ namespace BenchmarkServer
 
         public void LoadGraph()
         {
+            this_server_id = 0;
             num_servers = Global.ServerCount;
             finished = false;
             var watch = System.Diagnostics.Stopwatch.StartNew();
@@ -354,15 +356,15 @@ namespace BenchmarkServer
         }
 
         public void AddEdgeBasicThreaded(long cellid1, long cellid2, float weight){
-          thread_single_cellid2[cellid1%num_threads].Enqueue(cellid2);
-          if(hasWeight) thread_single_weight[cellid1%num_threads].Enqueue(weight);
-          thread_single_cellid1[cellid1%num_threads].Enqueue(cellid1);
+          thread_single_cellid2[cellid1%(num_threads*num_servers)-(serverID*num_threads)].Enqueue(cellid2);
+          if(hasWeight) thread_single_weight[cellid1%(num_threads*num_servers)-(serverID*num_threads)].Enqueue(weight);
+          thread_single_cellid1[cellid1%(num_threads*num_servers)-(serverID*num_threads)].Enqueue(cellid1);
         }
 
         public void AddEdgeQueueCacheThreaded(){
-          thread_cache_cellid2s[last_added%num_threads].Enqueue(new Queue<long>(outlinks_cache.ToArray()));
-          if(hasWeight) thread_cache_weights[last_added%num_threads].Enqueue(new Queue<float>(weights_cache.ToArray()));
-          thread_cache_cellid1[last_added%num_threads].Enqueue(last_added);
+          thread_cache_cellid2s[last_added%(num_threads*num_servers)-(serverID*num_threads)].Enqueue(new Queue<long>(outlinks_cache.ToArray()));
+          if(hasWeight) thread_cache_weights[last_added%(num_threads*num_servers)-(serverID*num_threads)].Enqueue(new Queue<float>(weights_cache.ToArray()));
+          thread_cache_cellid1[last_added%(num_threads*num_servers)-(serverID*num_threads)].Enqueue(last_added);
         }
 
         public void ConsumerThread(object nthread){
@@ -503,6 +505,7 @@ namespace BenchmarkServer
         }
 
         public void addDistributedLoadToServer(DistributedLoad load){
+           this_server_id = load.serverID;
            for(int i = 0; i < load.num_elements; i++){
              AddEdgeThreaded(load.cellid1s[i], load.cellid2s[i], load.weights[i], load.single_element[i]);
            }
