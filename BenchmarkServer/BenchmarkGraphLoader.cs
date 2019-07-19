@@ -454,6 +454,10 @@ namespace BenchmarkServer
 
         public void createDistributedLoad(int ServerID){
             distributedLoads[ServerID] = new DistributedLoad();
+            distributedLoads[ServerID].cellid1s = new long[32768];
+            distributedLoads[ServerID].cellid2s = new long[32768];
+            distributedLoads[ServerID].weights = new float[32768];
+            distributedLoads[ServerID].single_element = new bool[32768];
         }
 
         public void AddToDistributedLoad(long cellid1, long cellid2, float weight, bool single){
