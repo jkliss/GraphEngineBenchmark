@@ -38,7 +38,7 @@ namespace BenchmarkServer
 
     //references_to_values
     public BenchmarkGraphLoader loader = new BenchmarkGraphLoader();
-    public BenchmarkGraphLoader[] multi_loaders = new BenchmarkGraphLoader[2]();
+    public BenchmarkGraphLoader[] multi_loaders = new BenchmarkGraphLoader[2];
     public bool ranLoader = false;
     public BenchmarkAlgorithm benchmarkAlgorithm = new BenchmarkAlgorithm();
     public bool ranRun = false;
