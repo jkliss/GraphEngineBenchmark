@@ -207,7 +207,10 @@ namespace BenchmarkServer
                   thread_cache_weights[i] = null;
                 }
                 for(int i = 1; i < num_servers; i++){
-                  addDistributedLoadToServer(distributedLoads[i]);
+                  using (var request = new DistributedLoadWriter(ServerID, distributed_load_current_index[i] ,distributedLoads[i].cellid1s, distributedLoads[i].cellid2s, distributedLoads[i].weights, distributedLoads[i].single_element))
+                  {
+                    Global.CloudStorage.DistributedLoadMessageToBenchmarkServer(i, request);
+                  }
                 }
                 for(int i = 1; i < num_servers; i++){
                   while(!serverFinished[i]){
@@ -475,7 +478,7 @@ namespace BenchmarkServer
             distributed_load_current_index[ServerID]++;
             // 32768 is buffersize
             if(distributed_load_current_index[ServerID] >= 32768){
-                using (var request = new DistributedLoadWriter(ServerID, distributedLoads[ServerID].cellid1s, distributedLoads[ServerID].cellid2s, distributedLoads[ServerID].weights, distributedLoads[ServerID].single_element))
+                using (var request = new DistributedLoadWriter(ServerID, distributed_load_current_index[i], distributedLoads[ServerID].cellid1s, distributedLoads[ServerID].cellid2s, distributedLoads[ServerID].weights, distributedLoads[ServerID].single_element))
                 {
                   Global.CloudStorage.DistributedLoadMessageToBenchmarkServer(ServerID, request);
                 }
@@ -500,7 +503,7 @@ namespace BenchmarkServer
         }
 
         public void addDistributedLoadToServer(DistributedLoad load){
-           for(int i = 0; i < load.cellid1s.Length; i++){
+           for(int i = 0; i < load.num_elements; i++){
              AddEdgeThreaded(load.cellid1s[i], load.cellid2s[i], load.weights[i], load.single_element[i]);
            }
            if(load.lastLoad){
