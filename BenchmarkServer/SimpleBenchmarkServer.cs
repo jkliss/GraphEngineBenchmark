@@ -38,6 +38,7 @@ namespace BenchmarkServer
 
     //references_to_values
     public BenchmarkGraphLoader loader = new BenchmarkGraphLoader();
+    public BenchmarkGraphLoader[] multi_loaders = new BenchmarkGraphLoader[2]();
     public bool ranLoader = false;
     public BenchmarkAlgorithm benchmarkAlgorithm = new BenchmarkAlgorithm();
     public bool ranRun = false;
@@ -108,12 +109,12 @@ namespace BenchmarkServer
     public override void DistributedLoadMessageHandler(DistributedLoadReader request){
       if(!isDedicatedLoader){
           // inititalize local loader
-          loader = new BenchmarkGraphLoader();
+          multi_loaders[request.serverID] = new BenchmarkGraphLoader();
           // start local consumer threads
           loader.startServerConsumerThreads();
           isDedicatedLoader = true;
       }
-      loader.addDistributedLoadToServer(request);
+      multi_loaders[request.serverID].addDistributedLoadToServer(request);
       /**
       As soon as finished flag is set --> Set finish too
       **/

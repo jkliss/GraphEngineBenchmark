@@ -466,6 +466,7 @@ namespace BenchmarkServer
             DistributedLoad distributed_load = distributedLoads[ServerID];
             long[] lsd1 = distributedLoads[ServerID].cellid1s;
             long lsd = distributedLoads[ServerID].cellid1s[distributed_load_current_index[ServerID]];
+            distributedLoads[ServerID].ServerID = ServerID;
             distributedLoads[ServerID].cellid1s[distributed_load_current_index[ServerID]] = cellid1;
             distributedLoads[ServerID].cellid2s[distributed_load_current_index[ServerID]] = cellid2;
             distributedLoads[ServerID].weights[distributed_load_current_index[ServerID]] = weight;
