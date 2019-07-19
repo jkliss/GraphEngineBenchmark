@@ -27,6 +27,7 @@ namespace BenchmarkServer
         public bool hasWeight = false;
         public bool directed = false;
         public static int num_threads = Environment.ProcessorCount;
+        public static int num_servers = 2;
         public Thread[] threads = new Thread[num_threads];
         public ConcurrentQueue<long>[] thread_single_cellid1 = new ConcurrentQueue<long>[num_threads];
         public ConcurrentQueue<long>[] thread_single_cellid2 = new ConcurrentQueue<long>[num_threads];
@@ -35,6 +36,9 @@ namespace BenchmarkServer
         public ConcurrentQueue<Queue<long>>[] thread_cache_cellid2s = new ConcurrentQueue<Queue<long>>[num_threads];
         public ConcurrentQueue<Queue<float>>[] thread_cache_weights = new ConcurrentQueue<Queue<float>>[num_threads];
         public bool finished = false;
+        public DistributedLoad[] distributedLoads = new DistributedLoad[num_threads];
+        public int[] distributed_load_current_index = new int[num_threads];
+        public bool[] serverFinished = new bool[num_servers];
 
         public void setPath(String new_path){
             path = new_path;
@@ -99,12 +103,16 @@ namespace BenchmarkServer
 
         public void LoadGraph()
         {
+            num_servers = Global.ServerCount;
             finished = false;
             var watch = System.Diagnostics.Stopwatch.StartNew();
             // If graph is undirected process file with;
             Console.WriteLine("Read File at: {0}", path);
             // Create Worker Threads
             threads = new Thread[num_threads];
+            for(int i = 0; i < num_servers; i++){
+              serverFinished[i] = false;
+            }
             for(int i = 0; i < num_threads; i++){
               threads[i] = new Thread(new ParameterizedThreadStart(ConsumerThread));
               thread_single_cellid1[i] = new ConcurrentQueue<long>();
@@ -114,6 +122,9 @@ namespace BenchmarkServer
               thread_cache_cellid2s[i] = new ConcurrentQueue<Queue<long>>();
               thread_cache_weights[i] = new ConcurrentQueue<Queue<float>>();
               threads[i].Start(i);
+            }
+            for(int i = 0; i < num_servers; i++){
+              createDistributedLoad(i);
             }
             using (StreamReader reader = new StreamReader(path))
             {
@@ -149,19 +160,19 @@ namespace BenchmarkServer
                         // directed edges
                         if(hasWeight){
                           //AddEdge(mapping2[read_node], mapping2[read_edge], float.Parse(fields[2]), false);
-                          AddEdgeThreaded(mapping2[read_node], mapping2[read_edge], float.Parse(fields[2]), false);
+                          AddEdgeThreadedToServer(mapping2[read_node], mapping2[read_edge], float.Parse(fields[2]), false);
                         } else {
                           //AddEdge(mapping2[read_node], mapping2[read_edge], -1, false);
-                          AddEdgeThreaded(mapping2[read_node], mapping2[read_edge], -1, false);
+                          AddEdgeThreadedToServer(mapping2[read_node], mapping2[read_edge], -1, false);
                         }
                         if(!directed){
                           // inversion for undirected
                           if(hasWeight){
                             //AddEdge(mapping2[read_edge], mapping2[read_node], float.Parse(fields[2]), true);
-                            AddEdgeThreaded(mapping2[read_edge], mapping2[read_node], float.Parse(fields[2]), true);
+                            AddEdgeThreadedToServer(mapping2[read_edge], mapping2[read_node], float.Parse(fields[2]), true);
                           } else {
                             //AddEdge(mapping2[read_edge], mapping2[read_node], -1, true);
-                            AddEdgeThreaded(mapping2[read_edge], mapping2[read_node], -1, true);
+                            AddEdgeThreadedToServer(mapping2[read_edge], mapping2[read_node], -1, true);
                           }
                         }
 
@@ -192,6 +203,12 @@ namespace BenchmarkServer
                   thread_cache_cellid1[i] = null;
                   thread_cache_cellid2s[i] = null;
                   thread_cache_weights[i] = null;
+                }
+                for(int i = 1; i < num_servers; i++){
+                  while(!serverFinished[i]){
+                    Thread.Sleep(5);
+                  }
+                  Console.WriteLine("Remote Server " + i + " finished");
                 }
                 //AddNodesWithoutEdges(current_node);
                 //Console.WriteLine("Counted Node:" + current_node);
@@ -431,6 +448,73 @@ namespace BenchmarkServer
           }
           // printGraphNode(simpleGraphNode);
           Global.LocalStorage.SaveSimpleGraphNode(simpleGraphNode);
+        }
+
+        public void createDistributedLoad(int ServerID){
+            distributedLoads[ServerID] = new DistributedLoad();
+        }
+
+        public void AddToDistributedLoad(long cellid1, long cellid2, float weight, bool single){
+            int ServerID = (int) cellid1%(num_threads*num_servers);
+            distributedLoads[ServerID].cellid1s[distributed_load_current_index[ServerID]] = cellid1;
+            distributedLoads[ServerID].cellid2s[distributed_load_current_index[ServerID]] = cellid2;
+            distributedLoads[ServerID].weights[distributed_load_current_index[ServerID]] = weight;
+            distributedLoads[ServerID].single_element[distributed_load_current_index[ServerID]] = single;
+            distributed_load_current_index[ServerID]++;
+            // 32768 is buffersize
+            if(distributed_load_current_index[ServerID] >= 32768){
+                using (var request = new DistributedLoadWriter(ServerID, distributedLoads[ServerID].cellid1s, distributedLoads[ServerID].cellid2s, distributedLoads[ServerID].weights, distributedLoads[ServerID].single_element))
+                {
+                  Global.CloudStorage.DistributedLoadMessageToBenchmarkServer(ServerID, request);
+                }
+                createDistributedLoad(ServerID);
+                distributed_load_current_index[ServerID] = 0;
+            }
+        }
+
+        public void startServerConsumerThreads(){
+          threads = new Thread[num_threads];
+          for(int i = 0; i < num_threads; i++){
+            Console.WriteLine("[" + i + "]Start Remote Consumer Thread");
+            threads[i] = new Thread(new ParameterizedThreadStart(ConsumerThread));
+            thread_single_cellid1[i] = new ConcurrentQueue<long>();
+            thread_single_cellid2[i] = new ConcurrentQueue<long>();
+            thread_single_weight[i] = new ConcurrentQueue<float>();
+            thread_cache_cellid1[i] = new ConcurrentQueue<long>();
+            thread_cache_cellid2s[i] = new ConcurrentQueue<Queue<long>>();
+            thread_cache_weights[i] = new ConcurrentQueue<Queue<float>>();
+            threads[i].Start(i);
+          }
+        }
+
+        public void addDistributedLoadToServer(DistributedLoad load){
+           for(int i = 0; i < load.cellid1s.Length; i++){
+             AddEdgeThreaded(load.cellid1s[i], load.cellid2s[i], load.weights[i], load.single_element[i]);
+           }
+           if(load.lastLoad){
+              Console.WriteLine("Last Load Arrived!");
+              finished = true;
+              for(int i = 0; i < num_threads; i++){
+                threads[i].Join();
+                thread_single_cellid1[i] = null;
+                thread_single_cellid2[i] = null;
+                thread_single_weight[i] = null;
+                thread_cache_cellid1[i] = null;
+                thread_cache_cellid2s[i] = null;
+                thread_cache_weights[i] = null;
+              }
+              Console.WriteLine("All Threads Finished!");
+              serverFinished[(int) load.cellid1s[1]%(num_threads*num_servers)/num_threads] = true;
+           }
+        }
+
+        public void AddEdgeThreadedToServer(long cellid1, long cellid2, float weight, bool single){
+           int ServerID = (int) cellid1%(num_threads*num_servers)/num_threads;
+           if(ServerID == 0){
+              AddEdgeThreaded(cellid1, cellid2, weight, single);
+           } else {
+              AddToDistributedLoad(cellid1, cellid2, weight, single);
+           }
         }
     }
 }

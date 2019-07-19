@@ -42,6 +42,8 @@ namespace BenchmarkServer
     public BenchmarkAlgorithm benchmarkAlgorithm = new BenchmarkAlgorithm();
     public bool ranRun = false;
 
+    public bool isDedicatedLoader = false;
+
     public override void SynPingHandler(ConfigurationMessageReader request)
     {
       Console.WriteLine("Received Graph: {0}", request.graph_name);
@@ -96,8 +98,25 @@ namespace BenchmarkServer
       }
     }
 
-    /**public override void DistributedLoadMessageHandler(DistributedLoadReader request){
-    }**/
+    static void DistributedLoad(int server, DistributedLoad dload){
+      using (var request = new DistributedLoadWriter(dload.serverID, dload.cellid1s, dload.cellid2s, dload.weights, dload.single_element))
+      {
+        Global.CloudStorage.DistributedLoadMessageToBenchmarkServer(server, request);
+      }
+    }
+
+    public override void DistributedLoadMessageHandler(DistributedLoadReader request){
+      if(!isDedicatedLoader){
+          // inititalize local loader
+          loader = new BenchmarkGraphLoader();
+          // start local consumer threads
+          loader.startServerConsumerThreads();
+      }
+      loader.addDistributedLoadToServer(request);
+      /**
+      As soon as finished flag is set --> Set finish too
+      **/
+    }
 
     public override void FinalizeHandler(ConfigurationMessageReader request){
       // The platform reports the benchmark information and makes the environment ready for the next benchmark run.
