@@ -112,7 +112,7 @@ namespace BenchmarkServer
           // inititalize local loader
           multi_loaders[request.serverID] = new BenchmarkGraphLoader();
           // start local consumer threads
-          loader.startServerConsumerThreads();
+          loader.startServerConsumerThreads(request.serverID);
           isDedicatedLoader = true;
       }
       multi_loaders[request.serverID].addDistributedLoadToServer(request);
