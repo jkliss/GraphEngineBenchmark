@@ -356,7 +356,7 @@ namespace BenchmarkServer
         }
 
         public void AddEdgeBasicThreaded(long cellid1, long cellid2, float weight){
-          int index = (int) cellid1%(num_threads*num_servers)-(this_server_id*num_threads);
+          int index = (int) (cellid1%(num_threads*num_servers))%num_threads;
           Console.WriteLine("[>] Add " + cellid1 + " at Thread: " + index + " on Server " + this_server_id);
           thread_single_cellid2[index].Enqueue(cellid2);
           if(hasWeight) thread_single_weight[index].Enqueue(weight);
@@ -364,7 +364,7 @@ namespace BenchmarkServer
         }
 
         public void AddEdgeQueueCacheThreaded(){
-          int index = (int) last_added%(num_threads*num_servers)-(this_server_id*num_threads);
+          int index = (int) (last_added%(num_threads*num_servers))%num_threads;
           Console.WriteLine("[>] Add " + last_added + " at Thread: " + index);
           thread_cache_cellid2s[index].Enqueue(new Queue<long>(outlinks_cache.ToArray()));
           if(hasWeight) thread_cache_weights[index].Enqueue(new Queue<float>(weights_cache.ToArray()));
@@ -473,7 +473,7 @@ namespace BenchmarkServer
         }
 
         public void AddToDistributedLoad(long cellid1, long cellid2, float weight, bool single){
-            int ServerID = (int) cellid1%(num_threads*num_servers)/num_threads;
+            int ServerID = (int) (cellid1%(num_threads*num_servers))/num_threads
             Console.WriteLine("Add " + cellid1 + " to " + cellid2 + " at " + ServerID + " Position in Load: " + distributed_load_current_index[ServerID]);
             DistributedLoad distributed_load = distributedLoads[ServerID];
             distributedLoads[ServerID].serverID = ServerID;
@@ -532,7 +532,7 @@ namespace BenchmarkServer
         }
 
         public void AddEdgeThreadedToServer(long cellid1, long cellid2, float weight, bool single){
-           int ServerID = (int) cellid1%(num_threads*num_servers)/num_threads;
+           int ServerID = (int) (cellid1%(num_threads*num_servers))/num_threads;
            if(ServerID == 0){
               AddEdgeThreaded(cellid1, cellid2, weight, single);
            } else {
