@@ -107,6 +107,7 @@ namespace BenchmarkServer
     }
 
     public override void DistributedLoadMessageHandler(DistributedLoadReader request){
+      Console.WriteLine("Request at:" request.serverID);
       if(!isDedicatedLoader){
           // inititalize local loader
           multi_loaders[request.serverID] = new BenchmarkGraphLoader();

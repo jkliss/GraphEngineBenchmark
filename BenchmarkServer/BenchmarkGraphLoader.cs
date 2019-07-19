@@ -36,8 +36,8 @@ namespace BenchmarkServer
         public ConcurrentQueue<Queue<long>>[] thread_cache_cellid2s = new ConcurrentQueue<Queue<long>>[num_threads];
         public ConcurrentQueue<Queue<float>>[] thread_cache_weights = new ConcurrentQueue<Queue<float>>[num_threads];
         public bool finished = false;
-        public DistributedLoad[] distributedLoads = new DistributedLoad[num_threads];
-        public int[] distributed_load_current_index = new int[num_threads];
+        public DistributedLoad[] distributedLoads = new DistributedLoad[num_servers];
+        public int[] distributed_load_current_index = new int[num_servers];
         public bool[] serverFinished = new bool[num_servers];
 
         public void setPath(String new_path){
@@ -205,6 +205,9 @@ namespace BenchmarkServer
                   thread_cache_cellid1[i] = null;
                   thread_cache_cellid2s[i] = null;
                   thread_cache_weights[i] = null;
+                }
+                for(int i = 1; i < num_servers; i++){
+                  addDistributedLoadToServer(distributedLoads[i]);
                 }
                 for(int i = 1; i < num_servers; i++){
                   while(!serverFinished[i]){
