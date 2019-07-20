@@ -215,6 +215,7 @@ namespace BenchmarkServer
                   thread_cache_weights[i] = null;
                 }
                 for(int i = 1; i < num_servers; i++){
+                  Console.WriteLine("Send to Server:" + i);
                   using (var request = new DistributedLoadWriter(i, distributed_load_current_index[i] ,distributedLoads[i].cellid1s, distributedLoads[i].cellid2s, distributedLoads[i].weights, distributedLoads[i].single_element))
                   {
                     Global.CloudStorage.DistributedLoadMessageToBenchmarkServer(i, request);
