@@ -464,7 +464,7 @@ namespace BenchmarkServer
             } else if (!no_action){
               exponential_delay = 1;
             }
-            Console.WriteLine("["+ThreadNumber+"] Request CELLID:" Int64.MaxValue-(1+ThreadNumber+(this_server_id*num_threads)));
+            Console.WriteLine("["+ThreadNumber+"] Request CELLID:" + Int64.MaxValue-(1+ThreadNumber+(this_server_id*num_threads)));
             fc = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-(1+ThreadNumber+(this_server_id*num_threads)));
             if(this_server_id > 0){
               finished = fc.LastLoad;
