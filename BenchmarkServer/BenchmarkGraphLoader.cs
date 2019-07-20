@@ -119,7 +119,7 @@ namespace BenchmarkServer
                 FinishCommunicator fc = new FinishCommunicator();
                 fc.Finished = false;
                 fc.LastLoad = false;
-                Global.CloudStorage.SaveFinishCommunicator(fc);
+                Global.CloudStorage.SaveFinishCommunicator(j+(i*num_threads), fc);
               }
             }
             for(int i = 0; i < num_threads; i++){
