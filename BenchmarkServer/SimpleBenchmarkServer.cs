@@ -110,6 +110,7 @@ namespace BenchmarkServer
       Console.WriteLine("Request at:" + request.serverID);
       if(!isDedicatedLoader){
           // inititalize local loader
+          Console.WriteLine("Graph Loader for Server is being initialzed");
           multi_loaders[request.serverID] = new BenchmarkGraphLoader();
           // start local consumer threads
           loader.startServerConsumerThreads(request.serverID);

@@ -358,17 +358,27 @@ namespace BenchmarkServer
         public void AddEdgeBasicThreaded(long cellid1, long cellid2, float weight){
           int index = (int) (cellid1%(num_threads*num_servers))%num_threads;
           Console.WriteLine("[>] Add BASIC " + cellid1 + " at Thread: " + index + " on Server " + this_server_id);
-          thread_single_cellid2[index].Enqueue(cellid2);
-          if(hasWeight) thread_single_weight[index].Enqueue(weight);
-          thread_single_cellid1[index].Enqueue(cellid1);
+          try{
+            thread_single_cellid2[index].Enqueue(cellid2);
+            if(hasWeight) thread_single_weight[index].Enqueue(weight);
+            thread_single_cellid1[index].Enqueue(cellid1);
+          } catch (Exception ex) {
+              Console.Error.WriteLine(ex.Message);
+              Console.Error.WriteLine(ex.StackTrace.ToString());
+          }
         }
 
         public void AddEdgeQueueCacheThreaded(){
           int index = (int) (last_added%(num_threads*num_servers))%num_threads;
           Console.WriteLine("[>] Add CACHE " + last_added + " at Thread: " + index + " on Server " + this_server_id);
-          thread_cache_cellid2s[index].Enqueue(new Queue<long>(outlinks_cache.ToArray()));
-          if(hasWeight) thread_cache_weights[index].Enqueue(new Queue<float>(weights_cache.ToArray()));
-          thread_cache_cellid1[index].Enqueue(last_added);
+          try{
+            thread_cache_cellid2s[index].Enqueue(new Queue<long>(outlinks_cache.ToArray()));
+            if(hasWeight) thread_cache_weights[index].Enqueue(new Queue<float>(weights_cache.ToArray()));
+            thread_cache_cellid1[index].Enqueue(last_added);
+          } catch (Exception ex) {
+              Console.Error.WriteLine(ex.Message);
+              Console.Error.WriteLine(ex.StackTrace.ToString());
+          }
         }
 
         public void ConsumerThread(object nthread){
