@@ -115,6 +115,12 @@ namespace BenchmarkServer
             for(int i = 0; i < num_servers; i++){
               serverFinished[i] = false;
               createDistributedLoad(i);
+              for(int j = 0; j < num_threads+1; j++){
+                FinishCommunicator fc = new FinishCommunicator();
+                fc.Finished = false;
+                fc.LastLoad = false;
+                Global.CloudStorage.SaveFinishCommunicator(fc);
+              }
             }
             for(int i = 0; i < num_threads; i++){
               threads[i] = new Thread(new ParameterizedThreadStart(ConsumerThread));
@@ -215,9 +221,14 @@ namespace BenchmarkServer
                   }
                 }
                 for(int i = 1; i < num_servers; i++){
-                  while(!serverFinished[i]){
-                    Thread.Sleep(5);
+                  for(int j = 0; j <= num_threads; j++){
+                      FinishCommunicator fcr = Global.CloudStorage.LoadFinishCommunicator(1+j+(i*num_threads));
+                      while(!fcr.Finished){
+                          Thread.Sleep(100);
+                          fcr = Global.CloudStorage.LoadFinishCommunicator(1+j+(i*num_threads));
+                      }
                   }
+
                   Console.WriteLine("Remote Server " + i + " finished");
                 }
                 //AddNodesWithoutEdges(current_node);
@@ -405,7 +416,10 @@ namespace BenchmarkServer
           bool no_action = true;
           int ThreadNumber = (int) nthread;
           long dequeued_cellid1;
-          while(!finished || thread_single_cellid1[ThreadNumber].Count > 0 || thread_cache_cellid1[ThreadNumber].Count > 0){
+          FinishCommunicator fc = new FinishCommunicator();
+          fc.Finished = false;
+          fc.LastLoad = false;
+          while(!fc.LastLoad || thread_single_cellid1[ThreadNumber].Count > 0 || thread_cache_cellid1[ThreadNumber].Count > 0){
             no_action = true;
             while(thread_cache_cellid1[ThreadNumber].TryDequeue(out dequeued_cellid1)){
                 no_action = false;
@@ -448,6 +462,7 @@ namespace BenchmarkServer
             } else if (!no_action){
               exponential_delay = 1;
             }
+            fc = Global.CloudStorage.LoadFinishCommunicator(1+ThreadNumber+(this_server_id*num_threads));
             Thread.Sleep(exponential_delay);
           }
           // transfer all cells to global space
@@ -455,6 +470,9 @@ namespace BenchmarkServer
           foreach (long i in set){
             Global.CloudStorage.SaveSimpleGraphNode(i, Global.LocalStorage.LoadSimpleGraphNode(i));
           }
+          fc = Global.CloudStorage.LoadFinishCommunicator(1+ThreadNumber+(this_server_id*num_threads));
+          fc.Finished = true;
+          Global.CloudStorage.SaveFinishCommunicator(1+ThreadNumber+(this_server_id*num_threads), fc);
         }
 
         public void AddEdgeQueue(long cellid1, Queue<long> cellid2s, Queue<float> weights){
@@ -569,9 +587,13 @@ namespace BenchmarkServer
                 thread_cache_cellid1[i] = null;
                 thread_cache_cellid2s[i] = null;
                 thread_cache_weights[i] = null;
+                FinishCommunicator fc = Global.CloudStorage.LoadFinishCommunicator(1+i+(this_server_id*num_threads));
+                fc.LastLoad = true;
+                Global.CloudStorage.SaveFinishCommunicator(1+i+(this_server_id*num_threads), fc);
               }
               Console.WriteLine("All Threads Finished!");
               serverFinished[(int) load.cellid1s[1]%(num_threads*num_servers)/num_threads] = true;
+
            }
         }
 
