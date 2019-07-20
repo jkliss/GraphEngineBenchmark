@@ -421,9 +421,6 @@ namespace BenchmarkServer
           bool no_action = true;
           int ThreadNumber = (int) nthread;
           long dequeued_cellid1;
-          FinishCommunicator fc = new FinishCommunicator();
-          fc.Finished = false;
-          fc.LastLoad = false;
           while(!finished || thread_single_cellid1[ThreadNumber].Count > 0 || thread_cache_cellid1[ThreadNumber].Count > 0){
             no_action = true;
             while(thread_cache_cellid1[ThreadNumber].TryDequeue(out dequeued_cellid1)){
@@ -467,16 +464,6 @@ namespace BenchmarkServer
             } else if (!no_action){
               exponential_delay = 1;
             }
-            long commucation_cellid = (1 + ThreadNumber + (this_server_id*num_threads));
-            Console.WriteLine("["+ThreadNumber+"] Request CELLID:" + commucation_cellid);
-            try{
-              fc = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-commucation_cellid);
-            } catch (Exception ex){
-              Console.WriteLine("[!] Did not find " + commucation_cellid);
-            }
-            if(this_server_id > 0){
-              finished = fc.LastLoad;
-            }
             Thread.Sleep(exponential_delay);
           }
           // transfer all cells to global space
@@ -486,7 +473,7 @@ namespace BenchmarkServer
           }
           long cellid_comm = (1+ThreadNumber+(this_server_id*num_threads));
           Console.WriteLine("["+ ThreadNumber +"] setting finished to " + cellid_comm);
-          fc = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-cellid_comm);
+          FinishCommunicator fc = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-cellid_comm);
           fc.Finished = true;
           Global.CloudStorage.SaveFinishCommunicator(Int64.MaxValue-cellid_comm, fc);
         }
@@ -603,9 +590,6 @@ namespace BenchmarkServer
                 thread_cache_cellid1[i] = null;
                 thread_cache_cellid2s[i] = null;
                 thread_cache_weights[i] = null;
-                FinishCommunicator fc = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-(1+i+(this_server_id*num_threads)));
-                fc.LastLoad = true;
-                Global.CloudStorage.SaveFinishCommunicator(Int64.MaxValue-(1+i+(this_server_id*num_threads)), fc);
               }
               Console.WriteLine("All Threads Finished!");
               serverFinished[(int) load.cellid1s[1]%(num_threads*num_servers)/num_threads] = true;
