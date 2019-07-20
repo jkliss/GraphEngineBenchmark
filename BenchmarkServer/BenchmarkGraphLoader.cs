@@ -484,6 +484,8 @@ namespace BenchmarkServer
           foreach (long i in set){
             Global.CloudStorage.SaveSimpleGraphNode(i, Global.LocalStorage.LoadSimpleGraphNode(i));
           }
+          long cellid_comm = Int64.MaxValue-(1+ThreadNumber+(this_server_id*num_threads));
+          Console.WriteLine("["+ ThreadNumber +"] setting finished to " + cellid_comm);
           fc = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-(1+ThreadNumber+(this_server_id*num_threads)));
           fc.Finished = true;
           Global.CloudStorage.SaveFinishCommunicator(Int64.MaxValue-(1+ThreadNumber+(this_server_id*num_threads)), fc);
