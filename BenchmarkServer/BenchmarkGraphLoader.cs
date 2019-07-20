@@ -121,10 +121,9 @@ namespace BenchmarkServer
                 fc.LastLoad = false;
                 long fcid = (j+(i*num_threads));
                 Console.WriteLine("CREATE COMMUNICATION CELL:" + fcid);
-                Global.CloudStorage.SaveFinishCommunicator(Int64.MaxValue-(j+(i*num_threads)), fc);
+                Global.CloudStorage.SaveFinishCommunicator(Int64.MaxValue-fcid, fc);
               }
             }
-            Global.LocalStorage.SaveStorage();
             for(int i = 0; i < num_threads; i++){
               threads[i] = new Thread(new ParameterizedThreadStart(ConsumerThread));
               thread_single_cellid1[i] = new ConcurrentQueue<long>();
@@ -231,7 +230,7 @@ namespace BenchmarkServer
                           Thread.Sleep(2000);
                           long cellid_comm = (j+(i*num_threads));
                           Console.WriteLine("Finished CELL: " + cellid_comm);
-                          fcr = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-(j+(i*num_threads)));
+                          fcr = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-cellid_comm);
                       }
                   }
 
@@ -474,8 +473,10 @@ namespace BenchmarkServer
           }
           long cellid_comm = (ThreadNumber+(this_server_id*num_threads));
           Console.WriteLine("["+ ThreadNumber +"] setting finished to " + cellid_comm);
-          FinishCommunicator fc = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-cellid_comm);
+          //FinishCommunicator fc = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-cellid_comm);
+          FinishCommunicator fc = new FinishCommunicator();
           fc.Finished = true;
+          fc.LastLoad = true;
           Global.CloudStorage.SaveFinishCommunicator(Int64.MaxValue-cellid_comm, fc);
         }
 
