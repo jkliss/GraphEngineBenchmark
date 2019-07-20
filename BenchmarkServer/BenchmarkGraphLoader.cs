@@ -360,6 +360,7 @@ namespace BenchmarkServer
           Console.WriteLine("[>] Add BASIC " + cellid1 + " at Thread: " + index + " on Server " + this_server_id);
           try{
             if(thread_single_cellid2[index] == null){
+              Console.WriteLine("["+index+"] Init new Concurrent Queue");
               thread_single_cellid2[index] = new ConcurrentQueue<long>();
               thread_single_weight[index] = new ConcurrentQueue<float>();
               thread_single_cellid1[index] = new ConcurrentQueue<long>();
@@ -378,6 +379,7 @@ namespace BenchmarkServer
           Console.WriteLine("[>] Add CACHE " + last_added + " at Thread: " + index + " on Server " + this_server_id);
           try{
             if(thread_cache_cellid2s[index] == null){
+              Console.WriteLine("["+index+"] Init new Concurrent Queue");
               thread_cache_cellid1[index] = new ConcurrentQueue<long>();
               thread_cache_cellid2s[index] = new ConcurrentQueue<Queue<long>>();
               thread_cache_weights[index] = new ConcurrentQueue<Queue<float>>();
@@ -401,7 +403,7 @@ namespace BenchmarkServer
             no_action = true;
             while(thread_cache_cellid1[ThreadNumber].TryDequeue(out dequeued_cellid1)){
                 no_action = false;
-                //Console.WriteLine("["+ ThreadNumber +"] Clear Cache of " + thread_cache_cellid1[ThreadNumber].Peek());
+                Console.WriteLine("["+ ThreadNumber +"] Clear Cache of " + thread_cache_cellid1[ThreadNumber].Peek());
                 Queue<long> cellid2s;
                 while(!thread_cache_cellid2s[ThreadNumber].TryDequeue(out cellid2s)){
                   Thread.Sleep(1);
@@ -419,7 +421,7 @@ namespace BenchmarkServer
             }
             while(thread_single_cellid1[ThreadNumber].TryDequeue(out dequeued_cellid1)){
                 no_action = false;
-                //Console.WriteLine("["+ ThreadNumber +"] Insert of " + thread_single_cellid1[ThreadNumber].Peek() + "->" + thread_single_cellid2[ThreadNumber].Peek());
+                Console.WriteLine("["+ ThreadNumber +"] Insert of " + thread_single_cellid1[ThreadNumber].Peek() + "->" + thread_single_cellid2[ThreadNumber].Peek());
                 long cellid2;
                 while(!thread_single_cellid2[ThreadNumber].TryDequeue(out cellid2)){
                   Thread.Sleep(1);
