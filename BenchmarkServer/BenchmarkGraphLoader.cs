@@ -359,18 +359,17 @@ namespace BenchmarkServer
           int index = (int) (cellid1%(num_threads*num_servers))%num_threads;
           Console.WriteLine("[>] Add BASIC " + cellid1 + " at Thread: " + index + " on Server " + this_server_id);
           try{
+            if(thread_single_cellid2[index] == null){
+              thread_single_cellid2[index] = new ConcurrentQueue<long>();
+              thread_single_weight[index] = new ConcurrentQueue<float>();
+              thread_single_cellid1[index] = new ConcurrentQueue<long>();
+            }
             thread_single_cellid2[index].Enqueue(cellid2);
             if(hasWeight) thread_single_weight[index].Enqueue(weight);
             thread_single_cellid1[index].Enqueue(cellid1);
           } catch (Exception ex) {
               Console.Error.WriteLine(ex.Message);
               Console.Error.WriteLine(ex.StackTrace.ToString());
-              thread_single_cellid1[index] = new ConcurrentQueue<long>();
-              thread_single_cellid2[index] = new ConcurrentQueue<long>();
-              thread_single_weight[index] = new ConcurrentQueue<float>();
-              thread_cache_cellid1[index] = new ConcurrentQueue<long>();
-              thread_cache_cellid2s[index] = new ConcurrentQueue<Queue<long>>();
-              thread_cache_weights[index] = new ConcurrentQueue<Queue<float>>();
           }
         }
 
@@ -378,18 +377,17 @@ namespace BenchmarkServer
           int index = (int) (last_added%(num_threads*num_servers))%num_threads;
           Console.WriteLine("[>] Add CACHE " + last_added + " at Thread: " + index + " on Server " + this_server_id);
           try{
+            if(thread_cache_cellid2s[index] == null){
+              thread_cache_cellid2s[index] = new ConcurrentQueue<long>();
+              thread_cache_weights[index] = new ConcurrentQueue<float>();
+              thread_cache_cellid1[index] = new ConcurrentQueue<long>();
+            }
             thread_cache_cellid2s[index].Enqueue(new Queue<long>(outlinks_cache.ToArray()));
             if(hasWeight) thread_cache_weights[index].Enqueue(new Queue<float>(weights_cache.ToArray()));
             thread_cache_cellid1[index].Enqueue(last_added);
           } catch (Exception ex) {
               Console.Error.WriteLine(ex.Message);
               Console.Error.WriteLine(ex.StackTrace.ToString());
-              thread_single_cellid1[index] = new ConcurrentQueue<long>();
-              thread_single_cellid2[index] = new ConcurrentQueue<long>();
-              thread_single_weight[index] = new ConcurrentQueue<float>();
-              thread_cache_cellid1[index] = new ConcurrentQueue<long>();
-              thread_cache_cellid2s[index] = new ConcurrentQueue<Queue<long>>();
-              thread_cache_weights[index] = new ConcurrentQueue<Queue<float>>();
           }
         }
 
