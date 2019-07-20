@@ -124,6 +124,7 @@ namespace BenchmarkServer
                 Global.CloudStorage.SaveFinishCommunicator(Int64.MaxValue-(j+(i*num_threads)), fc);
               }
             }
+            Global.LocalStorage.SaveStorage();
             for(int i = 0; i < num_threads; i++){
               threads[i] = new Thread(new ParameterizedThreadStart(ConsumerThread));
               thread_single_cellid1[i] = new ConcurrentQueue<long>();
