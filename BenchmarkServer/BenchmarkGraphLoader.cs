@@ -365,6 +365,12 @@ namespace BenchmarkServer
           } catch (Exception ex) {
               Console.Error.WriteLine(ex.Message);
               Console.Error.WriteLine(ex.StackTrace.ToString());
+              thread_single_cellid1[index] = new ConcurrentQueue<long>();
+              thread_single_cellid2[index] = new ConcurrentQueue<long>();
+              thread_single_weight[index] = new ConcurrentQueue<float>();
+              thread_cache_cellid1[index] = new ConcurrentQueue<long>();
+              thread_cache_cellid2s[index] = new ConcurrentQueue<Queue<long>>();
+              thread_cache_weights[index] = new ConcurrentQueue<Queue<float>>();
           }
         }
 
@@ -378,6 +384,12 @@ namespace BenchmarkServer
           } catch (Exception ex) {
               Console.Error.WriteLine(ex.Message);
               Console.Error.WriteLine(ex.StackTrace.ToString());
+              thread_single_cellid1[index] = new ConcurrentQueue<long>();
+              thread_single_cellid2[index] = new ConcurrentQueue<long>();
+              thread_single_weight[index] = new ConcurrentQueue<float>();
+              thread_cache_cellid1[index] = new ConcurrentQueue<long>();
+              thread_cache_cellid2s[index] = new ConcurrentQueue<Queue<long>>();
+              thread_cache_weights[index] = new ConcurrentQueue<Queue<float>>();
           }
         }
 
