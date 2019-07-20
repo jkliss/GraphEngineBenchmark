@@ -403,7 +403,7 @@ namespace BenchmarkServer
             no_action = true;
             while(thread_cache_cellid1[ThreadNumber].TryDequeue(out dequeued_cellid1)){
                 no_action = false;
-                Console.WriteLine("["+ ThreadNumber +"] Clear Cache of " + thread_cache_cellid1[ThreadNumber].Peek());
+                Console.WriteLine("["+ ThreadNumber +"] Clear Cache of " + dequeued_cellid1);
                 Queue<long> cellid2s;
                 while(!thread_cache_cellid2s[ThreadNumber].TryDequeue(out cellid2s)){
                   Thread.Sleep(1);
@@ -421,11 +421,11 @@ namespace BenchmarkServer
             }
             while(thread_single_cellid1[ThreadNumber].TryDequeue(out dequeued_cellid1)){
                 no_action = false;
-                Console.WriteLine("["+ ThreadNumber +"] Insert of " + thread_single_cellid1[ThreadNumber].Peek() + "->" + thread_single_cellid2[ThreadNumber].Peek());
                 long cellid2;
                 while(!thread_single_cellid2[ThreadNumber].TryDequeue(out cellid2)){
                   Thread.Sleep(1);
                 }
+                Console.WriteLine("["+ ThreadNumber +"] Insert of " + dequeued_cellid1 + "->" + cellid2);
                 if(hasWeight){
                   float weight;
                   while(!thread_single_weight[ThreadNumber].TryDequeue(out weight)){
