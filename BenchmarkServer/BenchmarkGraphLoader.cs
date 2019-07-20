@@ -223,12 +223,14 @@ namespace BenchmarkServer
                     Global.CloudStorage.DistributedLoadMessageToBenchmarkServer(i, request);
                   }
                 }
-                for(int i = 1; i < num_servers; i++){
+                for(int i = 0; i < num_servers; i++){
                   for(int j = 0; j <= num_threads; j++){
-                      FinishCommunicator fcr = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-(j+(i*num_threads)));
+                      long cellid_comm = (j+(i*num_threads));
+                      Console.WriteLine("Test ThreadCell: " + cellid_comm);
+                      FinishCommunicator fcr = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-cellid_comm);
                       while(!fcr.Finished){
                           Thread.Sleep(2000);
-                          long cellid_comm = (j+(i*num_threads));
+
                           Console.WriteLine("Finished CELL: " + cellid_comm);
                           fcr = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-cellid_comm);
                       }
