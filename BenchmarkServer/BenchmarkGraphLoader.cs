@@ -467,7 +467,11 @@ namespace BenchmarkServer
             }
             long commucation_cellid = Int64.MaxValue - (1 + ThreadNumber + (this_server_id*num_threads));
             Console.WriteLine("["+ThreadNumber+"] Request CELLID:" + commucation_cellid);
-            fc = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-(1+ThreadNumber+(this_server_id*num_threads)));
+            try{
+              fc = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-(1+ThreadNumber+(this_server_id*num_threads)));
+            } catch (Exception ex){
+              Console.WriteLine("[!] Did not find " + commucation_cellid);
+            }
             if(this_server_id > 0){
               finished = fc.LastLoad;
             }
