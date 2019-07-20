@@ -218,7 +218,7 @@ namespace BenchmarkServer
                 }
                 for(int i = 1; i < num_servers; i++){
                   Console.WriteLine("Send to Server:" + i);
-                  using (var request = new DistributedLoadWriter(i, distributed_load_current_index[i] ,distributedLoads[i].cellid1s, distributedLoads[i].cellid2s, distributedLoads[i].weights, distributedLoads[i].single_element))
+                  using (var request = new DistributedLoadWriter(i, distributed_load_current_index[i] ,distributedLoads[i].cellid1s, distributedLoads[i].cellid2s, distributedLoads[i].weights, distributedLoads[i].single_element, true))
                   {
                     Global.CloudStorage.DistributedLoadMessageToBenchmarkServer(i, request);
                   }
@@ -467,10 +467,10 @@ namespace BenchmarkServer
             } else if (!no_action){
               exponential_delay = 1;
             }
-            long commucation_cellid = Int64.MaxValue - (1 + ThreadNumber + (this_server_id*num_threads));
+            long commucation_cellid = (1 + ThreadNumber + (this_server_id*num_threads));
             Console.WriteLine("["+ThreadNumber+"] Request CELLID:" + commucation_cellid);
             try{
-              fc = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-(1+ThreadNumber+(this_server_id*num_threads)));
+              fc = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-commucation_cellid);
             } catch (Exception ex){
               Console.WriteLine("[!] Did not find " + commucation_cellid);
             }
@@ -484,11 +484,11 @@ namespace BenchmarkServer
           foreach (long i in set){
             Global.CloudStorage.SaveSimpleGraphNode(i, Global.LocalStorage.LoadSimpleGraphNode(i));
           }
-          long cellid_comm = Int64.MaxValue-(1+ThreadNumber+(this_server_id*num_threads));
+          long cellid_comm = (1+ThreadNumber+(this_server_id*num_threads));
           Console.WriteLine("["+ ThreadNumber +"] setting finished to " + cellid_comm);
-          fc = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-(1+ThreadNumber+(this_server_id*num_threads)));
+          fc = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-cellid_comm);
           fc.Finished = true;
-          Global.CloudStorage.SaveFinishCommunicator(Int64.MaxValue-(1+ThreadNumber+(this_server_id*num_threads)), fc);
+          Global.CloudStorage.SaveFinishCommunicator(Int64.MaxValue-cellid_comm, fc);
         }
 
         public void AddEdgeQueue(long cellid1, Queue<long> cellid2s, Queue<float> weights){
