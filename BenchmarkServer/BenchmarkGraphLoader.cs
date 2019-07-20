@@ -420,7 +420,7 @@ namespace BenchmarkServer
           FinishCommunicator fc = new FinishCommunicator();
           fc.Finished = false;
           fc.LastLoad = false;
-          while(!fc.LastLoad || thread_single_cellid1[ThreadNumber].Count > 0 || thread_cache_cellid1[ThreadNumber].Count > 0){
+          while(!finished || thread_single_cellid1[ThreadNumber].Count > 0 || thread_cache_cellid1[ThreadNumber].Count > 0){
             no_action = true;
             while(thread_cache_cellid1[ThreadNumber].TryDequeue(out dequeued_cellid1)){
                 no_action = false;
@@ -464,6 +464,9 @@ namespace BenchmarkServer
               exponential_delay = 1;
             }
             fc = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-(1+ThreadNumber+(this_server_id*num_threads)));
+            if(this_server_id > 0){
+              finished = fc.LastLoad;
+            }
             Thread.Sleep(exponential_delay);
           }
           // transfer all cells to global space
