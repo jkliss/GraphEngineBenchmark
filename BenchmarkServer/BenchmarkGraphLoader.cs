@@ -119,7 +119,7 @@ namespace BenchmarkServer
                 FinishCommunicator fc = new FinishCommunicator();
                 fc.Finished = false;
                 fc.LastLoad = false;
-                long fcid = Int64.MaxValue-(j+(i*num_threads));
+                long fcid = (j+(i*num_threads));
                 Console.WriteLine("CREATE COMMUNICATION CELL:" + fcid);
                 Global.CloudStorage.SaveFinishCommunicator(Int64.MaxValue-(j+(i*num_threads)), fc);
               }
