@@ -584,16 +584,7 @@ namespace BenchmarkServer
            if(load.lastLoad){
               Console.WriteLine("Last Load Arrived!");
               finished = true;
-              for(int i = 0; i < num_threads; i++){
-                threads[i].Join();
-                thread_single_cellid1[i] = null;
-                thread_single_cellid2[i] = null;
-                thread_single_weight[i] = null;
-                thread_cache_cellid1[i] = null;
-                thread_cache_cellid2s[i] = null;
-                thread_cache_weights[i] = null;
-              }
-              Console.WriteLine("All Threads Finished!");
+              Console.WriteLine("All Threads will be Finished!");
               serverFinished[(int) load.cellid1s[1]%(num_threads*num_servers)/num_threads] = true;
 
            }
