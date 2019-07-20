@@ -359,6 +359,9 @@ namespace BenchmarkServer
           int index = (int) (cellid1%(num_threads*num_servers))%num_threads;
           Console.WriteLine("[>] Add BASIC " + cellid1 + " at Thread: " + index + " on Server " + this_server_id);
           try{
+            if(threads[index] == null){
+              startServerConsumerThread(this_server_id,index);
+            }
             if(thread_single_cellid2[index] == null){
               Console.WriteLine("["+index+"] Init new Concurrent Queue");
               thread_single_cellid2[index] = new ConcurrentQueue<long>();
@@ -378,6 +381,9 @@ namespace BenchmarkServer
           int index = (int) (last_added%(num_threads*num_servers))%num_threads;
           Console.WriteLine("[>] Add CACHE " + last_added + " at Thread: " + index + " on Server " + this_server_id);
           try{
+            if(threads[index] == null){
+              startServerConsumerThread(this_server_id,index);
+            }
             if(thread_cache_cellid2s[index] == null){
               Console.WriteLine("["+index+"] Init new Concurrent Queue");
               thread_cache_cellid1[index] = new ConcurrentQueue<long>();
@@ -398,12 +404,6 @@ namespace BenchmarkServer
           int exponential_delay = 1;
           bool no_action = true;
           int ThreadNumber = (int) nthread;
-          thread_single_cellid1[ThreadNumber] = new ConcurrentQueue<long>();
-          thread_single_cellid2[ThreadNumber] = new ConcurrentQueue<long>();
-          thread_single_weight[ThreadNumber] = new ConcurrentQueue<float>();
-          thread_cache_cellid1[ThreadNumber] = new ConcurrentQueue<long>();
-          thread_cache_cellid2s[ThreadNumber] = new ConcurrentQueue<Queue<long>>();
-          thread_cache_weights[ThreadNumber] = new ConcurrentQueue<Queue<float>>();
           long dequeued_cellid1;
           while(!finished || thread_single_cellid1[ThreadNumber].Count > 0 || thread_cache_cellid1[ThreadNumber].Count > 0){
             no_action = true;
@@ -535,6 +535,22 @@ namespace BenchmarkServer
             threads[i] = new Thread(new ParameterizedThreadStart(ConsumerThread));
             threads[i].Start(i);
           }
+        }
+
+        public void startServerConsumerThread(int serverid, int threadid){
+          this_server_id = serverid;
+          if(threads == null){
+            threads = new Thread[num_threads];
+          }
+          Console.WriteLine("[" + threadid + "]Start Remote Consumer Thread");
+          thread_single_cellid1[threadid] = new ConcurrentQueue<long>();
+          thread_single_cellid2[threadid] = new ConcurrentQueue<long>();
+          thread_single_weight[threadid] = new ConcurrentQueue<float>();
+          thread_cache_cellid1[threadid] = new ConcurrentQueue<long>();
+          thread_cache_cellid2s[threadid] = new ConcurrentQueue<Queue<long>>();
+          thread_cache_weights[threadid] = new ConcurrentQueue<Queue<float>>();
+          threads[threadid] = new Thread(new ParameterizedThreadStart(ConsumerThread));
+          threads[threadid].Start(threadid);
         }
 
         public void addDistributedLoadToServer(DistributedLoad load){
