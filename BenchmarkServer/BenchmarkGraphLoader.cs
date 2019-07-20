@@ -398,6 +398,12 @@ namespace BenchmarkServer
           int exponential_delay = 1;
           bool no_action = true;
           int ThreadNumber = (int) nthread;
+          thread_single_cellid1[ThreadNumber] = new ConcurrentQueue<long>();
+          thread_single_cellid2[ThreadNumber] = new ConcurrentQueue<long>();
+          thread_single_weight[ThreadNumber] = new ConcurrentQueue<float>();
+          thread_cache_cellid1[ThreadNumber] = new ConcurrentQueue<long>();
+          thread_cache_cellid2s[ThreadNumber] = new ConcurrentQueue<Queue<long>>();
+          thread_cache_weights[ThreadNumber] = new ConcurrentQueue<Queue<float>>();
           long dequeued_cellid1;
           while(!finished || thread_single_cellid1[ThreadNumber].Count > 0 || thread_cache_cellid1[ThreadNumber].Count > 0){
             no_action = true;
