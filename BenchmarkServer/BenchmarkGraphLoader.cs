@@ -228,7 +228,7 @@ namespace BenchmarkServer
                       FinishCommunicator fcr = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-(1+j+(i*num_threads)));
                       while(!fcr.Finished){
                           Thread.Sleep(2000);
-                          long cellid_comm = Int64.MaxValue-(1+j+(i*num_threads));
+                          long cellid_comm = (1+j+(i*num_threads));
                           Console.WriteLine("Finished CELL: " + cellid_comm);
                           fcr = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-(1+j+(i*num_threads)));
                       }
