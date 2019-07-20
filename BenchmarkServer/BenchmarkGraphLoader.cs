@@ -378,9 +378,9 @@ namespace BenchmarkServer
           Console.WriteLine("[>] Add CACHE " + last_added + " at Thread: " + index + " on Server " + this_server_id);
           try{
             if(thread_cache_cellid2s[index] == null){
-              thread_cache_cellid2s[index] = new ConcurrentQueue<long>();
-              thread_cache_weights[index] = new ConcurrentQueue<float>();
               thread_cache_cellid1[index] = new ConcurrentQueue<long>();
+              thread_cache_cellid2s[index] = new ConcurrentQueue<Queue<long>>();
+              thread_cache_weights[index] = new ConcurrentQueue<Queue<float>>();
             }
             thread_cache_cellid2s[index].Enqueue(new Queue<long>(outlinks_cache.ToArray()));
             if(hasWeight) thread_cache_weights[index].Enqueue(new Queue<float>(weights_cache.ToArray()));
