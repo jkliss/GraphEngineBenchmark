@@ -228,9 +228,13 @@ namespace BenchmarkServer
                       long cellid_comm = (j+(i*num_threads));
                       Console.WriteLine("Test ThreadCell: " + cellid_comm);
                       FinishCommunicator fcr = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-cellid_comm);
+                      bool message_sent = false;
                       while(!fcr.Finished){
+                          if(!message_sent){
+                            Console.WriteLine("Wait for Cell: " + cellid_comm);
+                            message_sent = true;
+                          }
                           Thread.Sleep(20);
-                          Console.WriteLine("Wait for Cell: " + cellid_comm);
                           fcr = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-cellid_comm);
                       }
                   }
