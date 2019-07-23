@@ -376,7 +376,11 @@ namespace BenchmarkServer
           Console.WriteLine("[>] Add BASIC " + cellid1 + " at Thread: " + index + " on Server " + this_server_id);
           try{
             if(threads[index] == null){
-              startServerConsumerThread(this_server_id,index);
+              for(int i = 0; i < num_threads; i++){
+                if(threads[i] == null){
+                  startServerConsumerThread(this_server_id,i);
+                }
+              }
             }
             /**if(thread_single_cellid2[index] == null){
               Console.WriteLine("["+index+"] Init new Concurrent Queue");
