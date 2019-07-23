@@ -417,7 +417,7 @@ namespace BenchmarkServer
             Queue<long> converted_queue;
             try{
                 converted_queue = new Queue<long>(outlinks_cache.ToArray());
-            } catch {
+            } catch (Exception ex) {
                 Console.Error.WriteLine(ex.Message);
                 Console.Error.WriteLine(ex.StackTrace.ToString());
             }
