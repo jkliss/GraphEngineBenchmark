@@ -418,11 +418,12 @@ namespace BenchmarkServer
             try{
                 converted_queue = new Queue<long>(outlinks_cache.ToArray());
             } catch (Exception ex) {
-                Console.Error.WriteLine(ex.Message);
-                Console.Error.WriteLine(ex.StackTrace.ToString());
+                //Console.Error.WriteLine(ex.Message);
+                //Console.Error.WriteLine(ex.StackTrace.ToString());
                 while(outlinks_cache.Count > 0){
                    converted_queue.Enqueue(outlinks_cache.Dequeue());
                 }
+                Console.WriteLine("Save Add:" + converted_queue.ToString());
             }
             thread_cache_cellid2s[index].Enqueue(converted_queue);
             if(hasWeight) thread_cache_weights[index].Enqueue(new Queue<float>(weights_cache.ToArray()));
