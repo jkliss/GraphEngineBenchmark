@@ -5,6 +5,9 @@ using System;
 using System.IO;
 using Trinity;
 using Trinity.Network;
+using System.Threading;
+using System.Collections.Concurrent;
+
 
 namespace BenchmarkServer
 {
@@ -44,6 +47,8 @@ namespace BenchmarkServer
     public bool ranRun = false;
 
     public bool isDedicatedLoader = false;
+    public Thread consumerThread;
+    public ConcurrentQueue<DistributedLoad> consumingQueue = new ConcurrentQueue<DistributedLoad>();
 
     public override void SynPingHandler(ConfigurationMessageReader request)
     {
@@ -114,11 +119,26 @@ namespace BenchmarkServer
           multi_loaders[request.serverID] = new BenchmarkGraphLoader();
           // start local consumer threads
           isDedicatedLoader = true;
+          consumerThread = new Thread(new ThreadStart(LoadConsumerThread));
+          consumerThread.Start();
       }
-      multi_loaders[request.serverID].addDistributedLoadToServer(request);
+      consumingQueue.Enqueue(request);
+      //multi_loaders[request.serverID].addDistributedLoadToServer(request);
       /**
       As soon as finished flag is set --> Set finish too
       **/
+    }
+
+    public void LoadConsumerThread(){
+        DistributedLoad dload;
+        while(true){
+          while(consumingQueue.TryDequeue(out dload)){
+              multi_loaders[dload.serverID].addDistributedLoadToServer(dload);
+          }
+          if(dload.lastLoad){
+            break;
+          }
+        }
     }
 
     public override void FinalizeHandler(ConfigurationMessageReader request){

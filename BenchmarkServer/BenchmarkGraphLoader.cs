@@ -615,7 +615,6 @@ namespace BenchmarkServer
               finished = true;
               Console.WriteLine("All Threads will be Finished!");
               serverFinished[(int) load.cellid1s[1]%(num_threads*num_servers)/num_threads] = true;
-
            }
         }
 
