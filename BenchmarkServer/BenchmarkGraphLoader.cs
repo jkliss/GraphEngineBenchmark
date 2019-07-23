@@ -217,7 +217,7 @@ namespace BenchmarkServer
                   thread_cache_weights[i] = null;
                 }
                 for(int i = 1; i < num_servers; i++){
-                  Console.WriteLine("Send to Server:" + i);
+                  Console.WriteLine("Last Sends to Server:" + i);
                   using (var request = new DistributedLoadWriter(i, distributed_load_current_index[i] ,distributedLoads[i].cellid1s, distributedLoads[i].cellid2s, distributedLoads[i].weights, distributedLoads[i].single_element, true))
                   {
                     Global.CloudStorage.DistributedLoadMessageToBenchmarkServer(i, request);
@@ -373,7 +373,7 @@ namespace BenchmarkServer
 
         public void AddEdgeBasicThreaded(long cellid1, long cellid2, float weight){
           int index = (int) (cellid1%(num_threads*num_servers))%num_threads;
-          Console.WriteLine("[>] Add BASIC " + cellid1 + " at Thread: " + index + " on Server " + this_server_id);
+          //Console.WriteLine("[>] Add BASIC " + cellid1 + " at Thread: " + index + " on Server " + this_server_id);
           try{
             if(threads[index] == null){
               for(int i = 0; i < num_threads; i++){
@@ -399,7 +399,7 @@ namespace BenchmarkServer
 
         public void AddEdgeQueueCacheThreaded(){
           int index = (int) (last_added%(num_threads*num_servers))%num_threads;
-          Console.WriteLine("[>] Add CACHE " + last_added + " at Thread: " + index + " on Server " + this_server_id);
+          //Console.WriteLine("[>] Add CACHE " + last_added + " at Thread: " + index + " on Server " + this_server_id);
           try{
             if(threads[index] == null){
               startServerConsumerThread(this_server_id,index);
@@ -429,7 +429,7 @@ namespace BenchmarkServer
             no_action = true;
             while(thread_cache_cellid1[ThreadNumber].TryDequeue(out dequeued_cellid1)){
                 no_action = false;
-                Console.WriteLine("["+ ThreadNumber +"] Clear Cache of " + dequeued_cellid1);
+                //Console.WriteLine("["+ ThreadNumber +"] Clear Cache of " + dequeued_cellid1);
                 Queue<long> cellid2s;
                 while(!thread_cache_cellid2s[ThreadNumber].TryDequeue(out cellid2s)){
                   Thread.Sleep(1);
@@ -451,7 +451,7 @@ namespace BenchmarkServer
                 while(!thread_single_cellid2[ThreadNumber].TryDequeue(out cellid2)){
                   Thread.Sleep(1);
                 }
-                Console.WriteLine("["+ ThreadNumber +"] Insert of " + dequeued_cellid1 + "->" + cellid2);
+                //Console.WriteLine("["+ ThreadNumber +"] Insert of " + dequeued_cellid1 + "->" + cellid2);
                 if(hasWeight){
                   float weight;
                   while(!thread_single_weight[ThreadNumber].TryDequeue(out weight)){
@@ -529,7 +529,7 @@ namespace BenchmarkServer
 
         public void AddToDistributedLoad(long cellid1, long cellid2, float weight, bool single){
             int ServerID = (int) (cellid1%(num_threads*num_servers))/num_threads;
-            Console.WriteLine("Add " + cellid1 + " to " + cellid2 + " at " + ServerID + " Position in Load: " + distributed_load_current_index[ServerID]);
+            //Console.WriteLine("Add " + cellid1 + " to " + cellid2 + " at " + ServerID + " Position in Load: " + distributed_load_current_index[ServerID]);
             DistributedLoad distributed_load = distributedLoads[ServerID];
             distributedLoads[ServerID].serverID = ServerID;
             distributedLoads[ServerID].cellid1s[distributed_load_current_index[ServerID]] = cellid1;
