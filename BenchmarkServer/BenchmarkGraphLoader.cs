@@ -120,7 +120,7 @@ namespace BenchmarkServer
                 fc.Finished = false;
                 fc.LastLoad = false;
                 long fcid = (j+(i*num_threads));
-                Console.WriteLine("CREATE COMMUNICATION CELL:" + fcid);
+                //Console.WriteLine("CREATE COMMUNICATION CELL:" + fcid);
                 Global.CloudStorage.SaveFinishCommunicator(Int64.MaxValue-fcid, fc);
               }
             }
@@ -187,7 +187,6 @@ namespace BenchmarkServer
                             AddEdgeThreadedToServer(mapping2[read_edge], mapping2[read_node], -1, true);
                           }
                         }
-
                         current_node = read_node;
                     }
                     catch (Exception ex)
