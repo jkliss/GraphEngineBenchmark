@@ -414,7 +414,8 @@ namespace BenchmarkServer
               thread_cache_cellid2s[index] = new ConcurrentQueue<Queue<long>>();
               thread_cache_weights[index] = new ConcurrentQueue<Queue<float>>();
             }**/
-            thread_cache_cellid2s[index].Enqueue(new Queue<long>(outlinks_cache.ToArray()));
+            Queue<long> converted_queue = new Queue<long>(outlinks_cache.ToArray());
+            thread_cache_cellid2s[index].Enqueue(converted_queue);
             if(hasWeight) thread_cache_weights[index].Enqueue(new Queue<float>(weights_cache.ToArray()));
             thread_cache_cellid1[index].Enqueue(last_added);
           } catch (Exception ex) {
