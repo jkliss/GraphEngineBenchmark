@@ -420,7 +420,7 @@ namespace BenchmarkServer
             } catch (Exception ex) {
                 Console.Error.WriteLine(ex.Message);
                 Console.Error.WriteLine(ex.StackTrace.ToString());
-                while(outlinks_cache > 0){
+                while(outlinks_cache.Count > 0){
                    converted_queue.Enqueue(outlinks_cache.Dequeue());
                 }
             }
