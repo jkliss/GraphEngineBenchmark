@@ -428,10 +428,12 @@ namespace BenchmarkServer
             } catch (Exception ex) {
                 //Console.Error.WriteLine(ex.Message);
                 //Console.Error.WriteLine(ex.StackTrace.ToString());
+                Console.WriteLine("[SOLUTION REQUIRED]Save Add:");
                 while(outlinks_cache.Count > 0){
-                  Console.WriteLine("[SOLUTION REQUIRED]Save Add:" + outlinks_cache.Peek());
+                  Console.Write(outlinks_cache.Peek()+",");
                   converted_queue.Enqueue(outlinks_cache.Dequeue());
                 }
+                Console.WriteLine();
             }
             thread_cache_cellid2s[index].Enqueue(converted_queue);
             if(hasWeight) thread_cache_weights[index].Enqueue(new Queue<float>(weights_cache.ToArray()));
