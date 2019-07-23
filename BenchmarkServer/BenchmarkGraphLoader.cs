@@ -224,18 +224,16 @@ namespace BenchmarkServer
                   }
                 }
                 for(int i = 0; i < num_servers; i++){
-                  for(int j = 0; j <= num_threads; j++){
+                  for(int j = 0; j < num_threads; j++){
                       long cellid_comm = (j+(i*num_threads));
                       Console.WriteLine("Test ThreadCell: " + cellid_comm);
                       FinishCommunicator fcr = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-cellid_comm);
                       while(!fcr.Finished){
-                          Thread.Sleep(2000);
-
-                          Console.WriteLine("Finished CELL: " + cellid_comm);
+                          Thread.Sleep(20);
+                          Console.WriteLine("Wait for Cell: " + cellid_comm);
                           fcr = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-cellid_comm);
                       }
                   }
-
                   Console.WriteLine("Remote Server " + i + " finished");
                 }
                 //AddNodesWithoutEdges(current_node);
@@ -380,12 +378,12 @@ namespace BenchmarkServer
             if(threads[index] == null){
               startServerConsumerThread(this_server_id,index);
             }
-            if(thread_single_cellid2[index] == null){
+            /**if(thread_single_cellid2[index] == null){
               Console.WriteLine("["+index+"] Init new Concurrent Queue");
               thread_single_cellid2[index] = new ConcurrentQueue<long>();
               thread_single_weight[index] = new ConcurrentQueue<float>();
               thread_single_cellid1[index] = new ConcurrentQueue<long>();
-            }
+            }**/
             thread_single_cellid2[index].Enqueue(cellid2);
             if(hasWeight) thread_single_weight[index].Enqueue(weight);
             thread_single_cellid1[index].Enqueue(cellid1);
@@ -402,12 +400,12 @@ namespace BenchmarkServer
             if(threads[index] == null){
               startServerConsumerThread(this_server_id,index);
             }
-            if(thread_cache_cellid2s[index] == null){
+            /**if(thread_cache_cellid2s[index] == null){
               Console.WriteLine("["+index+"] Init new Concurrent Queue");
               thread_cache_cellid1[index] = new ConcurrentQueue<long>();
               thread_cache_cellid2s[index] = new ConcurrentQueue<Queue<long>>();
               thread_cache_weights[index] = new ConcurrentQueue<Queue<float>>();
-            }
+            }**/
             thread_cache_cellid2s[index].Enqueue(new Queue<long>(outlinks_cache.ToArray()));
             if(hasWeight) thread_cache_weights[index].Enqueue(new Queue<float>(weights_cache.ToArray()));
             thread_cache_cellid1[index].Enqueue(last_added);
@@ -550,7 +548,7 @@ namespace BenchmarkServer
           this_server_id = serverid;
           threads = new Thread[num_threads];
           for(int i = 0; i < num_threads; i++){
-            Console.WriteLine("[" + i + "]Start Remote Consumer Thread");
+            Console.WriteLine("[" + i + "] Start Remote Consumer Thread");
             thread_single_cellid1[i] = new ConcurrentQueue<long>();
             thread_single_cellid2[i] = new ConcurrentQueue<long>();
             thread_single_weight[i] = new ConcurrentQueue<float>();
@@ -567,7 +565,7 @@ namespace BenchmarkServer
           if(threads == null){
             threads = new Thread[num_threads];
           }
-          Console.WriteLine("[" + threadid + "]Start Remote Consumer Thread");
+          Console.WriteLine("[" + threadid + "] Start Remote Consumer Thread");
           thread_single_cellid1[threadid] = new ConcurrentQueue<long>();
           thread_single_cellid2[threadid] = new ConcurrentQueue<long>();
           thread_single_weight[threadid] = new ConcurrentQueue<float>();
