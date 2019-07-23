@@ -368,7 +368,11 @@ namespace BenchmarkServer
                   outlinks_cache.Enqueue(cellid2);
                   weights_cache.Enqueue(weight);
                 } else {
-                  outlinks_cache.Enqueue(cellid2);
+                  try{
+                    outlinks_cache.Enqueue(cellid2);
+                  } catch (Exception ex) {
+                    Console.WriteLine("Could not insert " + cellid2);
+                  }
                 }
             }
             last_added = cellid1;
@@ -421,9 +425,9 @@ namespace BenchmarkServer
                 //Console.Error.WriteLine(ex.Message);
                 //Console.Error.WriteLine(ex.StackTrace.ToString());
                 while(outlinks_cache.Count > 0){
-                   converted_queue.Enqueue(outlinks_cache.Dequeue());
+                  Console.WriteLine("Save Add:" + outlinks_cache.Peek());
+                  converted_queue.Enqueue(outlinks_cache.Dequeue());
                 }
-                Console.WriteLine("Save Add:" + converted_queue.ToString());
             }
             thread_cache_cellid2s[index].Enqueue(converted_queue);
             if(hasWeight) thread_cache_weights[index].Enqueue(new Queue<float>(weights_cache.ToArray()));
