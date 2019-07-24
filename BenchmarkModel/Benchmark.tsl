@@ -126,6 +126,8 @@ server BenchmarkServer {
   protocol Terminate;
   protocol DeleteGraph;
   protocol DistributedLoadMessage;
+  protocol StartBFS;
+  protocol BFSUpdate;
 }
 
 cell struct SimpleGraphNode
@@ -134,10 +136,36 @@ cell struct SimpleGraphNode
     List<float> Weights;
     int Depth;
     long RealID;
+    long parent;
 }
 
 cell struct FinishCommunicator
 {
     bool Finished;
     bool LastLoad;
+}
+
+
+// Johannes Thiel BFS
+
+struct StartBFSMessage {
+  long root;
+}
+
+struct BFSUpdateMessage {
+  long senderId;
+  int level;
+  List<long> recipients;
+}
+
+protocol StartBFS {
+  type: Asyn;
+  Request: StartBFSMessage;
+  Response: void;
+}
+
+protocol BFSUpdate {
+  Type: Asyn;
+  Request: BFSUpdateMessage;
+  Response: void;
 }

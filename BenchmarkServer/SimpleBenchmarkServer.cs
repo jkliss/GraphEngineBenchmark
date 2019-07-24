@@ -8,6 +8,10 @@ using Trinity.Network;
 using System.Threading;
 using System.Collections.Concurrent;
 
+using Trinity.Core.Lib;
+using Trinity.TSL.Lib;
+using Trinity.Network.Messaging;
+
 
 namespace BenchmarkServer
 {
@@ -86,6 +90,7 @@ namespace BenchmarkServer
 
     public override void RunHandler(ConfigurationMessageReader request){
       Console.WriteLine("Started Run");
+      int mapped_node;
       if(ranLoader == false){
         Console.WriteLine("Loader not run before");
       } else {
@@ -96,11 +101,16 @@ namespace BenchmarkServer
         benchmarkAlgorithm.graph_name = graph_name;
         benchmarkAlgorithm.e_log_path = e_log_path;
         benchmarkAlgorithm.setOutputPath(e_output_path);
-        int mapped_node = (int) loader.mapping2[this.source_vertex];
+        mapped_node = (int) loader.mapping2[this.source_vertex];
         Console.WriteLine("Start at {0}", mapped_node);
         SimpleGraphNode rootNode = Global.CloudStorage.LoadSimpleGraphNode(mapped_node);
         benchmarkAlgorithm.BFS(rootNode);
         ranLoader = true;
+      }
+      mapped_node = (int) loader.mapping2[this.source_vertex];
+      using (var request2 = new StartBFSMessageWriter(mapped_node))
+      {
+        Global.CloudStorage.StartBFSToBenchmarkServer(0, request2);
       }
     }
 
@@ -208,6 +218,47 @@ namespace BenchmarkServer
       Console.WriteLine("Num Threads:          {0}", num_threads);
       Console.WriteLine("Termination Job ID:   {0}", t_job_id);
       Console.WriteLine("Termination Log Path: {0}", t_log_path);
+    }
+
+    public override void StartBFSHandler(StartBFSMessageReader request) {
+      if (Global.CloudStorage.IsLocalCell(request.root)) {
+        using (var rootCell = Global.LocalStorage.UseSimpleGraphNode(request.root)) {
+          rootCell.Depth = 0;
+          rootCell.parent = request.root;
+
+          MessageSorter sorter = new MessageSorter(rootCell.Outlinks);
+          for (int i = 0; i < Global.ServerCount; i++) {
+            BFSUpdateMessageWriter msg = new BFSUpdateMessageWriter(rootCell.CellId, 0, sorter.GetCellRecipientList(i));
+            Global.CloudStorage.BFSUpdateToBenchmarkServer(i, msg);
+          }
+        }
+      }
+    }
+
+    public override void BFSUpdateHandler(BFSUpdateMessageReader request) {
+      request.recipients.ForEach((cellId) => {
+        using (var cell = Global.LocalStorage.UseSimpleGraphNode(cellId)) {
+          if (cell.Depth > request.level + 1) {
+            cell.Depth = request.level + 1;
+            cell.parent = request.senderId;
+
+            List<long> aliveNeighbors = new List<long>();
+            for (int i = 0; i < cell.Outlinks.Count; i++) {
+              if (Global.CloudStorage.Contains(cell.Outlinks[i])) {
+                aliveNeighbors.Add(cell.Outlinks[i]);
+              }
+            }
+
+            //MessageSorter sorter = new MessageSorter(cell.Outlinks);
+            MessageSorter sorter = new MessageSorter(aliveNeighbors);
+
+            for (int i = 0; i < Global.ServerCount; i++) {
+              BFSUpdateMessageWriter msg = new BFSUpdateMessageWriter(cell.CellId, cell.Depth, sorter.GetCellRecipientList(i));
+              Global.CloudStorage.BFSUpdateToBenchmarkServer(i, msg);
+            }
+          }
+        }
+      });
     }
   }
 }
