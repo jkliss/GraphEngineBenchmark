@@ -120,6 +120,7 @@ namespace BenchmarkServer
         }
         StartBFS(mapped_node);
       }
+      Thread.Sleep(1000);
       while(msgQueue.Count > 0){
           Thread.Sleep(10);
       }
