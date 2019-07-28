@@ -120,9 +120,9 @@ namespace BenchmarkServer
       }
       Thread.Sleep(50);
       while(true){
-        using (var incCell = Global.LocalStorage.UseFinishCount(Int64.MaxValue-Global.MyServerID)) {
+        using (var incCell = Global.LocalStorage.UseFinishCounter(Int64.MaxValue-Global.MyServerID)) {
           if(incCell.count == 0){
-                break;
+              break;
           }
         }
         Thread.Sleep(50);
@@ -288,13 +288,13 @@ namespace BenchmarkServer
     }
 
     public void incrementMessageCounter(long id){
-      using (var incCell = Global.LocalStorage.UseFinishCount(id)) {
+      using (var incCell = Global.LocalStorage.UseFinishCounter(id)) {
           incCell.count++;
       }
     }
 
     public void decrementMessageCounter(long id){
-      using (var incCell = Global.LocalStorage.UseFinishCount(id)) {
+      using (var incCell = Global.LocalStorage.UseFinishCounter(id)) {
           incCell.count--;
       }
     }
