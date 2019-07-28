@@ -231,7 +231,7 @@ namespace BenchmarkServer
     private static void StartBFS(long root) {
       for (int i = 0; i < Global.ServerCount; i++) {
         using (var msg = new StartBFSMessageWriter(root)) {
-          Global.CloudStorage.StartBFSToBFSServer(i, msg);
+          Global.CloudStorage.StartBFSToBenchmarkServer(i, msg);
         }
       }
     }
