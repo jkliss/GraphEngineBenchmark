@@ -53,6 +53,8 @@ namespace BenchmarkServer
     public bool isDedicatedLoader = false;
     public Thread consumerThread;
     public ConcurrentQueue<DistributedLoad> consumingQueue = new ConcurrentQueue<DistributedLoad>();
+    public int finishCounter = 0;
+    public ConcurrentQueue<bool> msgQueue = new ConcurrentQueue<bool>();
 
     public override void SynPingHandler(ConfigurationMessageReader request)
     {
@@ -118,15 +120,10 @@ namespace BenchmarkServer
         }
         StartBFS(mapped_node);
       }
-      Thread.Sleep(50);
-      while(true){
-        using (var incCell = Global.LocalStorage.UseFinishCounter(Int64.MaxValue-Global.MyServerID)) {
-          if(incCell.count == 0){
-              break;
-          }
-        }
-        Thread.Sleep(50);
+      while(msgQueue.Count > 0){
+          Thread.Sleep(10);
       }
+      Console.WriteLine("FinishedServer0");
     }
 
     static void DistributedLoad(int server, DistributedLoad dload){
@@ -260,7 +257,7 @@ namespace BenchmarkServer
     }
 
     public override void BFSUpdateHandler(BFSUpdateMessageReader request) {
-      incrementMessageCounter(Int64.MaxValue-Global.MyServerID);
+      msgQueue.Enqueue(true);
       request.recipients.ForEach((cellId) => {
         using (var cell = Global.LocalStorage.UseSimpleGraphNode(cellId)) {
           if (cell.Depth > request.level + 1) {
@@ -284,18 +281,8 @@ namespace BenchmarkServer
           }
         }
       });
-      decrementMessageCounter(Int64.MaxValue-Global.MyServerID);
-    }
-
-    public void incrementMessageCounter(long id){
-      using (var incCell = Global.LocalStorage.UseFinishCounter(id)) {
-          incCell.count++;
-      }
-    }
-
-    public void decrementMessageCounter(long id){
-      using (var incCell = Global.LocalStorage.UseFinishCounter(id)) {
-          incCell.count--;
+      bool test;
+      while(!msgQueue.TryDequeue(out test)){
       }
     }
   }
