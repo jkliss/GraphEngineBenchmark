@@ -235,7 +235,7 @@ namespace BenchmarkServer
 
     public override void StartBFSHandler(StartBFSMessageReader request) {
       if (Global.CloudStorage.IsLocalCell(request.root)) {
-        Console.WriteLine("BFS Started on Machine" + Global.MyServerID);
+        Console.WriteLine("BFS Started on Machine" + Global.MyServerID + " found Cell " + request.root);
         using (var rootCell = Global.LocalStorage.UseSimpleGraphNode(request.root)) {
           rootCell.Depth = 0;
           rootCell.parent = request.root;
