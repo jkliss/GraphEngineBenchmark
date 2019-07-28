@@ -116,12 +116,7 @@ namespace BenchmarkServer
           //Console.WriteLine("CREATE COMMUNICATION CELL:" + fcid);
           Global.CloudStorage.SaveFinishCommunicator(Int64.MaxValue-fcid, fc);
         }
-        using (var request2 = new StartBFSMessageWriter(mapped_node))
-        {
-          for(int i = 0; i < Global.ServerCount; i++){
-            Global.CloudStorage.StartBFSToBenchmarkServer(i, request2);
-          }
-        }
+        StartBFS(mapped_node);
       }
 
 
@@ -232,6 +227,15 @@ namespace BenchmarkServer
       Console.WriteLine("Termination Job ID:   {0}", t_job_id);
       Console.WriteLine("Termination Log Path: {0}", t_log_path);
     }
+
+    private static void StartBFS(long root) {
+      for (int i = 0; i < Global.ServerCount; i++) {
+        using (var msg = new StartBFSMessageWriter(root)) {
+          Global.CloudStorage.StartBFSToBFSServer(i, msg);
+        }
+      }
+    }
+
 
     public override void StartBFSHandler(StartBFSMessageReader request) {
       if (Global.CloudStorage.IsLocalCell(request.root)) {
