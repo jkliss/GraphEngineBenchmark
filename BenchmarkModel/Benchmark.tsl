@@ -145,6 +145,10 @@ cell struct FinishCommunicator
     bool LastLoad;
 }
 
+cell struct FinishCounter
+{
+    int count;
+}
 
 // Johannes Thiel BFS
 

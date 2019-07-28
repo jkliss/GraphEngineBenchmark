@@ -118,8 +118,15 @@ namespace BenchmarkServer
         }
         StartBFS(mapped_node);
       }
-
-
+      Thread.Sleep(50);
+      while(true){
+        using (var incCell = Global.LocalStorage.UseFinishCount(Int64.MaxValue-Global.MyServerID)) {
+          if(incCell.count == 0){
+                break;
+          }
+        }
+        Thread.Sleep(50);
+      }
     }
 
     static void DistributedLoad(int server, DistributedLoad dload){
@@ -239,7 +246,7 @@ namespace BenchmarkServer
 
     public override void StartBFSHandler(StartBFSMessageReader request) {
       if (Global.CloudStorage.IsLocalCell(request.root)) {
-        Console.WriteLine("BFS Started on Machine" + Global.MyServerID + " found Cell " + request.root);
+        Console.WriteLine("BFS Started (on this Machine) found Cell " + request.root);
         using (var rootCell = Global.LocalStorage.UseSimpleGraphNode(request.root)) {
           rootCell.Depth = 0;
           rootCell.parent = request.root;
@@ -253,6 +260,7 @@ namespace BenchmarkServer
     }
 
     public override void BFSUpdateHandler(BFSUpdateMessageReader request) {
+      incrementMessageCounter(Int64.MaxValue-Global.MyServerID);
       request.recipients.ForEach((cellId) => {
         using (var cell = Global.LocalStorage.UseSimpleGraphNode(cellId)) {
           if (cell.Depth > request.level + 1) {
@@ -276,6 +284,19 @@ namespace BenchmarkServer
           }
         }
       });
+      decrementMessageCounter(Int64.MaxValue-Global.MyServerID);
+    }
+
+    public void incrementMessageCounter(long id){
+      using (var incCell = Global.LocalStorage.UseFinishCount(id)) {
+          incCell.count++;
+      }
+    }
+
+    public void decrementMessageCounter(long id){
+      using (var incCell = Global.LocalStorage.UseFinishCount(id)) {
+          incCell.count--;
+      }
     }
   }
 }
