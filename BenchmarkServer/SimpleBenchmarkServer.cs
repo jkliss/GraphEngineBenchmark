@@ -236,7 +236,7 @@ namespace BenchmarkServer
     public override void StartBFSHandler(StartBFSMessageReader request) {
       if (Global.CloudStorage.IsLocalCell(request.root)) {
         Console.WriteLine("BFS Started on Machine" + Global.MyServerID);
-        using (var rootCell = Global.CloudStorage.UseSimpleGraphNode(request.root)) {
+        using (var rootCell = Global.LocalStorage.UseSimpleGraphNode(request.root)) {
           rootCell.Depth = 0;
           rootCell.parent = request.root;
           MessageSorter sorter = new MessageSorter(rootCell.Outlinks);
@@ -250,7 +250,7 @@ namespace BenchmarkServer
 
     public override void BFSUpdateHandler(BFSUpdateMessageReader request) {
       request.recipients.ForEach((cellId) => {
-        using (var cell = Global.CloudStorage.UseSimpleGraphNode(cellId)) {
+        using (var cell = Global.LocalStorage.UseSimpleGraphNode(cellId)) {
           if (cell.Depth > request.level + 1) {
             cell.Depth = request.level + 1;
             cell.parent = request.senderId;
