@@ -149,5 +149,9 @@ namespace BenchmarkServer
       Console.WriteLine("#######    Finished Run    #######");
       Console.WriteLine("##################################");
     }
+
+    public void output_server(){
+      
+    }
   }
 }

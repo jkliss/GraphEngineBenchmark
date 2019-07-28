@@ -104,14 +104,27 @@ namespace BenchmarkServer
         mapped_node = (int) loader.mapping2[this.source_vertex];
         Console.WriteLine("Start at {0}", mapped_node);
         SimpleGraphNode rootNode = Global.CloudStorage.LoadSimpleGraphNode(mapped_node);
-        benchmarkAlgorithm.BFS(rootNode);
+        //benchmarkAlgorithm.BFS(rootNode);
         ranLoader = true;
+
+        //Distributed Try with Message Sorter
+        for(int i = 0; i < Global.ServerCount; i++){
+          FinishCommunicator fc = new FinishCommunicator();
+          fc.Finished = false;
+          fc.LastLoad = false;
+          long fcid = i;
+          //Console.WriteLine("CREATE COMMUNICATION CELL:" + fcid);
+          Global.CloudStorage.SaveFinishCommunicator(Int64.MaxValue-fcid, fc);
+        }
+        using (var request2 = new StartBFSMessageWriter(mapped_node))
+        {
+          for(int i = 0; i < Global.ServerCount; i++){
+            Global.CloudStorage.StartBFSToBenchmarkServer(i, request2);
+          }
+        }
       }
-      mapped_node = (int) loader.mapping2[this.source_vertex];
-      using (var request2 = new StartBFSMessageWriter(mapped_node))
-      {
-        Global.CloudStorage.StartBFSToBenchmarkServer(0, request2);
-      }
+
+
     }
 
     static void DistributedLoad(int server, DistributedLoad dload){
@@ -222,10 +235,10 @@ namespace BenchmarkServer
 
     public override void StartBFSHandler(StartBFSMessageReader request) {
       if (Global.CloudStorage.IsLocalCell(request.root)) {
+        Console.WriteLine("BFS Started on Machine" + this_server_id);
         using (var rootCell = Global.LocalStorage.UseSimpleGraphNode(request.root)) {
           rootCell.Depth = 0;
           rootCell.parent = request.root;
-
           MessageSorter sorter = new MessageSorter(rootCell.Outlinks);
           for (int i = 0; i < Global.ServerCount; i++) {
             BFSUpdateMessageWriter msg = new BFSUpdateMessageWriter(rootCell.CellId, 0, sorter.GetCellRecipientList(i));
