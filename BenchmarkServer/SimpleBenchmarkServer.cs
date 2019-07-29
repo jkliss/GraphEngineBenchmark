@@ -280,7 +280,6 @@ namespace BenchmarkServer
                 aliveNeighbors.Add(cell.Outlinks[i]);
               }
             }
-
             //MessageSorter sorter = new MessageSorter(cell.Outlinks);
             MessageSorter sorter = new MessageSorter(aliveNeighbors);
 
