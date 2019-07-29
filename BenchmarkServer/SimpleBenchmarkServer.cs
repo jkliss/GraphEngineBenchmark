@@ -106,9 +106,9 @@ namespace BenchmarkServer
         mapped_node = (int) loader.mapping2[this.source_vertex];
         Console.WriteLine("Start at {0}", mapped_node);
         SimpleGraphNode rootNode = Global.CloudStorage.LoadSimpleGraphNode(mapped_node);
-        //benchmarkAlgorithm.BFS(rootNode);
+        benchmarkAlgorithm.BFS(rootNode);
         ranLoader = true;
-
+/**
         //Distributed Try with Message Sorter
         for(int i = 0; i < Global.ServerCount; i++){
           FinishCommunicator fc = new FinishCommunicator();
@@ -118,13 +118,15 @@ namespace BenchmarkServer
           //Console.WriteLine("CREATE COMMUNICATION CELL:" + fcid);
           Global.CloudStorage.SaveFinishCommunicator(Int64.MaxValue-fcid, fc);
         }
+        **/
         StartBFS(mapped_node);
       }
+      /**
       Thread.Sleep(1000);
       while(msgQueue.Count > 0){
           Thread.Sleep(10);
       }
-      Console.WriteLine("FinishedServer0");
+      Console.WriteLine("FinishedServer0");**/
     }
 
     static void DistributedLoad(int server, DistributedLoad dload){
