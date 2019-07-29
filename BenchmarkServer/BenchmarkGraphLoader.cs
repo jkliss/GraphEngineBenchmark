@@ -508,10 +508,12 @@ namespace BenchmarkServer
           Console.WriteLine("["+ ThreadNumber +"] setting finished to " + cellid_comm);
           //FinishCommunicator fc = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-cellid_comm);
           FinishCommunicator fc = new FinishCommunicator();
-          threads[ThreadNumber] = null;
           fc.Finished = true;
           fc.LastLoad = true;
           Global.CloudStorage.SaveFinishCommunicator(Int64.MaxValue-cellid_comm, fc);
+          if(this_server_id != 0){
+            threads[ThreadNumber] = null;
+          }
         }
 
         public void AddEdgeQueue(long cellid1, Queue<long> cellid2s, Queue<float> weights){
