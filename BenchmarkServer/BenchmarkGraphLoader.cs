@@ -515,6 +515,7 @@ namespace BenchmarkServer
             simpleGraphNode.CellId = cellid1;
             simpleGraphNode.Weights = new List<float>();
             simpleGraphNode.Outlinks = new List<long>();
+            simpleGraphNode.Depth = Int64.MaxValue;
           } else {
             simpleGraphNode = Global.LocalStorage.LoadSimpleGraphNode(cellid1);
           }
@@ -533,6 +534,7 @@ namespace BenchmarkServer
             simpleGraphNode.CellId = cellid1;
             simpleGraphNode.Weights = new List<float>();
             simpleGraphNode.Outlinks = new List<long>();
+            simpleGraphNode.Depth = Int64.MaxValue;
           } else {
             simpleGraphNode = Global.LocalStorage.LoadSimpleGraphNode(cellid1);
           }
