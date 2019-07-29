@@ -270,6 +270,7 @@ namespace BenchmarkServer
     public override void BFSUpdateHandler(BFSUpdateMessageReader request) {
       Console.WriteLine("Outgoing from " + request.senderId);
       request.recipients.ForEach((cellId) => {
+        Console.WriteLine("<< CALL " + cellId);
         using (var cell = Global.LocalStorage.UseSimpleGraphNode(cellId)) {
           if (cell.Depth > request.level + 1) {
             cell.Depth = request.level + 1;
