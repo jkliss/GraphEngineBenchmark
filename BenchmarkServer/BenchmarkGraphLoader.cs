@@ -40,6 +40,7 @@ namespace BenchmarkServer
         public int[] distributed_load_current_index = new int[num_servers];
         public bool[] serverFinished = new bool[num_servers];
         public int this_server_id;
+        public int finish_counter = 0;
 
         public void setPath(String new_path){
             path = new_path;
@@ -511,8 +512,14 @@ namespace BenchmarkServer
           fc.Finished = true;
           fc.LastLoad = true;
           Global.CloudStorage.SaveFinishCommunicator(Int64.MaxValue-cellid_comm, fc);
-          if(this_server_id != 0){
-            threads[ThreadNumber] = null;
+          Interlocked.Increment(ref finish_counter);
+          if(this_server_id != 0 && finish_counter == 12){
+            Console.WriteLine("Last Thread on Server Finished!");
+            // reset for next run
+            for(int i = 0; i < num_threads; i++){
+              threads[i] = null;
+            }
+            finished = false;
           }
         }
 
