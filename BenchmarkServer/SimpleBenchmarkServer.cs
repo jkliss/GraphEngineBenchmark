@@ -119,7 +119,7 @@ namespace BenchmarkServer
           Global.CloudStorage.SaveFinishCommunicator(Int64.MaxValue-fcid, fc);
         }
         **/
-        StartBFS(mapped_node);
+        //StartBFS(mapped_node);
       }
       /**
       Thread.Sleep(1000);
