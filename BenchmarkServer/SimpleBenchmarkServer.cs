@@ -108,7 +108,7 @@ namespace BenchmarkServer
         SimpleGraphNode rootNode = Global.CloudStorage.LoadSimpleGraphNode(mapped_node);
         benchmarkAlgorithm.BFS(rootNode);
         ranLoader = true;
-/**
+        /**
         //Distributed Try with Message Sorter
         for(int i = 0; i < Global.ServerCount; i++){
           FinishCommunicator fc = new FinishCommunicator();
