@@ -274,7 +274,7 @@ namespace BenchmarkServer
             cell.parent = request.senderId;
             List<long> aliveNeighbors = new List<long>();
             for (int i = 0; i < cell.Outlinks.Count; i++) {
-              if (Global.LocalStorage.Contains(cell.Outlinks[i])) {
+              if (Global.CloudStorage.Contains(cell.Outlinks[i])) {
                 msgQueue.Enqueue(true);
                 Console.WriteLine(">" + cell.Outlinks[i]);
                 aliveNeighbors.Add(cell.Outlinks[i]);
