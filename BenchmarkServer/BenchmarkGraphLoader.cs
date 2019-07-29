@@ -520,6 +520,7 @@ namespace BenchmarkServer
               threads[i] = null;
             }
             finished = false;
+            finish_counter = 0;
           }
         }
 
