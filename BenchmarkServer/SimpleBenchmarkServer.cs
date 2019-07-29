@@ -258,17 +258,17 @@ namespace BenchmarkServer
     }
 
     public override void BFSUpdateHandler(BFSUpdateMessageReader request) {
-      msgQueue.Enqueue(true);
       Console.WriteLine("Outgoing from " + request.senderId);
       request.recipients.ForEach((cellId) => {
         using (var cell = Global.LocalStorage.UseSimpleGraphNode(cellId)) {
           if (cell.Depth > request.level + 1) {
             cell.Depth = request.level + 1;
             cell.parent = request.senderId;
-
             List<long> aliveNeighbors = new List<long>();
             for (int i = 0; i < cell.Outlinks.Count; i++) {
               if (Global.CloudStorage.Contains(cell.Outlinks[i])) {
+                msgQueue.Enqueue(true);
+                Console.WriteLine(">" + cell.Outlinks[i]);
                 aliveNeighbors.Add(cell.Outlinks[i]);
               }
             }
@@ -284,8 +284,7 @@ namespace BenchmarkServer
         }
       });
       bool test;
-      while(!msgQueue.TryDequeue(out test)){
-      }
+      while(!msgQueue.TryDequeue(out test)){}
     }
   }
 }
