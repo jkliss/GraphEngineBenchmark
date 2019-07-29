@@ -248,7 +248,15 @@ namespace BenchmarkServer
         using (var rootCell = Global.LocalStorage.UseSimpleGraphNode(request.root)) {
           rootCell.Depth = 0;
           rootCell.parent = request.root;
-          MessageSorter sorter = new MessageSorter(rootCell.Outlinks);
+          List<long> aliveNeighbors = new List<long>();
+          for (int i = 0; i < rootCell.Outlinks.Count; i++) {
+            if (Global.CloudStorage.Contains(rootCell.Outlinks[i])) {
+              msgQueue.Enqueue(true);
+              Console.WriteLine(">" + rootCell.Outlinks[i]);
+              aliveNeighbors.Add(rootCell.Outlinks[i]);
+            }
+          }
+          MessageSorter sorter = new MessageSorter(aliveNeighbors);
           for (int i = 0; i < Global.ServerCount; i++) {
             BFSUpdateMessageWriter msg = new BFSUpdateMessageWriter(rootCell.CellId, 0, sorter.GetCellRecipientList(i));
             Global.CloudStorage.BFSUpdateToBenchmarkServer(i, msg);
