@@ -134,7 +134,7 @@ cell struct SimpleGraphNode
 {
     List<CellId> Outlinks;
     List<float> Weights;
-    int Depth;
+    long Depth;
     long RealID;
     long parent;
 }
@@ -158,7 +158,7 @@ struct StartBFSMessage {
 
 struct BFSUpdateMessage {
   long senderId;
-  int level;
+  long level;
   List<long> recipients;
 }
 
