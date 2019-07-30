@@ -228,16 +228,11 @@ namespace BenchmarkServer
                       long cellid_comm = (j+(i*num_threads));
                       Console.WriteLine("Test ThreadCell: " + cellid_comm);
                       FinishCommunicator fcr = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-cellid_comm);
-                      int wait_counter = 0;
                       bool message_sent = false;
                       while(!fcr.Finished){
                           if(!message_sent){
                             Console.WriteLine("Wait for Cell: " + cellid_comm);
                             message_sent = true;
-                          }
-                          wait_counter++;
-                          if(wait_counter >= 10000){
-                              Console.WriteLine("Server Timed out!");
                           }
                           Thread.Sleep(60);
                           fcr = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-cellid_comm);
@@ -515,7 +510,7 @@ namespace BenchmarkServer
           Interlocked.Increment(ref finish_counter);
           if(this_server_id != 0 && finish_counter == 12){
             Console.WriteLine("Last Thread on Server Finished!");
-            // reset for next run
+            // reset for next load run
             for(int i = 0; i < num_threads; i++){
               threads[i] = null;
             }
