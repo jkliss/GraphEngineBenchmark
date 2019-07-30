@@ -620,6 +620,7 @@ namespace BenchmarkServer
         public void addDistributedLoadToServer(DistributedLoad load){
            this_server_id = load.serverID;
            for(int i = 0; i < load.num_elements; i++){
+             Console.WriteLine("Add LOAD " + load.cellid1s[i] +" "+ load.cellid2s[i] +" "+ load.weights[i] +" "+ load.single_element[i]);
              AddEdgeThreaded(load.cellid1s[i], load.cellid2s[i], load.weights[i], load.single_element[i]);
            }
            if(load.lastLoad){
