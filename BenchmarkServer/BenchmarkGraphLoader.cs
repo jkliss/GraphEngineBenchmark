@@ -648,7 +648,7 @@ namespace BenchmarkServer
                       try{
                           SimpleGraphNode simpleGraphNode = Global.LocalStorage.LoadSimpleGraphNode(entry.Key);
                           foreach(long link in simpleGraphNode.Outlinks){
-                          file.WriteLine(entry.Value + " " + link);
+                          file.WriteLine("["+ entry.Key +"]" + entry.Value + " " + link);
                         }
                       } catch (Exception ex){
                         TextWriter errorWriter = Console.Error;
