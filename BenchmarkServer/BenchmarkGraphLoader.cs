@@ -645,10 +645,15 @@ namespace BenchmarkServer
                 {
                   foreach(KeyValuePair<long, long> entry in mapping1)
                   {
-                    SimpleGraphNode simpleGraphNode = Global.LocalStorage.LoadSimpleGraphNode(entry.Key);
-                    foreach(long link in simpleGraphNode.Outlinks){
-                      file.WriteLine(entry.Value + " " + link);
-                    }
+                      try{
+                          SimpleGraphNode simpleGraphNode = Global.LocalStorage.LoadSimpleGraphNode(entry.Key);
+                          foreach(long link in simpleGraphNode.Outlinks){
+                          file.WriteLine(entry.Value + " " + link);
+                        }
+                      } catch (Exception ex){
+                        TextWriter errorWriter = Console.Error;
+                        errorWriter.WriteLine(ex.Message);
+                      }
                   }
                 }
               } catch (Exception ex){
