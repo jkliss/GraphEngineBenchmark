@@ -520,7 +520,7 @@ namespace BenchmarkServer
         }
 
         public void AddEdgeQueue(long cellid1, Queue<long> cellid2s, Queue<float> weights){
-          //Console.WriteLine("Add " + cellid1 + " to " + cellid2);
+
           SimpleGraphNode simpleGraphNode = new SimpleGraphNode();
           if(!Global.LocalStorage.Contains(cellid1)){
             simpleGraphNode.CellId = cellid1;
@@ -531,6 +531,7 @@ namespace BenchmarkServer
             simpleGraphNode = Global.LocalStorage.LoadSimpleGraphNode(cellid1);
           }
           while(cellid2s.Count > 0){
+            Console.WriteLine("~> Add " + cellid1 + " to " + cellid2s.Peek());
             simpleGraphNode.Outlinks.Add(cellid2s.Dequeue());
             simpleGraphNode.Weights.Add(weights.Dequeue());
           }
@@ -550,6 +551,7 @@ namespace BenchmarkServer
             simpleGraphNode = Global.LocalStorage.LoadSimpleGraphNode(cellid1);
           }
           while(cellid2s.Count > 0){
+            Console.WriteLine("~> Add " + cellid1 + " to " + cellid2s.Peek());
             simpleGraphNode.Outlinks.Add(cellid2s.Dequeue());
           }
           // printGraphNode(simpleGraphNode);
