@@ -81,6 +81,7 @@ namespace BenchmarkServer
       loader.loadVertices();
       loader.LoadGraph();
       ranLoader = true;
+      loader.dumpLoadCells();
     }
 
     public override void PrepareHandler(ConfigurationMessageReader request){
