@@ -558,15 +558,15 @@ namespace BenchmarkServer
 
         public void createDistributedLoad(int ServerID){
             distributedLoads[ServerID] = new DistributedLoad();
-            distributedLoads[ServerID].cellid1s = new long[256];
-            distributedLoads[ServerID].cellid2s = new long[256];
-            distributedLoads[ServerID].weights = new float[256];
-            distributedLoads[ServerID].single_element = new bool[256];
+            distributedLoads[ServerID].cellid1s = new long[3];
+            distributedLoads[ServerID].cellid2s = new long[3];
+            distributedLoads[ServerID].weights = new float[3];
+            distributedLoads[ServerID].single_element = new bool[3];
         }
 
         public void AddToDistributedLoad(long cellid1, long cellid2, float weight, bool single){
             int ServerID = (int) (cellid1%(num_threads*num_servers))/num_threads;
-            //Console.WriteLine("Add " + cellid1 + " to " + cellid2 + " at " + ServerID + " Position in Load: " + distributed_load_current_index[ServerID]);
+            Console.WriteLine("Add " + cellid1 + " to " + cellid2 + " at " + ServerID + " Position in Load: " + distributed_load_current_index[ServerID]);
             DistributedLoad distributed_load = distributedLoads[ServerID];
             distributedLoads[ServerID].serverID = ServerID;
             distributedLoads[ServerID].cellid1s[distributed_load_current_index[ServerID]] = cellid1;
@@ -574,8 +574,8 @@ namespace BenchmarkServer
             distributedLoads[ServerID].weights[distributed_load_current_index[ServerID]] = weight;
             distributedLoads[ServerID].single_element[distributed_load_current_index[ServerID]] = single;
             distributed_load_current_index[ServerID]++;
-            // 256 is buffersize
-            if(distributed_load_current_index[ServerID] >= 256){
+            // 3 is buffersize
+            if(distributed_load_current_index[ServerID] >= 3){
                 using (var request = new DistributedLoadWriter(ServerID, distributed_load_current_index[ServerID], distributedLoads[ServerID].cellid1s, distributedLoads[ServerID].cellid2s, distributedLoads[ServerID].weights, distributedLoads[ServerID].single_element))
                 {
                   Global.CloudStorage.DistributedLoadMessageToBenchmarkServer(ServerID, request);

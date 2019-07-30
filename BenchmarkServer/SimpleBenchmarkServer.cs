@@ -138,7 +138,7 @@ namespace BenchmarkServer
     }
 
     public override void DistributedLoadMessageHandler(DistributedLoadReader request){
-      //Console.WriteLine("Request at:" + request.serverID);
+      Console.WriteLine("Request at:" + request.serverID);
       if(!isDedicatedLoader){
           // inititalize local loader
           Console.WriteLine("Graph Loader for Server is being initialzed");
