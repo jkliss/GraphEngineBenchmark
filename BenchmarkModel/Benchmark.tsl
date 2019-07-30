@@ -5,10 +5,10 @@ struct PingMessage {
 struct DistributedLoad {
   int serverID;
   int num_elements;
-  long[32768] cellid1s;
-  long[32768] cellid2s;
-  float[32768] weights;
-  bool[32768] single_element;
+  long[256] cellid1s;
+  long[256] cellid2s;
+  float[256] weights;
+  bool[256] single_element;
   bool lastLoad;
 }
 

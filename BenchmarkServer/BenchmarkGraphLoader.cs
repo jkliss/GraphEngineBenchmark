@@ -558,10 +558,10 @@ namespace BenchmarkServer
 
         public void createDistributedLoad(int ServerID){
             distributedLoads[ServerID] = new DistributedLoad();
-            distributedLoads[ServerID].cellid1s = new long[32768];
-            distributedLoads[ServerID].cellid2s = new long[32768];
-            distributedLoads[ServerID].weights = new float[32768];
-            distributedLoads[ServerID].single_element = new bool[32768];
+            distributedLoads[ServerID].cellid1s = new long[256];
+            distributedLoads[ServerID].cellid2s = new long[256];
+            distributedLoads[ServerID].weights = new float[256];
+            distributedLoads[ServerID].single_element = new bool[256];
         }
 
         public void AddToDistributedLoad(long cellid1, long cellid2, float weight, bool single){
@@ -574,8 +574,8 @@ namespace BenchmarkServer
             distributedLoads[ServerID].weights[distributed_load_current_index[ServerID]] = weight;
             distributedLoads[ServerID].single_element[distributed_load_current_index[ServerID]] = single;
             distributed_load_current_index[ServerID]++;
-            // 32768 is buffersize
-            if(distributed_load_current_index[ServerID] >= 32768){
+            // 256 is buffersize
+            if(distributed_load_current_index[ServerID] >= 256){
                 using (var request = new DistributedLoadWriter(ServerID, distributed_load_current_index[ServerID], distributedLoads[ServerID].cellid1s, distributedLoads[ServerID].cellid2s, distributedLoads[ServerID].weights, distributedLoads[ServerID].single_element))
                 {
                   Global.CloudStorage.DistributedLoadMessageToBenchmarkServer(ServerID, request);
