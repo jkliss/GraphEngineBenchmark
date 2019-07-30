@@ -385,7 +385,7 @@ namespace BenchmarkServer
 
         public void AddEdgeBasicThreaded(long cellid1, long cellid2, float weight){
           int index = (int) (cellid1%(num_threads*num_servers))%num_threads;
-          //Console.WriteLine("[>] Add BASIC " + cellid1 + " at Thread: " + index + " on Server " + this_server_id);
+          Console.WriteLine("[>] Add BASIC " + cellid1 + " at Thread: " + index + " on Server " + this_server_id);
           try{
             if(threads[index] == null){
               for(int i = 0; i < num_threads; i++){
