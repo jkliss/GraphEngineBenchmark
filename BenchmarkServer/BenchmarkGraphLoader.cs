@@ -648,7 +648,7 @@ namespace BenchmarkServer
                       try{
                           SimpleGraphNode simpleGraphNode = Global.CloudStorage.LoadSimpleGraphNode(entry.Key);
                           foreach(long link in simpleGraphNode.Outlinks){
-                          file.WriteLine("["+ entry.Key +"]" + entry.Value + " " + link);
+                          file.WriteLine(entry.Value + " " + mapping1[link]);
                         }
                       } catch (Exception ex){
                         TextWriter errorWriter = Console.Error;
