@@ -646,7 +646,7 @@ namespace BenchmarkServer
                   foreach(KeyValuePair<long, long> entry in mapping1)
                   {
                       try{
-                          SimpleGraphNode simpleGraphNode = Global.LocalStorage.LoadSimpleGraphNode(entry.Key);
+                          SimpleGraphNode simpleGraphNode = Global.CloudStorage.LoadSimpleGraphNode(entry.Key);
                           foreach(long link in simpleGraphNode.Outlinks){
                           file.WriteLine("["+ entry.Key +"]" + entry.Value + " " + link);
                         }
