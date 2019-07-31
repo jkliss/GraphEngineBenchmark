@@ -140,11 +140,11 @@ namespace BenchmarkServer
     public override void DistributedLoadMessageHandler(DistributedLoadReader request){
       //Console.WriteLine("Request at:" + request.serverID);
       if(!isDedicatedLoader){
+          isDedicatedLoader = true;
           // inititalize local loader
           Console.WriteLine("Graph Loader for Server is being initialzed");
           multi_loaders[request.serverID] = new BenchmarkGraphLoader();
           // start local consumer threads
-          isDedicatedLoader = true;
           consumerThread = new Thread(new ThreadStart(LoadConsumerThread));
           consumerThread.Start();
       }

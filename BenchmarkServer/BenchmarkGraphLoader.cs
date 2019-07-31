@@ -394,12 +394,6 @@ namespace BenchmarkServer
                 }
               }
             }
-            /**if(thread_single_cellid2[index] == null){
-              Console.WriteLine("["+index+"] Init new Concurrent Queue");
-              thread_single_cellid2[index] = new ConcurrentQueue<long>();
-              thread_single_weight[index] = new ConcurrentQueue<float>();
-              thread_single_cellid1[index] = new ConcurrentQueue<long>();
-            }**/
             thread_single_cellid2[index].Enqueue(cellid2);
             if(hasWeight) thread_single_weight[index].Enqueue(weight);
             thread_single_cellid1[index].Enqueue(cellid1);
@@ -416,12 +410,6 @@ namespace BenchmarkServer
             if(threads[index] == null){
               startServerConsumerThread(this_server_id,index);
             }
-            /**if(thread_cache_cellid2s[index] == null){
-              Console.WriteLine("["+index+"] Init new Concurrent Queue");
-              thread_cache_cellid1[index] = new ConcurrentQueue<long>();
-              thread_cache_cellid2s[index] = new ConcurrentQueue<Queue<long>>();
-              thread_cache_weights[index] = new ConcurrentQueue<Queue<float>>();
-            }**/
             Queue<long> converted_queue = new Queue<long>();
             try{
                 converted_queue = new Queue<long>(outlinks_cache.ToArray());
@@ -635,16 +623,11 @@ namespace BenchmarkServer
         }
 
         public void AddEdgeThreadedToServer(long cellid1, long cellid2, float weight, bool single){
-          if(cellid1 == 213164){
-            Console.WriteLine("/// LOADED NODE 213164");
-          }
           int ServerID = (int) (cellid1%(num_threads*num_servers))/num_threads;
           if(ServerID == 0){
               AddEdgeThreaded(cellid1, cellid2, weight, single);
-              //Console.WriteLine("/// DISTRIBUTED LOADED NODE 213164");
           } else {
               AddToDistributedLoad(cellid1, cellid2, weight, single);
-              //Console.WriteLine("/// LOCAL LOADED NODE 213164");
           }
         }
 
