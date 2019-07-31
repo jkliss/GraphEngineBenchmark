@@ -209,6 +209,13 @@ namespace BenchmarkServer
                     AddEdgeThreaded(mapping2[insertable_vertex], -1, -1, true);
                 }
                 finished = true;
+                for(int i = 1; i < num_servers; i++){
+                  Console.WriteLine("Last Sends to Server:" + i);
+                  using (var request = new DistributedLoadWriter(i, distributed_load_current_index[i] ,distributedLoads[i].cellid1s, distributedLoads[i].cellid2s, distributedLoads[i].weights, distributedLoads[i].single_element, true))
+                  {
+                    Global.CloudStorage.DistributedLoadMessageToBenchmarkServer(i, request);
+                  }
+                }
                 for(int i = 0; i < num_threads; i++){
                   threads[i].Join();
                   thread_single_cellid1[i] = null;
@@ -217,13 +224,6 @@ namespace BenchmarkServer
                   thread_cache_cellid1[i] = null;
                   thread_cache_cellid2s[i] = null;
                   thread_cache_weights[i] = null;
-                }
-                for(int i = 1; i < num_servers; i++){
-                  Console.WriteLine("Last Sends to Server:" + i);
-                  using (var request = new DistributedLoadWriter(i, distributed_load_current_index[i] ,distributedLoads[i].cellid1s, distributedLoads[i].cellid2s, distributedLoads[i].weights, distributedLoads[i].single_element, true))
-                  {
-                    Global.CloudStorage.DistributedLoadMessageToBenchmarkServer(i, request);
-                  }
                 }
                 for(int i = 0; i < num_servers; i++){
                   for(int j = 0; j < num_threads; j++){
@@ -625,7 +625,6 @@ namespace BenchmarkServer
 
         public void AddEdgeThreadedToServer(long cellid1, long cellid2, float weight, bool single){
           int ServerID = (int) (cellid1%(num_threads*num_servers))/num_threads;
-          if(cellid1 == 13253 && cellid2 == 157541) Console.WriteLine("CELL ADD 13253 TO SERVER " + ServerID);
           if(ServerID == 0){
               AddEdgeThreaded(cellid1, cellid2, weight, single);
           } else {
