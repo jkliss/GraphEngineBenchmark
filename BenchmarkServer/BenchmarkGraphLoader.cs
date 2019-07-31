@@ -169,7 +169,7 @@ namespace BenchmarkServer
                           AddEdgeThreadedToServer(mapping2[insertable_vertex], -1, -1, true);
                         }
                         long read_edge = long.Parse(fields[1]);
-                        if(read_node == 13253 && read_edge == 157541) Console.WriteLine("CELL READ 13253");
+                        if(read_node == 317018  && read_edge == 317307) Console.WriteLine("CELL READ LAST");
                         //Console.WriteLine("Translated-LINE:" + mapping2[read_node] + "->" + mapping2[read_edge]);
                         // directed edges
                         if(hasWeight){
@@ -177,7 +177,7 @@ namespace BenchmarkServer
                           AddEdgeThreadedToServer(mapping2[read_node], mapping2[read_edge], float.Parse(fields[2]), false);
                         } else {
                           //AddEdge(mapping2[read_node], mapping2[read_edge], -1, false);
-                          if(read_node == 13253 && read_edge == 157541) Console.WriteLine("CELL ADD EDGE THREAD SERVER 13253");
+                          //if(read_node == 13253 && read_edge == 157541) Console.WriteLine("CELL ADD EDGE THREAD SERVER 13253");
                           AddEdgeThreadedToServer(mapping2[read_node], mapping2[read_edge], -1, false);
                         }
                         if(!directed){
