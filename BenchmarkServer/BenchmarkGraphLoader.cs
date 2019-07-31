@@ -169,6 +169,7 @@ namespace BenchmarkServer
                           AddEdgeThreaded(mapping2[insertable_vertex], -1, -1, true);
                         }
                         long read_edge = long.Parse(fields[1]);
+                        if(read_node == 13253 && read_edge == 157541) Console.WriteLine("CELL READ 13253");
                         //Console.WriteLine("Translated-LINE:" + mapping2[read_node] + "->" + mapping2[read_edge]);
                         // directed edges
                         if(hasWeight){
@@ -509,7 +510,6 @@ namespace BenchmarkServer
         }
 
         public void AddEdgeQueue(long cellid1, Queue<long> cellid2s, Queue<float> weights){
-
           SimpleGraphNode simpleGraphNode = new SimpleGraphNode();
           if(!Global.LocalStorage.Contains(cellid1)){
             simpleGraphNode.CellId = cellid1;
@@ -549,10 +549,10 @@ namespace BenchmarkServer
 
         public void createDistributedLoad(int ServerID){
             distributedLoads[ServerID] = new DistributedLoad();
-            distributedLoads[ServerID].cellid1s = new long[3];
-            distributedLoads[ServerID].cellid2s = new long[3];
-            distributedLoads[ServerID].weights = new float[3];
-            distributedLoads[ServerID].single_element = new bool[3];
+            distributedLoads[ServerID].cellid1s = new long[65536];
+            distributedLoads[ServerID].cellid2s = new long[65536];
+            distributedLoads[ServerID].weights = new float[65536];
+            distributedLoads[ServerID].single_element = new bool[65536];
         }
 
         public void AddToDistributedLoad(long cellid1, long cellid2, float weight, bool single){
@@ -565,8 +565,8 @@ namespace BenchmarkServer
             distributedLoads[ServerID].weights[distributed_load_current_index[ServerID]] = weight;
             distributedLoads[ServerID].single_element[distributed_load_current_index[ServerID]] = single;
             distributed_load_current_index[ServerID]++;
-            // 3 is buffersize
-            if(distributed_load_current_index[ServerID] >= 3){
+            // 65536 is buffersize
+            if(distributed_load_current_index[ServerID] >= 65536){
                 using (var request = new DistributedLoadWriter(ServerID, distributed_load_current_index[ServerID], distributedLoads[ServerID].cellid1s, distributedLoads[ServerID].cellid2s, distributedLoads[ServerID].weights, distributedLoads[ServerID].single_element))
                 {
                   Global.CloudStorage.DistributedLoadMessageToBenchmarkServer(ServerID, request);
