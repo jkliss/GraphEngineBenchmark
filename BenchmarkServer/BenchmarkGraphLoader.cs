@@ -532,7 +532,7 @@ namespace BenchmarkServer
             simpleGraphNode = Global.LocalStorage.LoadSimpleGraphNode(cellid1);
           }
           while(cellid2s.Count > 0){
-            Console.WriteLine("~> Add " + cellid1 + " to " + cellid2s.Peek());
+            //Console.WriteLine("~> Add " + cellid1 + " to " + cellid2s.Peek());
             simpleGraphNode.Outlinks.Add(cellid2s.Dequeue());
             simpleGraphNode.Weights.Add(weights.Dequeue());
           }
@@ -552,7 +552,7 @@ namespace BenchmarkServer
             simpleGraphNode = Global.LocalStorage.LoadSimpleGraphNode(cellid1);
           }
           while(cellid2s.Count > 0){
-            Console.WriteLine("~> Add " + cellid1 + " to " + cellid2s.Peek());
+            //Console.WriteLine("~> Add " + cellid1 + " to " + cellid2s.Peek());
             simpleGraphNode.Outlinks.Add(cellid2s.Dequeue());
           }
           // printGraphNode(simpleGraphNode);
@@ -569,7 +569,7 @@ namespace BenchmarkServer
 
         public void AddToDistributedLoad(long cellid1, long cellid2, float weight, bool single){
             int ServerID = (int) (cellid1%(num_threads*num_servers))/num_threads;
-            Console.WriteLine("Add " + cellid1 + " to " + cellid2 + " at " + ServerID + " Position in Load: " + distributed_load_current_index[ServerID]);
+            //Console.WriteLine("Add " + cellid1 + " to " + cellid2 + " at " + ServerID + " Position in Load: " + distributed_load_current_index[ServerID]);
             DistributedLoad distributed_load = distributedLoads[ServerID];
             distributedLoads[ServerID].serverID = ServerID;
             distributedLoads[ServerID].cellid1s[distributed_load_current_index[ServerID]] = cellid1;
@@ -623,7 +623,7 @@ namespace BenchmarkServer
         public void addDistributedLoadToServer(DistributedLoad load){
            this_server_id = load.serverID;
            for(int i = 0; i < load.num_elements; i++){
-             Console.WriteLine("Add LOAD " + load.cellid1s[i] +" "+ load.cellid2s[i] +" "+ load.weights[i] +" "+ load.single_element[i]);
+             //Console.WriteLine("Add LOAD " + load.cellid1s[i] +" "+ load.cellid2s[i] +" "+ load.weights[i] +" "+ load.single_element[i]);
              AddEdgeThreaded(load.cellid1s[i], load.cellid2s[i], load.weights[i], load.single_element[i]);
            }
            if(load.lastLoad){
