@@ -166,7 +166,7 @@ namespace BenchmarkServer
                           long insertable_vertex = vertex_queue.Dequeue();
                           //Console.WriteLine("Special Insert of " + insertable_vertex + " at " + mapping2[insertable_vertex]);
                           //AddEdge(mapping2[insertable_vertex], -1, -1, true);
-                          AddEdgeThreaded(mapping2[insertable_vertex], -1, -1, true);
+                          AddEdgeThreadedToServer(mapping2[insertable_vertex], -1, -1, true);
                         }
                         long read_edge = long.Parse(fields[1]);
                         if(read_node == 13253 && read_edge == 157541) Console.WriteLine("CELL READ 13253");
@@ -625,7 +625,7 @@ namespace BenchmarkServer
 
         public void AddEdgeThreadedToServer(long cellid1, long cellid2, float weight, bool single){
           int ServerID = (int) (cellid1%(num_threads*num_servers))/num_threads;
-          if(read_node == 13253 && read_edge == 157541) Console.WriteLine("CELL ADD 13253 TO SERVER " + ServerID);
+          if(cellid1 == 13253 && cellid2 == 157541) Console.WriteLine("CELL ADD 13253 TO SERVER " + ServerID);
           if(ServerID == 0){
               AddEdgeThreaded(cellid1, cellid2, weight, single);
           } else {
