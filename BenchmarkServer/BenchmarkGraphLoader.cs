@@ -641,10 +641,10 @@ namespace BenchmarkServer
           int ServerID = (int) (cellid1%(num_threads*num_servers))/num_threads;
           if(ServerID == 0){
               AddEdgeThreaded(cellid1, cellid2, weight, single);
-              Console.WriteLine("/// DISTRIBUTED LOADED NODE 213164");
+              //Console.WriteLine("/// DISTRIBUTED LOADED NODE 213164");
           } else {
               AddToDistributedLoad(cellid1, cellid2, weight, single);
-              Console.WriteLine("/// LOCAL LOADED NODE 213164");
+              //Console.WriteLine("/// LOCAL LOADED NODE 213164");
           }
         }
 
