@@ -385,7 +385,7 @@ namespace BenchmarkServer
 
         public void AddEdgeBasicThreaded(long cellid1, long cellid2, float weight){
           int index = (int) (cellid1%(num_threads*num_servers))%num_threads;
-          Console.WriteLine("[>] Add BASIC " + cellid1 + " -> " + cellid2 + " at Thread: " + index + " on Server " + this_server_id);
+          //Console.WriteLine("[>] Add BASIC " + cellid1 + " -> " + cellid2 + " at Thread: " + index + " on Server " + this_server_id);
           try{
             if(threads[index] == null){
               for(int i = 0; i < num_threads; i++){
@@ -425,6 +425,7 @@ namespace BenchmarkServer
             Queue<long> converted_queue = new Queue<long>();
             try{
                 converted_queue = new Queue<long>(outlinks_cache.ToArray());
+
             } catch (Exception ex) {
                 //Console.Error.WriteLine(ex.Message);
                 //Console.Error.WriteLine(ex.StackTrace.ToString());
@@ -634,12 +635,17 @@ namespace BenchmarkServer
         }
 
         public void AddEdgeThreadedToServer(long cellid1, long cellid2, float weight, bool single){
-           int ServerID = (int) (cellid1%(num_threads*num_servers))/num_threads;
-           if(ServerID == 0){
+          if(cellid1 == 213164){
+            Console.WriteLine("/// LOADED NODE 213164");
+          }
+          int ServerID = (int) (cellid1%(num_threads*num_servers))/num_threads;
+          if(ServerID == 0){
               AddEdgeThreaded(cellid1, cellid2, weight, single);
-           } else {
+              Console.WriteLine("/// DISTRIBUTED LOADED NODE 213164");
+          } else {
               AddToDistributedLoad(cellid1, cellid2, weight, single);
-           }
+              Console.WriteLine("/// LOCAL LOADED NODE 213164");
+          }
         }
 
         public void dumpLoadCells(){
