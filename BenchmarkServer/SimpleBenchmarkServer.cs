@@ -73,6 +73,7 @@ namespace BenchmarkServer
 
     public override void LoadGraphHandler(ConfigurationMessageReader request){
       //Console.WriteLine("Servers:" + num_servers);
+      Console.WriteLine("NAME:" + request.input_vertex_path);
       int myID = Global.MyServerID;
       loader[myID] = new ParallelBenchmarkGraphLoader();
       Console.WriteLine("Started Load");
