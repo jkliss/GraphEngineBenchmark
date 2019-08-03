@@ -134,6 +134,7 @@ namespace BenchmarkServer
               //distributed_load_current_index[i] = 0;
             }
             for(int i = num_threads+(num_threads*this_server_id); i >= 1; i--){
+              Console.WriteLine("Start " + i);
               read_threads[i-1] = new Thread(new ParameterizedThreadStart(ParallelReading));
               read_threads[i-1].Start(i);
             }
