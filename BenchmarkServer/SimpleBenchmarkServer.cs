@@ -83,7 +83,7 @@ namespace BenchmarkServer
         for(int i = 1; i < Global.ServerCount; i++){
           using (var request2 = new ConfigurationMessageWriter(graph_name,input_vertex_path,input_edge_path,l_output_path,directed,weighted,e_job_id,e_log_path,algorithm,source_vertex,maxIteration,damping_factor,input_path,e_output_path,home_dir,num_machines,num_threads,t_job_id,t_log_path))
           {
-            Global.CloudStorage.LoadGraphToBenchmarkServer(0, request2);
+            Global.CloudStorage.LoadGraphToBenchmarkServer(i, request2);
           }
         }
       }
