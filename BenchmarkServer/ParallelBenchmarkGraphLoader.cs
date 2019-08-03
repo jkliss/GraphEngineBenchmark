@@ -320,6 +320,7 @@ namespace BenchmarkServer
                       //last_node[part-1] = current_node;
                   }
               }
+              Console.WriteLine("Finish Read Thread " + (part-1));
            }
         }
 
