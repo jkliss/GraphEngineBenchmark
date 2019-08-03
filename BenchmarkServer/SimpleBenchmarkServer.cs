@@ -72,7 +72,6 @@ namespace BenchmarkServer
     }
 
     public override void LoadGraphHandler(ConfigurationMessageReader request){
-      //Console.WriteLine("Servers:" + num_servers);
       if(Global.MyServerID == 0){
         Console.WriteLine("NAME:" + this.input_vertex_path);
         int myID = Global.MyServerID;
@@ -119,8 +118,9 @@ namespace BenchmarkServer
         loader[myID].hasWeight = request.weighted;
         loader[myID].directed = directed;
         loader[myID].loadVertices();
+        loader[myID].LoadGraph();
+        ranLoader = true;
       }
-
       //loader.dumpLoadCells();
     }
 
