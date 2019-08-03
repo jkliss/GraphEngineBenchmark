@@ -173,7 +173,7 @@ namespace BenchmarkServer
     }
 
     static void DistributedLoad(int server, DistributedLoad dload){
-      using (var request = new DistributedLoadWriter(dload.serverID, dload.num_elements ,dload.cellid1s, dload.cellid2s, dload.weights, dload.single_element))
+      using (var request = new DistributedLoadWriter(dload.serverID, dload.num_elements, dload.Loads))
       {
         Global.CloudStorage.DistributedLoadMessageToBenchmarkServer(server, request);
       }

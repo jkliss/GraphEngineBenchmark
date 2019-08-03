@@ -2,13 +2,17 @@ struct PingMessage {
   string Message;
 }
 
+struct Load {
+  long cellid1;
+  long cellid2;
+  float weight;
+  bool single_element;
+}
+
 struct DistributedLoad {
   int serverID;
   int num_elements;
-  long[65536] cellid1s;
-  long[65536] cellid2s;
-  float[65536] weights;
-  bool[65536] single_element;
+  Load[8192] Loads;
   bool lastLoad;
 }
 
@@ -134,6 +138,7 @@ cell struct SimpleGraphNode
 {
     List<CellId> Outlinks;
     List<float> Weights;
+    long ID;
     long Depth;
     long RealID;
     long parent;
