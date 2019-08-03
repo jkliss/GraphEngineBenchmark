@@ -81,10 +81,25 @@ namespace BenchmarkServer
       loader.loadVertices();
       if(Global.MyServerID == 0){
         for(int i = 1; i < Global.ServerCount; i++){
-          using (var request2 = new ConfigurationMessageWriter(request.graph_name,request.input_vertex_path,request.input_edge_path,
-                                                               request.l_output_path,request.directed,request.weighted,request.e_job_id,request.e_log_path,
-                                                               request.algorithm,request.source_vertex,request.maxIteration,request.damping_factor,request.input_path,request.e_output_path,
-                                                               request.home_dir,request.num_machines,request.num_threads,request.t_job_id,request.t_log_path))
+          using (var request2 = new ConfigurationMessageWriter(request.graph_name,
+                                                               request.input_vertex_path,
+                                                               request.input_edge_path,
+                                                               request.l_output_path,
+                                                               request.directed,
+                                                               request.weighted,
+                                                               request.e_job_id,
+                                                               request.e_log_path,
+                                                               request.algorithm,
+                                                               request.source_vertex,
+                                                               request.maxIteration,
+                                                               request.damping_factor,
+                                                               request.input_path,
+                                                               request.e_output_path,
+                                                               request.home_dir,
+                                                               request.num_machines,
+                                                               request.num_threads,
+                                                               request.t_job_id,
+                                                               request.t_log_path))
           {
             Global.CloudStorage.LoadGraphToBenchmarkServer(i, request2);
           }

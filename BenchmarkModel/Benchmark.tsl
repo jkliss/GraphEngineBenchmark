@@ -71,7 +71,7 @@ protocol VerifySetup {
 }
 
 protocol LoadGraph {
-  Type: Syn;
+  Type: Asyn;
   Request: ConfigurationMessage;
   Response: void;
 }
