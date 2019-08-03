@@ -135,8 +135,8 @@ namespace BenchmarkServer
             }
             for(int i = num_threads+(num_threads*this_server_id); i >= (num_threads*this_server_id)+1; i--){
               Console.WriteLine("Start " + i);
-              read_threads[i%num_threads-1] = new Thread(new ParameterizedThreadStart(ParallelReading));
-              read_threads[i%num_threads-1].Start(i);
+              read_threads[i-(num_threads*this_server_id)-1] = new Thread(new ParameterizedThreadStart(ParallelReading));
+              read_threads[i-(num_threads*this_server_id)-1].Start(i);
             }
             for(int i = 0; i < num_threads; i++){
               read_threads[i].Join();
