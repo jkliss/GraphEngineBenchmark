@@ -44,7 +44,7 @@ namespace BenchmarkServer
     public String t_log_path;
 
     //references_to_values
-    public ParallelBenchmarkGraphLoader loader = new ParallelBenchmarkGraphLoader();
+    public ParallelBenchmarkGraphLoader[] loader = new ParallelBenchmarkGraphLoader[2];
     public ParallelBenchmarkGraphLoader[] multi_loaders = new ParallelBenchmarkGraphLoader[2];
     public bool ranLoader = false;
     public BenchmarkAlgorithm benchmarkAlgorithm = new BenchmarkAlgorithm();
@@ -73,12 +73,14 @@ namespace BenchmarkServer
 
     public override void LoadGraphHandler(ConfigurationMessageReader request){
       //Console.WriteLine("Servers:" + num_servers);
+      int myID = Global.MyServerID;
+      loader[myID] = new ParallelBenchmarkGraphLoader();
       Console.WriteLine("Started Load");
-      loader.setPath(this.input_edge_path);
-      loader.vpath = this.input_vertex_path;
-      loader.hasWeight = this.weighted;
-      loader.directed = directed;
-      loader.loadVertices();
+      loader[myID].setPath(this.input_edge_path);
+      loader[myID].vpath = this.input_vertex_path;
+      loader[myID].hasWeight = this.weighted;
+      loader[myID].directed = directed;
+      loader[myID].loadVertices();
       if(Global.MyServerID == 0){
         for(int i = 1; i < Global.ServerCount; i++){
           using (var request2 = new ConfigurationMessageWriter(request.graph_name,
@@ -105,7 +107,7 @@ namespace BenchmarkServer
           }
         }
       }
-      loader.LoadGraph();
+      loader[myID].LoadGraph();
       ranLoader = true;
       //loader.dumpLoadCells();
     }
