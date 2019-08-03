@@ -81,7 +81,7 @@ namespace BenchmarkServer
       loader.loadVertices();
       if(Global.MyServerID == 0){
         for(int i = 1; i < Global.ServerCount; i++){
-          using (var request2 = new ConfigurationMessageWriter(request)
+          using (var request2 = new ConfigurationMessageWriter(request))
           {
             Global.CloudStorage.LoadGraphToBenchmarkServer(i, request2);
           }
