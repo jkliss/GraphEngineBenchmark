@@ -73,16 +73,16 @@ namespace BenchmarkServer
 
     public override void LoadGraphHandler(ConfigurationMessageReader request){
       //Console.WriteLine("Servers:" + num_servers);
-      Console.WriteLine("NAME:" + this.input_vertex_path);
-      int myID = Global.MyServerID;
-      loader[myID] = new ParallelBenchmarkGraphLoader();
-      Console.WriteLine("Started Load");
-      loader[myID].setPath(this.input_edge_path);
-      loader[myID].vpath = this.input_vertex_path;
-      loader[myID].hasWeight = this.weighted;
-      loader[myID].directed = directed;
-      loader[myID].loadVertices();
       if(Global.MyServerID == 0){
+        Console.WriteLine("NAME:" + this.input_vertex_path);
+        int myID = Global.MyServerID;
+        loader[myID] = new ParallelBenchmarkGraphLoader();
+        Console.WriteLine("Started Load");
+        loader[myID].setPath(this.input_edge_path);
+        loader[myID].vpath = this.input_vertex_path;
+        loader[myID].hasWeight = this.weighted;
+        loader[myID].directed = directed;
+        loader[myID].loadVertices();
         for(int i = 1; i < Global.ServerCount; i++){
           using (var request2 = new ConfigurationMessageWriter(this.graph_name,
                                                                this.input_vertex_path,
@@ -107,9 +107,20 @@ namespace BenchmarkServer
             Global.CloudStorage.LoadGraphToBenchmarkServer(i, request2);
           }
         }
+        loader[myID].LoadGraph();
+        ranLoader = true;
+      } else {
+        Console.WriteLine("NAME:" + request.input_vertex_path);
+        int myID = Global.MyServerID;
+        loader[myID] = new ParallelBenchmarkGraphLoader();
+        Console.WriteLine("Started Load");
+        loader[myID].setPath(request.input_edge_path);
+        loader[myID].vpath = request.input_vertex_path;
+        loader[myID].hasWeight = request.weighted;
+        loader[myID].directed = directed;
+        loader[myID].loadVertices();
       }
-      loader[myID].LoadGraph();
-      ranLoader = true;
+
       //loader.dumpLoadCells();
     }
 
