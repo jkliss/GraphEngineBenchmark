@@ -44,8 +44,8 @@ namespace BenchmarkServer
     public String t_log_path;
 
     //references_to_values
-    public BenchmarkGraphLoader loader = new BenchmarkGraphLoader();
-    public BenchmarkGraphLoader[] multi_loaders = new BenchmarkGraphLoader[2];
+    public ParallelBenchmarkGraphLoader loader = new ParallelBenchmarkGraphLoader();
+    public ParallelBenchmarkGraphLoader[] multi_loaders = new ParallelBenchmarkGraphLoader[2];
     public bool ranLoader = false;
     public BenchmarkAlgorithm benchmarkAlgorithm = new BenchmarkAlgorithm();
     public bool ranRun = false;
@@ -79,6 +79,14 @@ namespace BenchmarkServer
       loader.hasWeight = this.weighted;
       loader.directed = directed;
       loader.loadVertices();
+      if(Global.MyServerID == 0){
+        for(int i = 1; i < Global.ServerCount; i++){
+          using (var request2 = new ConfigurationMessageWriter(graph_name,input_vertex_path,input_edge_path,l_output_path,directed,weighted,e_job_id,e_log_path,algorithm,source_vertex,maxIteration,damping_factor,input_path,e_output_path,home_dir,num_machines,num_threads,t_job_id,t_log_path))
+          {
+            Global.CloudStorage.LoadGraphToBenchmarkServer(0, request2);
+          }
+        }
+      }
       loader.LoadGraph();
       ranLoader = true;
       //loader.dumpLoadCells();
@@ -92,6 +100,7 @@ namespace BenchmarkServer
     }
 
     public override void RunHandler(ConfigurationMessageReader request){
+      /**
       Console.WriteLine("Started Run");
       int mapped_node;
       if(ranLoader == false){
@@ -109,6 +118,7 @@ namespace BenchmarkServer
         SimpleGraphNode rootNode = Global.CloudStorage.LoadSimpleGraphNode(mapped_node);
         benchmarkAlgorithm.BFS(rootNode);
         ranLoader = true;
+        **/
         /**
         //Distributed Try with Message Sorter
         for(int i = 0; i < Global.ServerCount; i++){
@@ -121,7 +131,7 @@ namespace BenchmarkServer
         }
         **/
         //StartBFS(mapped_node);
-      }
+      //}
       /**
       Thread.Sleep(1000);
       while(msgQueue.Count > 0){
@@ -143,7 +153,7 @@ namespace BenchmarkServer
           isDedicatedLoader = true;
           // inititalize local loader
           Console.WriteLine("Graph Loader for Server is being initialzed");
-          multi_loaders[request.serverID] = new BenchmarkGraphLoader();
+          multi_loaders[request.serverID] = new ParallelBenchmarkGraphLoader();
           // start local consumer threads
           consumerThread = new Thread(new ThreadStart(LoadConsumerThread));
           consumerThread.Start();
@@ -159,7 +169,7 @@ namespace BenchmarkServer
         DistributedLoad dload;
         while(true){
           while(consumingQueue.TryDequeue(out dload)){
-              multi_loaders[dload.serverID].addDistributedLoadToServer(dload);
+              //multi_loaders[dload.serverID].addDistributedLoadToServer(dload);
           }
           if(dload.lastLoad){
             break;

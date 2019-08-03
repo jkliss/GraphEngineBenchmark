@@ -7,7 +7,7 @@ namespace SeekRead
 {
     class Program
     {
-        public static int num_parts = 10;
+        public static int num_parts = 12;
         public static int buffersize = 4096;
         public static long[] last_node = new long[num_parts];
         public static long[] first_read_node = new long[num_parts];
@@ -17,7 +17,7 @@ namespace SeekRead
         static void Main(string[] args)
         {
           if(new FileInfo(path).Length <= buffersize*num_parts){
-            Console.WriteLine("FILE TOO SMALL! SWITCH TO SINGLE THREAD");
+            Console.WriteLine("FILE TOO SMALL - SWITCH TO SINGLE THREAD");
             num_parts = 1;
           }
           for(int i = num_parts; i >= 1; i--){

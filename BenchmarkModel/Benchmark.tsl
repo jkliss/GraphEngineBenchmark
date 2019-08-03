@@ -143,6 +143,8 @@ cell struct FinishCommunicator
 {
     bool Finished;
     bool LastLoad;
+    long startReading;
+    long endReading;
 }
 
 cell struct FinishCounter
