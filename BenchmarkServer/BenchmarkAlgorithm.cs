@@ -13,7 +13,7 @@ namespace BenchmarkServer
     public long max_node = 1;
     public bool silent = true;
     public String graph_name = "XXX";
-    public Dictionary<long, long> mapping1 = new Dictionary<long, long>();
+    public long[] mapping1;
     public Dictionary<long, long> mapping2 = new Dictionary<long, long>();
     public String output_path = "output.txt";
     public long elapsedTime_lastRun;
@@ -151,7 +151,7 @@ namespace BenchmarkServer
     }
 
     public void output_server(){
-      
+
     }
   }
 }

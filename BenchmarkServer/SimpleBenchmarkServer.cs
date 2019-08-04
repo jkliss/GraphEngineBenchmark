@@ -102,25 +102,23 @@ namespace BenchmarkServer
     }
 
     public override void RunHandler(ConfigurationMessageReader request){
-      /**
       Console.WriteLine("Started Run");
       int mapped_node;
       if(ranLoader == false){
         Console.WriteLine("Loader not run before");
       } else {
-        benchmarkAlgorithm.setMaxNode(loader.getMaxNode());
-        benchmarkAlgorithm.mapping1 = loader.mapping1;
-        benchmarkAlgorithm.mapping2 = loader.mapping2;
+        benchmarkAlgorithm.setMaxNode(loader[Global.MyServerID].getMaxNode());
+        benchmarkAlgorithm.mapping1 = loader[Global.MyServerID].mapping1;
+        benchmarkAlgorithm.mapping2 = loader[Global.MyServerID].mapping2;
         //benchmarkAlgorithm.mapping1_array = loader.mapping1_array;
         benchmarkAlgorithm.graph_name = graph_name;
         benchmarkAlgorithm.e_log_path = e_log_path;
         benchmarkAlgorithm.setOutputPath(e_output_path);
-        mapped_node = (int) loader.mapping2[this.source_vertex];
+        mapped_node = (int) loader[Global.MyServerID].mapping2[this.source_vertex];
         Console.WriteLine("Start at {0}", mapped_node);
         SimpleGraphNode rootNode = Global.CloudStorage.LoadSimpleGraphNode(mapped_node);
         benchmarkAlgorithm.BFS(rootNode);
         ranLoader = true;
-        **/
         /**
         //Distributed Try with Message Sorter
         for(int i = 0; i < Global.ServerCount; i++){
@@ -133,7 +131,7 @@ namespace BenchmarkServer
         }
         **/
         //StartBFS(mapped_node);
-      //}
+      }
       /**
       Thread.Sleep(1000);
       while(msgQueue.Count > 0){
