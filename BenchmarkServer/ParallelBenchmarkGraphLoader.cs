@@ -129,10 +129,12 @@ namespace BenchmarkServer
           for(int i = 0; i < num_servers; i++){
             serverFinished[i] = false;
             all_starts[i] = -1;
-            load_sender_queue[i] = new ConcurrentQueue<Load>();
-            Console.WriteLine("START LOAD SENDER " + i);
-            load_sender_threads[i] = new Thread(new ParameterizedThreadStart(SenderThread));
-            load_sender_threads[i].Start(i);
+            if(this_server_id != i){
+              load_sender_queue[i] = new ConcurrentQueue<Load>();
+              Console.WriteLine("START LOAD SENDER " + i);
+              load_sender_threads[i] = new Thread(new ParameterizedThreadStart(SenderThread));
+              load_sender_threads[i].Start(i);
+            }
           }
           Console.WriteLine("Preparations for Server done!");
         }
@@ -168,7 +170,9 @@ namespace BenchmarkServer
             }
             Console.WriteLine("All Reader on this Server Finished");
             for(int i = 0; i < num_servers; i++){
-              load_sender_threads[i].Join();
+              if(i != this_server_id){
+                  load_sender_threads[i].Join();
+              }
             }
             Console.WriteLine("All Sender on this Server Finished");
             for(int i = 0; i < num_threads; i++){
@@ -370,6 +374,7 @@ namespace BenchmarkServer
               int destination_server = findServer(cellid1);
               Console.WriteLine("[READ"+threadid+"] AddEdge (INVERSION S["+destination_server+"]) " + cellid1 + " -> " + cellid2);
               if(destination_server == this_server_id){
+                Console.WriteLine("[READ"+threadid+"] AddEdge (INVERSION LOCAL) " + cellid1 + " -> " + cellid2);
                 SimpleGraphNode invGraphNode = new SimpleGraphNode();
                 invGraphNode.ID = cellid1;
                 invGraphNode.Outlinks = new List<long>();
