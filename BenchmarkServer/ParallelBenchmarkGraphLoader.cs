@@ -325,8 +325,8 @@ namespace BenchmarkServer
                         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                         line = sr.ReadLine();
                     } while (part == num_parts || read_node < first_read_node);
-                    // CLEAR LAST BUFFERED NODE
-                    AddEdge(-1, -1, -1, true, read_thread);
+                    // DUMMY NODE TO CLEAR BUFFER NODE
+                    AddEdge(1, 1, -1, false, read_thread);
                     current_node = read_node;
                   } catch (Exception ex){
                       Console.Error.WriteLine(ex.Message);
@@ -429,18 +429,15 @@ namespace BenchmarkServer
             simpleGraphNode = Global.LocalStorage.LoadSimpleGraphNode(new_node.ID);
           }
           if(hasWeight) {
-            if(new_node.Outlinks.Count > 0){
-              foreach(long i in simpleGraphNode.Outlinks){
-                  simpleGraphNode.Outlinks.Add(i);
-              }
-              foreach(float i in simpleGraphNode.Outlinks){
-                  simpleGraphNode.Weights.Add(i);
-              }
+            for(int i = 0; i < new_node.Outlinks.Count; i++){
+              simpleGraphNode.Outlinks.Add(new_node.Outlinks[i]);
+              simpleGraphNode.Weights.Add(new_node.Weights[i]);
+              Console.WriteLine("+->" + new_node.Outlinks[i]);
             }
           } else {
-            foreach(long i in simpleGraphNode.Outlinks){
-                simpleGraphNode.Outlinks.Add(i);
-                Console.WriteLine("+->" + i);
+            for(int i = 0; i < new_node.Outlinks.Count; i++){
+              simpleGraphNode.Outlinks.Add(new_node.Outlinks[i]);
+              Console.WriteLine("+->" + new_node.Outlinks[i]);
             }
           }
           printGraphNode(simpleGraphNode);
