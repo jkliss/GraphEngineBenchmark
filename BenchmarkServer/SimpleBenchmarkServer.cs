@@ -143,7 +143,7 @@ namespace BenchmarkServer
     }
 
     static void DistributedLoad(int server, DistributedLoad dload){
-      using (var request = new DistributedLoadWriter(dload.serverID, dload.num_elements, dload.Loads))
+      using (var request = new DistributedLoadWriter(dload.serverID, dload.num_elements, dload.cellid1, dload.cellid2, dload.weight, dload.single_element, false))
       {
         Global.CloudStorage.DistributedLoadMessageToBenchmarkServer(server, request);
       }
@@ -158,9 +158,10 @@ namespace BenchmarkServer
         Console.WriteLine("ID SENT" + dload.serverID);
         dload.num_elements = request.num_elements;
         Console.WriteLine("NUM ELEMENTS SENT" + dload.num_elements);
-        dload.Loads = new Load[dload.num_elements];
+        //dload.Loads = new Load[dload.num_elements];
         for(int i = 0; i < dload.num_elements; i++){
-          dload.Loads[i] = request.Loads[i];
+          Console.WriteLine();
+          //dload.Loads[i] = request.Loads[i];
         }
         Console.WriteLine("LOADS SENT");
         dload.lastLoad = request.lastLoad;

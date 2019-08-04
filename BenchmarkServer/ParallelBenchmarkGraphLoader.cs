@@ -528,26 +528,36 @@ namespace BenchmarkServer
           }
         }
 
+
         public void SenderThread(object nthread){
           int senderThreadId = (int) nthread;
           Load new_load;
           DistributedLoad distributedLoad = new DistributedLoad();
-          distributedLoad.Loads = new Load[8192];
+          distributedLoad.cellid1 = new long[8192];
+          distributedLoad.cellid2 = new long[8192];
+          distributedLoad.weight = new float[8192];
+          distributedLoad.single_element = new bool[8192];
           int index = 0;
           while(finished_readers < num_threads || load_sender_queue[senderThreadId].Count > 0){
             try{
               if(load_sender_queue[senderThreadId].TryDequeue(out new_load)){
-                distributedLoad.Loads[index] = new_load;
+                distributedLoad.cellid1[index] = new_load.cellid1;
+                distributedLoad.cellid2[index] = new_load.cellid2;
+                distributedLoad.weight[index] = new_load.weight;
+                distributedLoad.single_element[index] = new_load.single_element;
                 Interlocked.Increment(ref all_threads_sent_edges);
                 index++;
                 if(index >= 8192){
                     Console.WriteLine("Send Load to Server " + senderThreadId);
-                    using (var request = new DistributedLoadWriter(senderThreadId, index, distributedLoad.Loads, false))
+                    using (var request = new DistributedLoadWriter(senderThreadId, index, distributedLoad.cellid1, distributedLoad.cellid2, distributedLoad.weight, distributedLoad.single_element, false))
                     {
                       Global.CloudStorage.DistributedLoadMessageToBenchmarkServer(senderThreadId, request);
                     }
                     distributedLoad = new DistributedLoad();
-                    distributedLoad.Loads = new Load[8192];
+                    distributedLoad.cellid1 = new long[8192];
+                    distributedLoad.cellid2 = new long[8192];
+                    distributedLoad.weight = new float[8192];
+                    distributedLoad.single_element = new bool[8192];
                     index = 0;
                 }
               } else {
@@ -562,7 +572,7 @@ namespace BenchmarkServer
             // Last Send
             if(index > 0){
               Console.WriteLine("Send LAST Load to Server " + senderThreadId + " " + index);
-              using (var request = new DistributedLoadWriter(senderThreadId, index, distributedLoad.Loads, true))
+              using (var request = new DistributedLoadWriter(senderThreadId, index, distributedLoad.cellid1, distributedLoad.cellid2, distributedLoad.weight, distributedLoad.single_element, false))
               {
                 Global.CloudStorage.DistributedLoadMessageToBenchmarkServer(senderThreadId, request);
               }
@@ -582,19 +592,17 @@ namespace BenchmarkServer
 
         public void addDistributedLoadToServer(DistributedLoad load){
           try{
-            Load this_load;
             for(int i = 0; i < load.num_elements; i++){
               Interlocked.Increment(ref all_threads_recieved_load_edges);
-              this_load = load.Loads[i];
               SimpleGraphNode simpleGraphNode = new SimpleGraphNode();
-              simpleGraphNode.ID = this_load.cellid1;
+              simpleGraphNode.ID = load.cellid1[i];
               simpleGraphNode.Outlinks = new List<long>();
-              simpleGraphNode.Outlinks.Add(this_load.cellid2);
-              if(this_load.weight != -1){
+              simpleGraphNode.Outlinks.Add(load.cellid2[i]);
+              if(load.weight[i] != -1){
                  simpleGraphNode.Weights = new List<float>();
-                 simpleGraphNode.Weights.Add(this_load.weight);
+                 simpleGraphNode.Weights.Add(load.weight[i]);
               }
-              thread_cache[findThread(this_load.cellid1)].Enqueue(simpleGraphNode);
+              thread_cache[findThread(load.cellid1[i])].Enqueue(simpleGraphNode);
             }
             if(load.lastLoad){
                Console.WriteLine("Last Load Arrived!");
