@@ -21,7 +21,7 @@ struct DistributedLoad {
 }
 
 protocol DistributedLoadMessage {
-  Type: Asyn;
+  Type: Syn;
   Request: DistributedLoad;
   Response: void;
 }
