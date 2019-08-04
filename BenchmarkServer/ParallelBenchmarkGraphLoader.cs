@@ -44,6 +44,9 @@ namespace BenchmarkServer
 
         int all_threads_read_lines = 0;
         int all_threads_inserted_edges = 0;
+        int all_threads_equeued_edges = 0;
+        int all_threads_recieved_load_edges = 0;
+        int all_threads_sent_edges = 0;
 
         public ConcurrentQueue<Load>[] load_sender_queue = new ConcurrentQueue<Load>[num_servers];
         public Thread[] load_sender_threads = new Thread[num_servers];
@@ -204,7 +207,7 @@ namespace BenchmarkServer
 
         public void Reporter(){
           while(true){
-            Console.WriteLine("LINES: " + all_threads_read_lines + " INSERTED EDGES: " + all_threads_inserted_edges);
+            Console.WriteLine("LINES: " + all_threads_read_lines + " ENQUEUED EDGES: " + all_threads_equeued_edges + "INSERTED EDGES: " + all_threads_inserted_edges + " LOAD EDGES: " + all_threads_sent_edges + " RECIEVED LOAD EDGES: " + all_threads_recieved_load_edges);
             Thread.Sleep(1000);
           }
         }
@@ -334,6 +337,7 @@ namespace BenchmarkServer
         public SimpleGraphNode[] simpleBufferNode = new SimpleGraphNode[num_threads];
 
         public void AddEdge(long cellid1, long cellid2, float weight, bool single_element, int threadid){
+          Interlocked.Increment(ref all_threads_equeued_edges);
           // Single Element is either undirected inversion or special insert because no outgoing edges of vertex exist
           if(single_element){
             if(cellid2 == -1){
@@ -442,6 +446,7 @@ namespace BenchmarkServer
                   no_action = false;
                   //Console.WriteLine("["+ ThreadNumber +"] Clear Cache of " + dequeued_cellid1);
                   AddSimpleGraphNode(dequeued_node);
+                  Interlocked.Increment(ref all_threads_inserted_edges);
                   set.Add(dequeued_node.ID);
               }
               if(no_action && exponential_delay <= 8192){
@@ -489,6 +494,7 @@ namespace BenchmarkServer
             try{
               if(load_sender_queue[senderThreadId].TryDequeue(out new_load)){
                 distributedLoad.Loads[index] = new_load;
+                Interlocked.Increment(ref all_threads_sent_edges);
                 index++;
                 if(index >= 8192){
                     Console.WriteLine("Send Load to Server " + senderThreadId);
@@ -532,6 +538,7 @@ namespace BenchmarkServer
           try{
             Load this_load;
             for(int i = 0; i < load.num_elements; i++){
+              Interlocked.Increment(ref all_threads_recieved_load_edges);
               this_load = load.Loads[i];
               SimpleGraphNode simpleGraphNode = new SimpleGraphNode();
               simpleGraphNode.ID = this_load.cellid1;
