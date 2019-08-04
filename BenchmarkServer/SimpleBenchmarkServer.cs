@@ -109,6 +109,7 @@ namespace BenchmarkServer
         loader[myID].LoadGraph();
         ranLoader = true;
       } else {
+        Thread.Sleep(5000);
         Console.WriteLine("NAME:" + request.input_vertex_path);
         int myID = Global.MyServerID;
         loader[myID] = new ParallelBenchmarkGraphLoader();
