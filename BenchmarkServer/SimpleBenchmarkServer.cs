@@ -181,31 +181,42 @@ namespace BenchmarkServer
     }
 
     public override void DistributedLoadMessageHandler(DistributedLoadReader request){
-      //Console.WriteLine("Request at:" + request.serverID);
-      if(!isDedicatedLoader){
-          isDedicatedLoader = true;
-          // inititalize local loader
-          Console.WriteLine("Graph Loader for Server is being initialzed");
-          multi_loaders[request.serverID] = new ParallelBenchmarkGraphLoader();
-          // start local consumer threads
-          consumerThread = new Thread(new ThreadStart(LoadConsumerThread));
-          consumerThread.Start();
+      try{
+        //Console.WriteLine("Request at:" + request.serverID);
+        if(!isDedicatedLoader){
+            isDedicatedLoader = true;
+            // inititalize local loader
+            Console.WriteLine("Graph Loader for Server is being initialzed");
+            multi_loaders[request.serverID] = new ParallelBenchmarkGraphLoader();
+            // start local consumer threads
+            consumerThread = new Thread(new ThreadStart(LoadConsumerThread));
+            consumerThread.Start();
+        }
+        consumingQueue.Enqueue(request);
+        //multi_loaders[request.serverID].addDistributedLoadToServer(request);
+        /**
+        As soon as finished flag is set --> Set finish too
+        **/
+      } catch (Exception ex){
+          Console.Error.WriteLine(ex.Message);
+          Console.Error.WriteLine(ex.StackTrace.ToString());
       }
-      consumingQueue.Enqueue(request);
-      //multi_loaders[request.serverID].addDistributedLoadToServer(request);
-      /**
-      As soon as finished flag is set --> Set finish too
-      **/
+
     }
 
     public void LoadConsumerThread(){
         DistributedLoad dload;
         while(true){
-          while(consumingQueue.TryDequeue(out dload)){
-              multi_loaders[dload.serverID].addDistributedLoadToServer(dload);
-          }
-          if(dload.lastLoad){
-            break;
+          try{
+            while(consumingQueue.TryDequeue(out dload)){
+                multi_loaders[dload.serverID].addDistributedLoadToServer(dload);
+            }
+            if(dload.lastLoad){
+              break;
+            }
+          } catch (Exception ex){
+              Console.Error.WriteLine(ex.Message);
+              Console.Error.WriteLine(ex.StackTrace.ToString());
           }
         }
     }
