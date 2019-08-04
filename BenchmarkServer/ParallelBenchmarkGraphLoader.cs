@@ -207,7 +207,7 @@ namespace BenchmarkServer
 
         public void Reporter(){
           while(true){
-            Console.WriteLine("LINES: " + all_threads_read_lines + " ENQUEUED EDGES: " + all_threads_equeued_edges + "INSERTED EDGES: " + all_threads_inserted_edges + " LOAD EDGES: " + all_threads_sent_edges + " RECIEVED LOAD EDGES: " + all_threads_recieved_load_edges);
+            Console.WriteLine("LINES: " + all_threads_read_lines + " ENQUEUED EDGES: " + all_threads_equeued_edges + " INSERTED EDGES: " + all_threads_inserted_edges + " LOAD EDGES: " + all_threads_sent_edges + " RECIEVED LOAD EDGES: " + all_threads_recieved_load_edges);
             Thread.Sleep(1000);
           }
         }
@@ -516,10 +516,12 @@ namespace BenchmarkServer
           }
           try{
             // Last Send
-            Console.WriteLine("Send LAST Load to Server " + senderThreadId);
-            using (var request = new DistributedLoadWriter(senderThreadId, index, distributedLoad.Loads))
-            {
-              Global.CloudStorage.DistributedLoadMessageToBenchmarkServer(senderThreadId, request);
+            if(index > 0){
+              Console.WriteLine("Send LAST Load to Server " + senderThreadId);
+              using (var request = new DistributedLoadWriter(senderThreadId, index, distributedLoad.Loads))
+              {
+                Global.CloudStorage.DistributedLoadMessageToBenchmarkServer(senderThreadId, request);
+              }
             }
           } catch (Exception ex){
             Console.Error.WriteLine(ex.Message);
