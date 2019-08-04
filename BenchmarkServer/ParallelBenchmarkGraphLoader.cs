@@ -270,6 +270,7 @@ namespace BenchmarkServer
                     fc.startReading = read_node;
                     Global.CloudStorage.SaveFinishCommunicator(Int64.MaxValue-(part-1), fc);
                   }
+                  all_starts[part-1] = read_node;
                   bool msg_sent = false;
                   while(part < num_parts && Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-(part)).startReading == -1) {
                     Thread.Sleep(50);
