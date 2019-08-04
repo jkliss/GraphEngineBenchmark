@@ -118,7 +118,7 @@ namespace BenchmarkServer
             for (int i = 1; i <= graph_size; i++)
             {
               //file.WriteLine(mapping1_array[i] + " " + depth[i]);
-              file.WriteLine(mapping1[i] + " " + depth[i]); // hash alternative
+              file.WriteLine(mapping1[i-1] + " " + depth[i]); // hash alternative
             }
           }
         } catch (Exception ex){
