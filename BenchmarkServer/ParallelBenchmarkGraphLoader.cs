@@ -182,6 +182,7 @@ namespace BenchmarkServer
             }
             for(int i = 0; i < num_threads; i++){
               long fcid = (i+(this_server_id*num_threads));
+              Console.WriteLine("TRY TO ACCESS " + fcid);
               using (var send_fc = Global.LocalStorage.UseFinishCommunicator(Int64.MaxValue-fcid))
               {
                   send_fc.FinishedSending = true;
