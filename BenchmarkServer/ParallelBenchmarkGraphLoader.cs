@@ -246,9 +246,9 @@ namespace BenchmarkServer
                     Thread.Sleep(50);
                     Console.WriteLine("["+part+"] WAIT FOR OTHER THREAD");
                   }
-                  if(part < num_parts) Console.WriteLine("["+part+"] UNTIL: " + first_read_node[part]);
                   thread_starts[read_thread] = read_node;
                   first_read_node = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-(part)).startReading;
+                  if(part < num_parts) Console.WriteLine("["+part+"] UNTIL: " + first_read_node);
 
                   //OUTPUT MIGHT BE OBSOLETE
                   using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"out"+part,true))
