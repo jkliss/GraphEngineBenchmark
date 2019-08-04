@@ -250,7 +250,7 @@ namespace BenchmarkServer
         public bool checkAllSenderGlobal(){
           for(int i = 0; i < num_servers; i++){
             for(int j = 0; j < num_threads; j++){
-              long fcid = (i+(this_server_id*num_threads));
+              long fcid = (j+(i*num_threads));
               FinishCommunicator fcr = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-fcid);
               if(fcr.FinishedSending == false){
                  Console.WriteLine("[SENDER] Wait for " + fcid);
