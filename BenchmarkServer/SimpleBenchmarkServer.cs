@@ -45,7 +45,6 @@ namespace BenchmarkServer
 
     //references_to_values
     public ParallelBenchmarkGraphLoader[] loader = new ParallelBenchmarkGraphLoader[2];
-    public ParallelBenchmarkGraphLoader[] multi_loaders = new ParallelBenchmarkGraphLoader[2];
     public bool ranLoader = false;
     public BenchmarkAlgorithm benchmarkAlgorithm = new BenchmarkAlgorithm();
     public bool ranRun = false;
@@ -186,13 +185,13 @@ namespace BenchmarkServer
         if(!isDedicatedLoader){
             isDedicatedLoader = true;
             // inititalize local loader
-            Console.WriteLine("Graph Loader for Server is being initialzed");
-            multi_loaders[request.serverID] = new ParallelBenchmarkGraphLoader();
+            Console.WriteLine("[SERVER] Graph Loader for Server is being initialzed");
             // start local consumer threads
             consumerThread = new Thread(new ThreadStart(LoadConsumerThread));
             consumerThread.Start();
         }
         consumingQueue.Enqueue(request);
+        Console.WriteLine("[SERVER] Request Enqueued");
         //multi_loaders[request.serverID].addDistributedLoadToServer(request);
         /**
         As soon as finished flag is set --> Set finish too
@@ -209,6 +208,7 @@ namespace BenchmarkServer
         while(true){
           try{
             while(consumingQueue.TryDequeue(out dload)){
+                Console.WriteLine("[SERVER] ADD LOAD");
                 multi_loaders[dload.serverID].addDistributedLoadToServer(dload);
             }
             if(dload.lastLoad){
