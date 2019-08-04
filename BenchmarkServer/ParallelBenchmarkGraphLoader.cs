@@ -344,11 +344,13 @@ namespace BenchmarkServer
         public SimpleGraphNode[] simpleBufferNode = new SimpleGraphNode[num_threads];
 
         public void AddEdge(long cellid1, long cellid2, float weight, bool single_element, int threadid){
+          Console.WriteLine("["+threadid+"] AddEdge " + cellid1 + " -> " + cellid2);
           Interlocked.Increment(ref all_threads_equeued_edges);
           // Single Element is either undirected inversion or special insert because no outgoing edges of vertex exist
           if(single_element){
             if(cellid2 == -1){
               // Insert Empty Node
+              Console.WriteLine("["+threadid+"] AddEdge (EMPTY) " + cellid1 + " -> " + cellid2);
               SimpleGraphNode emptyGraphNode = new SimpleGraphNode();
               emptyGraphNode.ID = cellid1;
               emptyGraphNode.Outlinks = new List<long>();
@@ -356,18 +358,20 @@ namespace BenchmarkServer
               thread_cache[threadid].Enqueue(emptyGraphNode);
             } else {
               // Insert Inversion
-              int destination_server = findServer(cellid1);
+              Console.WriteLine("["+threadid+"] AddEdge (INVERSION) " + cellid2 + " -> " + cellid1);
+              int destination_server = findServer(cellid2);
               if(destination_server == this_server_id){
                 SimpleGraphNode invGraphNode = new SimpleGraphNode();
-                invGraphNode.ID = cellid1;
+                invGraphNode.ID = cellid2;
                 invGraphNode.Outlinks = new List<long>();
                 invGraphNode.Weights = new List<float>();
-                invGraphNode.Outlinks.Add(cellid2);
+                invGraphNode.Outlinks.Add(cellid1);
                 if(hasWeight){
                   invGraphNode.Weights.Add(weight);
                 }
                 thread_cache[threadid].Enqueue(invGraphNode);
               } else {
+                  Console.WriteLine("["+threadid+"] AddEdge (to Load) " + cellid2 + " -> " + cellid1);
                   // Add to DistributedLoad
                   Load new_load = new Load();
                   new_load.cellid1 = cellid1;
@@ -379,7 +383,7 @@ namespace BenchmarkServer
             }
           } else {
             if(simpleBufferNode[threadid].ID != cellid1){
-                //Console.WriteLine("Submit " + last_added + " Cache");
+                Console.WriteLine("["+threadid+"] AddEdge (Cache to Queue) for " + cellid1);
                 thread_cache[threadid].Enqueue(simpleBufferNode[threadid]);
                 simpleBufferNode[threadid] = new SimpleGraphNode();
                 simpleBufferNode[threadid].ID = cellid1;
@@ -391,6 +395,7 @@ namespace BenchmarkServer
                   simpleBufferNode[threadid].Weights.Add(weight);
                 }
             } else {
+                Console.WriteLine("["+threadid+"] AddEdge (to BufferNode) " + cellid1 + " -> " + cellid2);
                 simpleBufferNode[threadid].Outlinks.Add(cellid2);
                 if(hasWeight){
                   simpleBufferNode[threadid].Weights.Add(weight);
