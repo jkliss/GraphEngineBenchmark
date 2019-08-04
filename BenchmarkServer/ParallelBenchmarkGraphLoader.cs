@@ -125,6 +125,7 @@ namespace BenchmarkServer
               Global.CloudStorage.SaveFinishCommunicator(Int64.MaxValue-fcid, fc);
             }
           }
+          Console.WriteLine("Preparations for parallel done!");
         }
 
         public void LoadGraph()
@@ -243,7 +244,9 @@ namespace BenchmarkServer
                   }
                   while(part < num_parts && Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-(part)).startReading == -1) {
                     Thread.Sleep(50);
+                    Console.WriteLine("["+part+"] WAIT FOR OTHER THREAD");
                   }
+                  if(part < num_parts) Console.WriteLine("["+part+"] UNTIL: " + first_read_node[part]);
                   thread_starts[read_thread] = read_node;
                   first_read_node = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-(part)).startReading;
 
