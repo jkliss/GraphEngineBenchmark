@@ -270,7 +270,6 @@ namespace BenchmarkServer
                     fc.startReading = read_node;
                     Global.CloudStorage.SaveFinishCommunicator(Int64.MaxValue-(part-1), fc);
                   }
-                  all_starts[part-1] = read_node;
                   bool msg_sent = false;
                   while(part < num_parts && Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-(part)).startReading == -1) {
                     Thread.Sleep(50);
@@ -412,6 +411,12 @@ namespace BenchmarkServer
         }
 
         public int findServer(long cell){
+          while(all_starts[0] == -1){
+            for(int i = num_servers-1; i >= 0; i--){
+              all_starts[i] = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-(num_threads*i)).startReading;
+            }
+            Thread.Sleep(50);
+          }
           for(int i = 1; i < num_servers; i++){
             if(i < all_starts[i]) return i-1;
           }
