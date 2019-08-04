@@ -438,6 +438,7 @@ namespace BenchmarkServer
           int exponential_delay = 1;
           bool no_action = true;
           int ThreadNumber = (int) nthread;
+          Console.WriteLine("Start Consumer Thread " + ThreadNumber);
           SimpleGraphNode dequeued_node;
           while(!finished || thread_cache[ThreadNumber].Count > 0){
             try{
