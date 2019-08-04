@@ -361,14 +361,14 @@ namespace BenchmarkServer
               thread_cache[threadid].Enqueue(emptyGraphNode);
             } else {
               // Insert Inversion
-              int destination_server = findServer(cellid2);
-              Console.WriteLine("[READ"+threadid+"] AddEdge (INVERSION S["+destination_server+"]) " + cellid2 + " -> " + cellid1);
+              int destination_server = findServer(cellid1);
+              Console.WriteLine("[READ"+threadid+"] AddEdge (INVERSION S["+destination_server+"]) " + cellid1 + " -> " + cellid2);
               if(destination_server == this_server_id){
                 SimpleGraphNode invGraphNode = new SimpleGraphNode();
-                invGraphNode.ID = cellid2;
+                invGraphNode.ID = cellid1;
                 invGraphNode.Outlinks = new List<long>();
                 invGraphNode.Weights = new List<float>();
-                invGraphNode.Outlinks.Add(cellid1);
+                invGraphNode.Outlinks.Add(cellid2);
                 if(hasWeight){
                   invGraphNode.Weights.Add(weight);
                 }
