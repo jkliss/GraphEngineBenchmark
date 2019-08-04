@@ -537,10 +537,10 @@ namespace BenchmarkServer
                 index++;
                 if(index >= 8192){
                     Console.WriteLine("Send Load to Server " + senderThreadId);
-                    using (var request = new DistributedLoadWriter(senderThreadId, index, distributedLoad.Loads))
+                    /**using (var request = new DistributedLoadWriter(senderThreadId, index, distributedLoad.Loads))
                     {
                       Global.CloudStorage.DistributedLoadMessageToBenchmarkServer(senderThreadId, request);
-                    }
+                    }**/
                     distributedLoad = new DistributedLoad();
                     distributedLoad.Loads = new Load[8192];
                     index = 0;
@@ -557,10 +557,11 @@ namespace BenchmarkServer
             // Last Send
             if(index > 0){
               Console.WriteLine("Send LAST Load to Server " + senderThreadId);
+              /**
               using (var request = new DistributedLoadWriter(senderThreadId, index, distributedLoad.Loads))
               {
                 Global.CloudStorage.DistributedLoadMessageToBenchmarkServer(senderThreadId, request);
-              }
+              }**/
             }
           } catch (Exception ex){
             Console.Error.WriteLine(ex.Message);
