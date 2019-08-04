@@ -182,7 +182,6 @@ namespace BenchmarkServer
             }
             for(int i = 0; i < num_threads; i++){
               long fcid = (i+(this_server_id*num_threads));
-              Console.WriteLine("[?] Set Sender " + fcid + " to True");
               FinishCommunicator fcr = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-fcid);
               fcr.FinishedSending = true;
               Global.CloudStorage.SaveFinishCommunicator(fcr);
@@ -194,7 +193,8 @@ namespace BenchmarkServer
             }
             Console.WriteLine("----> All Sender Global Finished <-------");
             while(all_sends < num_servers-1){
-              Thread.Sleep(100);
+              Console.WriteLine();
+              Thread.Sleep(1000);
             }
             all_sent = true;
             // CONSUMING THREADS
@@ -605,7 +605,7 @@ namespace BenchmarkServer
           try{
               // Last Send
               Console.WriteLine("Send LAST Load to Server " + senderThreadId + " " + index);
-              using (var request = new DistributedLoadWriter(senderThreadId, this_server_id, index, distributedLoad.cellid1, distributedLoad.cellid2, distributedLoad.weight, distributedLoad.single_element, false))
+              using (var request = new DistributedLoadWriter(senderThreadId, this_server_id, index, distributedLoad.cellid1, distributedLoad.cellid2, distributedLoad.weight, distributedLoad.single_element, true))
               {
                 Global.CloudStorage.DistributedLoadMessageToBenchmarkServer(senderThreadId, request);
               }
