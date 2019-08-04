@@ -168,7 +168,7 @@ namespace BenchmarkServer
             }
             Console.WriteLine("All Reader on this Server Finished");
             for(int i = 0; i < num_servers; i++){
-              if(load_sender_threads[i] != null) load_sender_threads[i].Join();
+              load_sender_threads[i].Join();
             }
             Console.WriteLine("All Sender on this Server Finished");
             for(int i = 0; i < num_threads; i++){

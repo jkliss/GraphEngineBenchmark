@@ -185,28 +185,33 @@ namespace BenchmarkServer
 
     public void CommunicationThread(object serverid){
         int i = (int) serverid;
-        using (var request2 = new ConfigurationMessageWriter(this.graph_name,
-                                                             this.input_vertex_path,
-                                                             this.input_edge_path,
-                                                             this.l_output_path,
-                                                             this.directed,
-                                                             this.weighted,
-                                                             this.e_job_id,
-                                                             this.e_log_path,
-                                                             this.algorithm,
-                                                             this.source_vertex,
-                                                             this.maxIteration,
-                                                             this.damping_factor,
-                                                             this.input_path,
-                                                             this.e_output_path,
-                                                             this.home_dir,
-                                                             this.num_machines,
-                                                             this.num_threads,
-                                                             this.t_job_id,
-                                                             this.t_log_path))
-        {
-          Global.CloudStorage.LoadGraphToBenchmarkServer(i, request2);
+        try{
+          using (var request2 = new ConfigurationMessageWriter(this.graph_name,
+                                                               this.input_vertex_path,
+                                                               this.input_edge_path,
+                                                               this.l_output_path,
+                                                               this.directed,
+                                                               this.weighted,
+                                                               this.e_job_id,
+                                                               this.e_log_path,
+                                                               this.algorithm,
+                                                               this.source_vertex,
+                                                               this.maxIteration,
+                                                               this.damping_factor,
+                                                               this.input_path,
+                                                               this.e_output_path,
+                                                               this.home_dir,
+                                                               this.num_machines,
+                                                               this.num_threads,
+                                                               this.t_job_id,
+                                                               this.t_log_path))
+          {
+            Global.CloudStorage.LoadGraphToBenchmarkServer(i, request2);
+          }
+        } catch (Exception ex) {
+          Console.WriteLine("Server" + i + " died!");
         }
+
     }
 
     public override void FinalizeHandler(ConfigurationMessageReader request){
