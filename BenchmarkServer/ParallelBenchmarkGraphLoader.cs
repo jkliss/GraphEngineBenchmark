@@ -32,7 +32,6 @@ namespace BenchmarkServer
         public bool finished = false;
         public DistributedLoad[] distributedLoads = new DistributedLoad[num_servers];
         public int[] distributed_load_current_index = new int[num_servers];
-        public bool[] serverFinished = new bool[num_servers];
         public int this_server_id;
         public int finish_counter = 0;
 
@@ -41,6 +40,7 @@ namespace BenchmarkServer
         public long[] all_starts = new long[num_servers];
         public long[] thread_starts = new long[num_threads];
         int finished_readers = 0;
+        public bool all_sent = false;
 
         int all_threads_read_lines = 0;
         int all_threads_inserted_edges = 0;
@@ -48,6 +48,7 @@ namespace BenchmarkServer
         int all_threads_recieved_load_edges = 0;
         int all_threads_sent_edges = 0;
 
+        public int all_sends = 0;
         public ConcurrentQueue<Load>[] load_sender_queue = new ConcurrentQueue<Load>[num_servers];
         public Thread[] load_sender_threads = new Thread[num_servers];
 
@@ -117,6 +118,9 @@ namespace BenchmarkServer
               fc.Finished = false;
               fc.LastLoad = false;
               fc.startReading = -1;
+              fc.FinishedReading = false;
+              fc.FinishedSending = false;
+              fc.FinishedConsuming = false;
               long fcid = (j+(i*num_threads));
               //Console.WriteLine("CREATE COMMUNICATION CELL:" + fcid);
               Global.CloudStorage.SaveFinishCommunicator(Int64.MaxValue-fcid, fc);
@@ -127,7 +131,6 @@ namespace BenchmarkServer
 
         public void prepareServer(){
           for(int i = 0; i < num_servers; i++){
-            serverFinished[i] = false;
             all_starts[i] = -1;
             if(this_server_id != i){
               load_sender_queue[i] = new ConcurrentQueue<Load>();
@@ -165,16 +168,39 @@ namespace BenchmarkServer
               read_threads[i-(num_threads*this_server_id)-1] = new Thread(new ParameterizedThreadStart(ParallelReading));
               read_threads[i-(num_threads*this_server_id)-1].Start(i);
             }
+            ////////////////////////// WAITING FOR THREADS ////////////////////////////////////////////
+            // READING THREADS
             for(int i = 0; i < num_threads; i++){
               read_threads[i].Join();
+              long fcid = (i+(this_server_id*num_threads));
+              FinishCommunicator fcr = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-fcid);
+              fcr.FinishedReading = true;
+              Global.CloudStorage.SaveFinishCommunicator(fcr);
             }
             Console.WriteLine("All Reader on this Server Finished");
+            // SENDING THREADS
             for(int i = 0; i < num_servers; i++){
               if(i != this_server_id){
                   load_sender_threads[i].Join();
               }
             }
+            for(int i = 0; i < num_threads; i++){
+              long fcid = (i+(this_server_id*num_threads));
+              FinishCommunicator fcr = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-fcid);
+              fcr.FinishedSending = true;
+              Global.CloudStorage.SaveFinishCommunicator(fcr);
+            }
             Console.WriteLine("All Sender on this Server Finished");
+            // CHECK GLOBAL SENDING THREADS
+            while(!checkAllSenderGlobal()){
+              Thread.Sleep(100);
+            }
+            Console.WriteLine("All Sender Global Finished");
+            while(all_sends < num_servers-1){
+              Thread.Sleep(100);
+            }
+            all_sent = true;
+            // CONSUMING THREADS
             for(int i = 0; i < num_threads; i++){
               threads[i].Join();
             }
@@ -213,7 +239,7 @@ namespace BenchmarkServer
         }
 
         public void Reporter(){
-          Thread.Sleep(10000);
+          Thread.Sleep(5000);
           while(true){
             if(directed){
               Console.WriteLine("LINES: " + all_threads_read_lines + " ENQUEUED EDGES: " + all_threads_equeued_edges + " INSERTED EDGES: " + all_threads_inserted_edges);
@@ -222,6 +248,17 @@ namespace BenchmarkServer
             }
             Thread.Sleep(5000);
           }
+        }
+
+        public bool checkAllSenderGlobal(){
+          for(int i = 0; i < num_servers; i++){
+            for(int j = 0; j < num_threads; j++){
+              long fcid = (i+(this_server_id*num_threads));
+              FinishCommunicator fcr = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-fcid);
+              if(fcr.FinishedSending == false) return false;
+            }
+          }
+          return true;
         }
 
         public void ParallelReading(object par_part)
@@ -295,8 +332,6 @@ namespace BenchmarkServer
                   } else {
                     Console.WriteLine("["+part+"] FROM: " + read_node + " UNTIL: END");
                   }
-
-
                   //OUTPUT MIGHT BE OBSOLETE
                   try
                   {
@@ -483,7 +518,7 @@ namespace BenchmarkServer
           int ThreadNumber = (int) nthread;
           Console.WriteLine("Start Consumer Thread " + ThreadNumber);
           SimpleGraphNode dequeued_node;
-          while(!finished || thread_cache[ThreadNumber].Count > 0){
+          while(!all_sent || thread_cache[ThreadNumber].Count > 0){
             try{
               no_action = true;
               while(thread_cache[ThreadNumber].TryDequeue(out dequeued_node)){
@@ -549,7 +584,7 @@ namespace BenchmarkServer
                 index++;
                 if(index >= 8192){
                     Console.WriteLine("Send Load to Server " + senderThreadId);
-                    using (var request = new DistributedLoadWriter(senderThreadId, index, distributedLoad.cellid1, distributedLoad.cellid2, distributedLoad.weight, distributedLoad.single_element, false))
+                    using (var request = new DistributedLoadWriter(senderThreadId, this_server_id ,index, distributedLoad.cellid1, distributedLoad.cellid2, distributedLoad.weight, distributedLoad.single_element, false))
                     {
                       Global.CloudStorage.DistributedLoadMessageToBenchmarkServer(senderThreadId, request);
                     }
@@ -572,7 +607,7 @@ namespace BenchmarkServer
             // Last Send
             if(index > 0){
               Console.WriteLine("Send LAST Load to Server " + senderThreadId + " " + index);
-              using (var request = new DistributedLoadWriter(senderThreadId, index, distributedLoad.cellid1, distributedLoad.cellid2, distributedLoad.weight, distributedLoad.single_element, false))
+              using (var request = new DistributedLoadWriter(senderThreadId, this_server_id, index, distributedLoad.cellid1, distributedLoad.cellid2, distributedLoad.weight, distributedLoad.single_element, false))
               {
                 Global.CloudStorage.DistributedLoadMessageToBenchmarkServer(senderThreadId, request);
               }
@@ -605,10 +640,10 @@ namespace BenchmarkServer
               thread_cache[findThread(load.cellid1[i])].Enqueue(simpleGraphNode);
             }
             if(load.lastLoad){
-               Console.WriteLine("Last Load Arrived!");
+               Console.WriteLine("Last Load Arrived of Server:" + load.fromServerID);
+               Interlocked.Increment(ref all_sends);
                //finished = true;
                Console.WriteLine("All Threads will be Finished!");
-               serverFinished[this_server_id] = true;
             }
           } catch (Exception ex){
               Console.Error.WriteLine(ex.Message);

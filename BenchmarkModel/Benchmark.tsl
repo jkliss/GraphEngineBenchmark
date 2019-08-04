@@ -11,6 +11,7 @@ struct Load {
 
 struct DistributedLoad {
   int serverID;
+  int fromServerID;
   int num_elements;
   long[8192] cellid1;
   long[8192] cellid2;
