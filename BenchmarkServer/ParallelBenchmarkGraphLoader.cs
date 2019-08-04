@@ -530,7 +530,7 @@ namespace BenchmarkServer
                   AddSimpleGraphNode(dequeued_node);
                   set.Add(dequeued_node.ID);
               }
-              if(no_action && exponential_delay <= 8192){
+              if(no_action && exponential_delay <= 65536){
                 exponential_delay = exponential_delay * 2;
               } else if (!no_action){
                 exponential_delay = 1;
@@ -567,10 +567,10 @@ namespace BenchmarkServer
           int senderThreadId = (int) nthread;
           Load new_load;
           DistributedLoad distributedLoad = new DistributedLoad();
-          distributedLoad.cellid1 = new long[8192];
-          distributedLoad.cellid2 = new long[8192];
-          distributedLoad.weight = new float[8192];
-          distributedLoad.single_element = new bool[8192];
+          distributedLoad.cellid1 = new long[65536];
+          distributedLoad.cellid2 = new long[65536];
+          distributedLoad.weight = new float[65536];
+          distributedLoad.single_element = new bool[65536];
           int index = 0;
           while(finished_readers < num_threads || load_sender_queue[senderThreadId].Count > 0){
             try{
@@ -581,17 +581,17 @@ namespace BenchmarkServer
                 distributedLoad.single_element[index] = new_load.single_element;
                 Interlocked.Increment(ref all_threads_sent_edges);
                 index++;
-                if(index >= 8192){
+                if(index >= 65536){
                     Console.WriteLine("Send Load to Server " + senderThreadId);
                     using (var request = new DistributedLoadWriter(senderThreadId, this_server_id ,index, distributedLoad.cellid1, distributedLoad.cellid2, distributedLoad.weight, distributedLoad.single_element, false))
                     {
                       Global.CloudStorage.DistributedLoadMessageToBenchmarkServer(senderThreadId, request);
                     }
                     distributedLoad = new DistributedLoad();
-                    distributedLoad.cellid1 = new long[8192];
-                    distributedLoad.cellid2 = new long[8192];
-                    distributedLoad.weight = new float[8192];
-                    distributedLoad.single_element = new bool[8192];
+                    distributedLoad.cellid1 = new long[65536];
+                    distributedLoad.cellid2 = new long[65536];
+                    distributedLoad.weight = new float[65536];
+                    distributedLoad.single_element = new bool[65536];
                     index = 0;
                 }
               } else {

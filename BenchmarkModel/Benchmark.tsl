@@ -13,10 +13,10 @@ struct DistributedLoad {
   int serverID;
   int fromServerID;
   int num_elements;
-  long[8192] cellid1;
-  long[8192] cellid2;
-  float[8192] weight;
-  bool[8192] single_element;
+  long[65536] cellid1;
+  long[65536] cellid2;
+  float[65536] weight;
+  bool[65536] single_element;
   bool lastLoad;
 }
 
