@@ -113,11 +113,9 @@ namespace BenchmarkServer
           for(int i = 0; i < num_servers; i++){
             serverFinished[i] = false;
             all_starts[i] = -1;
-            if(i != this_server_id){
-              load_sender_queue[i] = new ConcurrentQueue<Load>();
-              load_sender_threads[i] = new Thread(new ParameterizedThreadStart(SenderThread));
-              load_sender_threads[i].Start(i);
-            }
+            load_sender_queue[i] = new ConcurrentQueue<Load>();
+            load_sender_threads[i] = new Thread(new ParameterizedThreadStart(SenderThread));
+            load_sender_threads[i].Start(i);
             for(int j = 0; j < num_threads+1; j++){
               FinishCommunicator fc = new FinishCommunicator();
               fc.Finished = false;
@@ -162,9 +160,7 @@ namespace BenchmarkServer
             }
             Console.WriteLine("All Reader on this Server Finished");
             for(int i = 0; i < num_servers; i++){
-              if(i != this_server_id){
-                load_sender_threads[i].Join();
-              }
+              load_sender_threads[i].Join();
             }
             Console.WriteLine("All Sender on this Server Finished");
             for(int i = 0; i < num_threads; i++){
@@ -206,13 +202,14 @@ namespace BenchmarkServer
         }
 
         public void Reporter(){
+          Thread.Sleep(5000);
           while(true){
             if(directed){
               Console.WriteLine("LINES: " + all_threads_read_lines + " ENQUEUED EDGES: " + all_threads_equeued_edges + " INSERTED EDGES: " + all_threads_inserted_edges);
             } else {
               Console.WriteLine("LINES: " + all_threads_read_lines + " ENQUEUED EDGES: " + all_threads_equeued_edges + " INSERTED EDGES: " + all_threads_inserted_edges + " LOAD EDGES: " + all_threads_sent_edges + " RECIEVED LOAD EDGES: " + all_threads_recieved_load_edges);
             }
-            Thread.Sleep(1000);
+            Thread.Sleep(2000);
           }
         }
 
