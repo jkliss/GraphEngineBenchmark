@@ -416,6 +416,7 @@ namespace BenchmarkServer
 
         public void AddSimpleGraphNode(SimpleGraphNode new_node){
           Interlocked.Increment(ref all_threads_inserted_edges);
+          Console.WriteLine("?????: " + new_node.ID + " OUT: " + String.Join(",", new_node.Outlinks));
           //Console.WriteLine("Add " + new_node.ID + " to " + new_node.Outlinks.ToString());
           SimpleGraphNode simpleGraphNode;
           if(!Global.LocalStorage.Contains(new_node.ID)){
