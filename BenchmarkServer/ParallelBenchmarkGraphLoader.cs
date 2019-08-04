@@ -195,7 +195,7 @@ namespace BenchmarkServer
             while(!checkAllSenderGlobal()){
               Thread.Sleep(100);
             }
-            Console.WriteLine("All Sender Global Finished");
+            Console.WriteLine("----> All Sender Global Finished <-------");
             while(all_sends < num_servers-1){
               Thread.Sleep(100);
             }
