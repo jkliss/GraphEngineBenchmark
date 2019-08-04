@@ -248,10 +248,15 @@ namespace BenchmarkServer
                   }
                   thread_starts[read_thread] = read_node;
                   first_read_node = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-(part)).startReading;
-                  if(part < num_parts) Console.WriteLine("["+part+"] UNTIL: " + first_read_node);
+                  if(part < num_parts){
+                    Console.WriteLine("["+part+"] FROM: " + read_node + " UNTIL: " + first_read_node);
+                  } else {
+                    Console.WriteLine("["+part+"] FROM: " + read_node + " UNTIL: END");
+                  }
+
 
                   //OUTPUT MIGHT BE OBSOLETE
-                  using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"out"+part,true))
+                  try
                   {
                     do{
                         if(line == null) break;
@@ -290,6 +295,9 @@ namespace BenchmarkServer
                         line = sr.ReadLine();
                     } while (part == num_parts || read_node < first_read_node);
                     current_node = read_node;
+                  } catch (Exception ex){
+                      Console.Error.WriteLine(ex.Message);
+                      Console.Error.WriteLine(ex.StackTrace.ToString());
                   }
               }
               while(first_read_node > mapping1[vertices_position]){
@@ -407,19 +415,24 @@ namespace BenchmarkServer
           int ThreadNumber = (int) nthread;
           SimpleGraphNode dequeued_node;
           while(!finished || thread_cache[ThreadNumber].Count > 0){
-            no_action = true;
-            while(thread_cache[ThreadNumber].TryDequeue(out dequeued_node)){
-                no_action = false;
-                //Console.WriteLine("["+ ThreadNumber +"] Clear Cache of " + dequeued_cellid1);
-                AddSimpleGraphNode(dequeued_node);
-                set.Add(dequeued_node.ID);
+            try{
+              no_action = true;
+              while(thread_cache[ThreadNumber].TryDequeue(out dequeued_node)){
+                  no_action = false;
+                  //Console.WriteLine("["+ ThreadNumber +"] Clear Cache of " + dequeued_cellid1);
+                  AddSimpleGraphNode(dequeued_node);
+                  set.Add(dequeued_node.ID);
+              }
+              if(no_action && exponential_delay <= 8192){
+                exponential_delay = exponential_delay * 2;
+              } else if (!no_action){
+                exponential_delay = 1;
+              }
+              Thread.Sleep(exponential_delay);
+            } catch (Exception ex){
+              Console.Error.WriteLine(ex.Message);
+              Console.Error.WriteLine(ex.StackTrace.ToString());
             }
-            if(no_action && exponential_delay <= 8192){
-              exponential_delay = exponential_delay * 2;
-            } else if (!no_action){
-              exponential_delay = 1;
-            }
-            Thread.Sleep(exponential_delay);
           }
           // transfer all cells to global space
           Console.WriteLine("["+ ThreadNumber +"] Start Saving to Cloud");
@@ -452,21 +465,26 @@ namespace BenchmarkServer
           distributedLoad.Loads = new Load[8192];
           int index = 0;
           while(finished_readers < num_threads || load_sender_queue[senderThreadId].Count > 0){
-            if(load_sender_queue[senderThreadId].TryDequeue(out new_load)){
-              distributedLoad.Loads[index] = new_load;
-              index++;
-              if(index >= 8192){
-                  Console.WriteLine("Send Load to Server " + senderThreadId);
-                  using (var request = new DistributedLoadWriter(this_server_id, index, distributedLoad.Loads))
-                  {
-                    Global.CloudStorage.DistributedLoadMessageToBenchmarkServer(this_server_id, request);
-                  }
-                  distributedLoad = new DistributedLoad();
-                  distributedLoad.Loads = new Load[8192];
-                  index = 0;
+            try{
+              if(load_sender_queue[senderThreadId].TryDequeue(out new_load)){
+                distributedLoad.Loads[index] = new_load;
+                index++;
+                if(index >= 8192){
+                    Console.WriteLine("Send Load to Server " + senderThreadId);
+                    using (var request = new DistributedLoadWriter(this_server_id, index, distributedLoad.Loads))
+                    {
+                      Global.CloudStorage.DistributedLoadMessageToBenchmarkServer(this_server_id, request);
+                    }
+                    distributedLoad = new DistributedLoad();
+                    distributedLoad.Loads = new Load[8192];
+                    index = 0;
+                }
+              } else {
+                Thread.Sleep(50);
               }
-            } else {
-              Thread.Sleep(50);
+            } catch (Exception ex){
+              Console.Error.WriteLine(ex.Message);
+              Console.Error.WriteLine(ex.StackTrace.ToString());
             }
           }
           // Last Send
@@ -477,28 +495,6 @@ namespace BenchmarkServer
           }
         }
 
-        public void startServerConsumerThreads(int serverid){
-          this_server_id = serverid;
-          threads = new Thread[num_threads];
-          for(int i = 0; i < num_threads; i++){
-            Console.WriteLine("[" + i + "] Start Remote Consumer Thread");
-            thread_cache[i] = new ConcurrentQueue<SimpleGraphNode>();
-            threads[i] = new Thread(new ParameterizedThreadStart(ConsumerThread));
-            threads[i].Start(i);
-          }
-        }
-
-        public void startServerConsumerThread(int serverid, int threadid){
-          this_server_id = serverid;
-          if(threads == null){
-            threads = new Thread[num_threads];
-          }
-          Console.WriteLine("[" + threadid + "] Start Remote Consumer Thread");
-          thread_cache[threadid] = new ConcurrentQueue<SimpleGraphNode>();
-          threads[threadid] = new Thread(new ParameterizedThreadStart(ConsumerThread));
-          threads[threadid].Start(threadid);
-        }
-
         public int findThread(long cell){
             for(int i = 1; i < num_threads; i++){
               if(thread_starts[i] > cell) return i-1;
@@ -507,26 +503,31 @@ namespace BenchmarkServer
         }
 
         public void addDistributedLoadToServer(DistributedLoad load){
-           this_server_id = load.serverID;
-           Load this_load;
-           for(int i = 0; i < load.num_elements; i++){
-             this_load = load.Loads[i];
-             SimpleGraphNode simpleGraphNode = new SimpleGraphNode();
-             simpleGraphNode.ID = this_load.cellid1;
-             simpleGraphNode.Outlinks = new List<long>();
-             simpleGraphNode.Outlinks.Add(this_load.cellid2);
-             if(this_load.weight != -1){
-                simpleGraphNode.Weights = new List<float>();
-                simpleGraphNode.Weights.Add(this_load.weight);
-             }
-             thread_cache[findThread(this_load.cellid1)].Enqueue(simpleGraphNode);
-           }
-           if(load.lastLoad){
-              Console.WriteLine("Last Load Arrived!");
-              finished = true;
-              Console.WriteLine("All Threads will be Finished!");
-              serverFinished[this_server_id] = true;
-           }
+          try{
+            this_server_id = load.serverID;
+            Load this_load;
+            for(int i = 0; i < load.num_elements; i++){
+              this_load = load.Loads[i];
+              SimpleGraphNode simpleGraphNode = new SimpleGraphNode();
+              simpleGraphNode.ID = this_load.cellid1;
+              simpleGraphNode.Outlinks = new List<long>();
+              simpleGraphNode.Outlinks.Add(this_load.cellid2);
+              if(this_load.weight != -1){
+                 simpleGraphNode.Weights = new List<float>();
+                 simpleGraphNode.Weights.Add(this_load.weight);
+              }
+              thread_cache[findThread(this_load.cellid1)].Enqueue(simpleGraphNode);
+            }
+            if(load.lastLoad){
+               Console.WriteLine("Last Load Arrived!");
+               finished = true;
+               Console.WriteLine("All Threads will be Finished!");
+               serverFinished[this_server_id] = true;
+            }
+          } catch (Exception ex){
+              Console.Error.WriteLine(ex.Message);
+              Console.Error.WriteLine(ex.StackTrace.ToString());
+          }
         }
 
         public void dumpLoadCells(){
