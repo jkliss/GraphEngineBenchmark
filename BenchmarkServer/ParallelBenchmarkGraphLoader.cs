@@ -47,6 +47,7 @@ namespace BenchmarkServer
         int all_threads_equeued_edges = 0;
         int all_threads_recieved_load_edges = 0;
         int all_threads_sent_edges = 0;
+        int all_threads_equeued_load_edges = 0;
 
         public int all_sends = 0;
         public ConcurrentQueue<Load>[] load_sender_queue = new ConcurrentQueue<Load>[num_servers];
@@ -244,7 +245,7 @@ namespace BenchmarkServer
             if(directed){
               Console.WriteLine("LINES: " + all_threads_read_lines + " ENQUEUED EDGES: " + all_threads_equeued_edges + " INSERTED NODES: " + all_threads_inserted_edges);
             } else {
-              Console.WriteLine("LINES: " + all_threads_read_lines + " ENQUEUED EDGES: " + all_threads_equeued_edges + " INSERTED NODES: " + all_threads_inserted_edges + " LOAD EDGES: " + all_threads_sent_edges + " RECIEVED LOAD EDGES: " + all_threads_recieved_load_edges);
+              Console.WriteLine("LINES: " + all_threads_read_lines + " ENQUEUED EDGES: " + all_threads_equeued_edges + " INSERTED NODES: " + all_threads_inserted_edges + " QUEUELOAD EDGES: " + all_threads_equeued_load_edges + " LOAD EDGES: " + all_threads_sent_edges + " RECIEVED LOAD EDGES: " + all_threads_recieved_load_edges);
             }
             Thread.Sleep(5000);
           }
@@ -430,6 +431,7 @@ namespace BenchmarkServer
                   new_load.cellid2 = cellid2;
                   new_load.weight = weight;
                   new_load.single_element = single_element;
+                  Interlocked.Increment(ref all_threads_equeued_load_edges);
                   load_sender_queue[destination_server].Enqueue(new_load);
               }
             }
