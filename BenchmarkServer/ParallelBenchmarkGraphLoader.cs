@@ -394,13 +394,13 @@ namespace BenchmarkServer
         public SimpleGraphNode[] simpleBufferNode = new SimpleGraphNode[num_threads];
 
         public void AddEdge(long cellid1, long cellid2, float weight, bool single_element, int threadid){
-          Console.WriteLine("[READ"+threadid+"] AddEdge " + cellid1 + " -> " + cellid2);
+          //Console.WriteLine("[READ"+threadid+"] AddEdge " + cellid1 + " -> " + cellid2);
           Interlocked.Increment(ref all_threads_equeued_edges);
           // Single Element is either undirected inversion or special insert because no outgoing edges of vertex exist
           if(single_element){
             if(cellid2 == -1){
               // Insert Empty Node
-              Console.WriteLine("[READ"+threadid+"] AddEdge (EMPTY) " + cellid1 + " -> " + cellid2);
+              //Console.WriteLine("[READ"+threadid+"] AddEdge (EMPTY) " + cellid1 + " -> " + cellid2);
               SimpleGraphNode emptyGraphNode = new SimpleGraphNode();
               emptyGraphNode.ID = cellid1;
               emptyGraphNode.Outlinks = new List<long>();
@@ -409,9 +409,9 @@ namespace BenchmarkServer
             } else {
               // Insert Inversion
               int destination_server = findServer(cellid1);
-              Console.WriteLine("[READ"+threadid+"] AddEdge{"+this_server_id+"} (INVERSION S["+destination_server+"]) " + cellid1 + " -> " + cellid2);
+              //Console.WriteLine("[READ"+threadid+"] AddEdge{"+this_server_id+"} (INVERSION S["+destination_server+"]) " + cellid1 + " -> " + cellid2);
               if(destination_server == this_server_id){
-                Console.WriteLine("[READ"+threadid+"] AddEdge (INVERSION LOCAL) " + cellid1 + " -> " + cellid2);
+                //Console.WriteLine("[READ"+threadid+"] AddEdge (INVERSION LOCAL) " + cellid1 + " -> " + cellid2);
                 SimpleGraphNode invGraphNode = new SimpleGraphNode();
                 invGraphNode.ID = cellid1;
                 invGraphNode.Outlinks = new List<long>();
@@ -422,7 +422,7 @@ namespace BenchmarkServer
                 }
                 thread_cache[threadid].Enqueue(invGraphNode);
               } else {
-                  Console.WriteLine("[READ"+threadid+"] AddEdge (to Load) " + cellid2 + " -> " + cellid1);
+                  //Console.WriteLine("[READ"+threadid+"] AddEdge (to Load) " + cellid2 + " -> " + cellid1);
                   // Add to DistributedLoad
                   Load new_load = new Load();
                   new_load.cellid1 = cellid1;
@@ -435,10 +435,10 @@ namespace BenchmarkServer
           } else {
             if(simpleBufferNode[threadid].ID != cellid1){
                 if(simpleBufferNode[threadid].ID > 0){
-                  Console.WriteLine("[READ"+threadid+"] AddEdge (Cache to Queue) for " + simpleBufferNode[threadid].ID + " OUT: " + String.Join(",", simpleBufferNode[threadid].Outlinks));
+                  //Console.WriteLine("[READ"+threadid+"] AddEdge (Cache to Queue) for " + simpleBufferNode[threadid].ID + " OUT: " + String.Join(",", simpleBufferNode[threadid].Outlinks));
                   thread_cache[threadid].Enqueue(simpleBufferNode[threadid]);
                 }
-                Console.WriteLine("[READ"+threadid+"] AddEdge (to BufferNode) " + cellid1 + " -> " + cellid2);
+                //Console.WriteLine("[READ"+threadid+"] AddEdge (to BufferNode) " + cellid1 + " -> " + cellid2);
                 simpleBufferNode[threadid] = new SimpleGraphNode();
                 simpleBufferNode[threadid].ID = cellid1;
                 simpleBufferNode[threadid].Outlinks = new List<long>();
@@ -449,7 +449,7 @@ namespace BenchmarkServer
                   simpleBufferNode[threadid].Weights.Add(weight);
                 }
             } else {
-                Console.WriteLine("[READ"+threadid+"] AddEdge (to BufferNode) " + cellid1 + " -> " + cellid2);
+                //Console.WriteLine("[READ"+threadid+"] AddEdge (to BufferNode) " + cellid1 + " -> " + cellid2);
                 simpleBufferNode[threadid].Outlinks.Add(cellid2);
                 if(hasWeight){
                   simpleBufferNode[threadid].Weights.Add(weight);
@@ -467,9 +467,9 @@ namespace BenchmarkServer
                   Thread.Sleep(50);
                 }
               }
-              for(int i = 0; i < num_servers; i++){
+              /**for(int i = 0; i < num_servers; i++){
                 Console.WriteLine("LOWER BOUND SERVER" + i + " " + all_starts[i]);
-              }
+              }**/
             }
             for(int i = 0; i < num_servers; i++){
               if(cell < all_starts[i]) return i-1;
@@ -525,8 +525,7 @@ namespace BenchmarkServer
               no_action = true;
               while(thread_cache[ThreadNumber].TryDequeue(out dequeued_node)){
                   no_action = false;
-                  Console.WriteLine("[CONSUMER"+ThreadNumber+"] Add Node: " + dequeued_node.ID + " OUT: " + String.Join(",", dequeued_node.Outlinks));
-                  //Console.WriteLine("["+ ThreadNumber +"] Clear Cache of " + dequeued_cellid1);
+                  //Console.WriteLine("[CONSUMER"+ThreadNumber+"] Add Node: " + dequeued_node.ID + " OUT: " + String.Join(",", dequeued_node.Outlinks));
                   AddSimpleGraphNode(dequeued_node);
                   set.Add(dequeued_node.ID);
               }
