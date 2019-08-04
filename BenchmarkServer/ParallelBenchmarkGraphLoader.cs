@@ -175,7 +175,6 @@ namespace BenchmarkServer
               threads[i].Join();
             }
             Console.WriteLine("All Consumer on this Server Finished");
-
             for(int i = 0; i < num_servers; i++){
               for(int j = 0; j < num_threads; j++){
                   long cellid_comm = (j+(i*num_threads));
