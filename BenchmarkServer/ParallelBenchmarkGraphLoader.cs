@@ -186,6 +186,7 @@ namespace BenchmarkServer
               FinishCommunicator fcr = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-fcid);
               fcr.FinishedSending = true;
               fcr.FinishedReading = true;
+              fcr.Finished = true;
               Global.CloudStorage.SaveFinishCommunicator(fcr);
             }
             Console.WriteLine("All Sender on this Server Finished");
@@ -549,10 +550,10 @@ namespace BenchmarkServer
           long cellid_comm = (ThreadNumber+(this_server_id*num_threads));
           Console.WriteLine("["+ ThreadNumber +"] setting finished to " + cellid_comm);
           //FinishCommunicator fc = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-cellid_comm);
-          FinishCommunicator fc = new FinishCommunicator();
-          fc.Finished = true;
-          fc.LastLoad = true;
-          Global.CloudStorage.SaveFinishCommunicator(Int64.MaxValue-cellid_comm, fc);
+          //FinishCommunicator fc = new FinishCommunicator();
+          //fc.Finished = true;
+          //fc.LastLoad = true;
+          //Global.CloudStorage.SaveFinishCommunicator(Int64.MaxValue-cellid_comm, fc);
           Interlocked.Increment(ref finish_counter);
           if(this_server_id != 0 && finish_counter == num_threads){
             Console.WriteLine("Last Thread on Server Finished!");
