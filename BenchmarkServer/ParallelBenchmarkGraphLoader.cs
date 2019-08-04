@@ -384,7 +384,7 @@ namespace BenchmarkServer
           } else {
             if(simpleBufferNode[threadid].ID != cellid1){
                 if(simpleBufferNode[threadid].ID > 0){
-                  Console.WriteLine("[READ"+threadid+"] AddEdge (Cache to Queue) for " + cellid1 + " OUT: " + String.Join(",", simpleBufferNode[threadid].Outlinks));
+                  Console.WriteLine("[READ"+threadid+"] AddEdge (Cache to Queue) for " + simpleBufferNode[threadid].ID + " OUT: " + String.Join(",", simpleBufferNode[threadid].Outlinks));
                   thread_cache[threadid].Enqueue(simpleBufferNode[threadid]);
                 }
                 Console.WriteLine("[READ"+threadid+"] AddEdge (to BufferNode) " + cellid1 + " -> " + cellid2);
@@ -460,7 +460,7 @@ namespace BenchmarkServer
               no_action = true;
               while(thread_cache[ThreadNumber].TryDequeue(out dequeued_node)){
                   no_action = false;
-                  Console.WriteLine("[CONSUMER"+ThreadNumber+"] Add Node: " + dequeued_node.ID);
+                  Console.WriteLine("[CONSUMER"+ThreadNumber+"] Add Node: " + dequeued_node.ID + " OUT: " + String.Join(",", dequeued_node.Outlinks));
                   //Console.WriteLine("["+ ThreadNumber +"] Clear Cache of " + dequeued_cellid1);
                   AddSimpleGraphNode(dequeued_node);
                   set.Add(dequeued_node.ID);
