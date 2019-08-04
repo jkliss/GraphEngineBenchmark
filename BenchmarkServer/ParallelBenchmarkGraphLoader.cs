@@ -560,11 +560,6 @@ namespace BenchmarkServer
           if(finish_counter == num_threads){
             Console.WriteLine("Last Thread on Server Finished!");
             // reset for next load run
-            for(int i = 0; i < num_threads; i++){
-              threads[i] = null;
-            }
-            finished = false;
-            finish_counter = 0;
           }
         }
 
