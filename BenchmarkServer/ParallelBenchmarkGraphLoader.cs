@@ -25,8 +25,8 @@ namespace BenchmarkServer
         public bool hasWeight = false;
         public bool directed = false;
         //public static int num_threads = Environment.ProcessorCount;
-        public static int num_threads = 3;
-        public static int num_servers = 2;
+        public static int num_threads = 1;
+        public static int num_servers = 1;
         public Thread[] threads = new Thread[num_threads];
         public ConcurrentQueue<SimpleGraphNode>[] thread_cache = new ConcurrentQueue<SimpleGraphNode>[num_threads];
         public bool finished = false;
