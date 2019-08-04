@@ -51,6 +51,7 @@ namespace BenchmarkServer
 
     public bool isDedicatedLoader = false;
     public Thread consumerThread;
+    public Thread communicationThread;
     public ConcurrentQueue<DistributedLoad> consumingQueue = new ConcurrentQueue<DistributedLoad>();
     public int finishCounter = 0;
     public ConcurrentQueue<bool> msgQueue = new ConcurrentQueue<bool>();
@@ -74,56 +75,22 @@ namespace BenchmarkServer
       consumerThread = new Thread(new ThreadStart(LoadConsumerThread));
       consumerThread.Start();
       if(Global.MyServerID == 0){
-        Console.WriteLine("NAME:" + this.input_vertex_path);
-        int myID = Global.MyServerID;
-        loader[myID] = new ParallelBenchmarkGraphLoader();
-        Console.WriteLine("Started Load");
-        loader[myID].setPath(this.input_edge_path);
-        loader[myID].vpath = this.input_vertex_path;
-        loader[myID].hasWeight = this.weighted;
-        loader[myID].directed = directed;
-        loader[myID].loadVertices();
         for(int i = 1; i < Global.ServerCount; i++){
-          using (var request2 = new ConfigurationMessageWriter(this.graph_name,
-                                                               this.input_vertex_path,
-                                                               this.input_edge_path,
-                                                               this.l_output_path,
-                                                               this.directed,
-                                                               this.weighted,
-                                                               this.e_job_id,
-                                                               this.e_log_path,
-                                                               this.algorithm,
-                                                               this.source_vertex,
-                                                               this.maxIteration,
-                                                               this.damping_factor,
-                                                               this.input_path,
-                                                               this.e_output_path,
-                                                               this.home_dir,
-                                                               this.num_machines,
-                                                               this.num_threads,
-                                                               this.t_job_id,
-                                                               this.t_log_path))
-          {
-            Global.CloudStorage.LoadGraphToBenchmarkServer(i, request2);
-          }
+          communicationThread = new Thread(new ParameterizedThreadStart(CommunicationThread));
+          communicationThread.Start();
         }
-        loader[myID].LoadGraph();
-        ranLoader = true;
-      } else {
-        Thread.Sleep(5000);
-        Console.WriteLine("NAME:" + request.input_vertex_path);
-        int myID = Global.MyServerID;
-        loader[myID] = new ParallelBenchmarkGraphLoader();
-        Console.WriteLine("Started Load");
-        loader[myID].setPath(request.input_edge_path);
-        loader[myID].vpath = request.input_vertex_path;
-        loader[myID].hasWeight = request.weighted;
-        loader[myID].directed = directed;
-        loader[myID].loadVertices();
-        loader[myID].LoadGraph();
-        ranLoader = true;
       }
-
+      Console.WriteLine("NAME:" + this.input_vertex_path);
+      int myID = Global.MyServerID;
+      loader[myID] = new ParallelBenchmarkGraphLoader();
+      Console.WriteLine("Started Load");
+      loader[myID].setPath(this.input_edge_path);
+      loader[myID].vpath = this.input_vertex_path;
+      loader[myID].hasWeight = this.weighted;
+      loader[myID].directed = directed;
+      loader[myID].loadVertices();
+      loader[myID].LoadGraph();
+      ranLoader = true;
       //loader.dumpLoadCells();
     }
 
@@ -213,6 +180,32 @@ namespace BenchmarkServer
               Console.Error.WriteLine(ex.Message);
               Console.Error.WriteLine(ex.StackTrace.ToString());
           }
+        }
+    }
+
+    public void CommunicationThread(object serverid){
+        int i = (int) serverid;
+        using (var request2 = new ConfigurationMessageWriter(this.graph_name,
+                                                             this.input_vertex_path,
+                                                             this.input_edge_path,
+                                                             this.l_output_path,
+                                                             this.directed,
+                                                             this.weighted,
+                                                             this.e_job_id,
+                                                             this.e_log_path,
+                                                             this.algorithm,
+                                                             this.source_vertex,
+                                                             this.maxIteration,
+                                                             this.damping_factor,
+                                                             this.input_path,
+                                                             this.e_output_path,
+                                                             this.home_dir,
+                                                             this.num_machines,
+                                                             this.num_threads,
+                                                             this.t_job_id,
+                                                             this.t_log_path))
+        {
+          Global.CloudStorage.LoadGraphToBenchmarkServer(i, request2);
         }
     }
 
