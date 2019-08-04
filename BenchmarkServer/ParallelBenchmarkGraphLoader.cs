@@ -545,7 +545,7 @@ namespace BenchmarkServer
             }
             if(load.lastLoad){
                Console.WriteLine("Last Load Arrived!");
-               finished = true;
+               //finished = true;
                Console.WriteLine("All Threads will be Finished!");
                serverFinished[this_server_id] = true;
             }
