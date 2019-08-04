@@ -153,15 +153,11 @@ namespace BenchmarkServer
             var watch = System.Diagnostics.Stopwatch.StartNew();
             Console.WriteLine("Read File at: {0}", path);
             // Create Worker Threads
-
             threads = new Thread[num_threads];
             for(int i = 0; i < num_threads; i++){
               threads[i] = new Thread(new ParameterizedThreadStart(ConsumerThread));
               thread_cache[i] = new ConcurrentQueue<SimpleGraphNode>();
               threads[i].Start(i);
-            }
-            for(int i = 0; i < num_servers; i++){
-              //distributed_load_current_index[i] = 0;
             }
             for(int i = num_threads+(num_threads*this_server_id); i >= (num_threads*this_server_id)+1; i--){
               Console.WriteLine("Start " + i);
@@ -186,6 +182,7 @@ namespace BenchmarkServer
             }
             for(int i = 0; i < num_threads; i++){
               long fcid = (i+(this_server_id*num_threads));
+              Console.WriteLine("[?] Set Sender " + fcid + " to True");
               FinishCommunicator fcr = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-fcid);
               fcr.FinishedSending = true;
               Global.CloudStorage.SaveFinishCommunicator(fcr);
