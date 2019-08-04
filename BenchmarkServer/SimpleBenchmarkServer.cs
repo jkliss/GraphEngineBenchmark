@@ -152,8 +152,8 @@ namespace BenchmarkServer
     public override void DistributedLoadMessageHandler(DistributedLoadReader request){
       try{
         //Console.WriteLine("Request at:" + request.serverID);
-        consumingQueue.Enqueue(request);
         Console.WriteLine("[SERVER] Request Enqueued");
+        consumingQueue.Enqueue(request);
         //multi_loaders[request.serverID].addDistributedLoadToServer(request);
         /**
         As soon as finished flag is set --> Set finish too
