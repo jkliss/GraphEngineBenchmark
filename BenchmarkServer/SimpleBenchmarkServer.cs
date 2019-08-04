@@ -155,10 +155,13 @@ namespace BenchmarkServer
         Console.WriteLine("SEPARATE ALL");
         DistributedLoad dload = new DistributedLoad();
         dload.serverID = request.serverID;
-        Console.WriteLine("ID SENT");
+        Console.WriteLine("ID SENT" + dload.serverID);
         dload.num_elements = request.num_elements;
-        Console.WriteLine("NUM ELEMENTS SENT");
-        dload.Loads = request.Loads;
+        Console.WriteLine("NUM ELEMENTS SENT" + dload.num_elements);
+        dload.Loads = new Load[dload.num_elements];
+        for(int i = 0; i < dload.num_elements; i++){
+          dload.Loads[i] = request.Loads[i];
+        }
         Console.WriteLine("LOADS SENT");
         dload.lastLoad = request.lastLoad;
         Console.WriteLine("[SERVER] Try Request Enqueued");
