@@ -155,6 +155,7 @@ namespace BenchmarkServer
         Console.WriteLine("SEPARATE ALL");
         DistributedLoad dload = new DistributedLoad();
         dload.serverID = request.serverID;
+        Console.WriteLine("ID SENT");
         dload.num_elements = request.num_elements;
         dload.Loads = request.Loads;
         dload.lastLoad = request.lastLoad;
