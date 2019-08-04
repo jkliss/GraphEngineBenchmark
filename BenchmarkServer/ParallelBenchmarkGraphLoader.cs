@@ -149,6 +149,33 @@ namespace BenchmarkServer
             for(int i = 0; i < num_threads; i++){
               read_threads[i].Join();
             }
+            for(int i = 0; i < num_servers; i++){
+              for(int j = 0; j < num_threads; j++){
+                  long cellid_comm = (j+(i*num_threads));
+                  Console.WriteLine("Test ThreadCell: " + cellid_comm);
+                  FinishCommunicator fcr = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-cellid_comm);
+                  bool message_sent = false;
+                  while(!fcr.Finished){
+                      if(!message_sent){
+                        Console.WriteLine("Wait for Cell: " + cellid_comm);
+                        message_sent = true;
+                      }
+                      Thread.Sleep(60);
+                      fcr = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-cellid_comm);
+                  }
+              }
+              Console.WriteLine("Remote Server " + i + " finished");
+            }
+            watch.Stop();
+            vertex_queue = null;
+            var elapsedMs = watch.ElapsedMilliseconds;
+            elapsedTime_lastLoadEdge = elapsedMs;
+            Console.WriteLine("----------------------------------");
+            Console.WriteLine("Runtime: {0} (ms)", elapsedTime_lastLoadEdge);
+            Console.WriteLine("##################################");
+            Console.WriteLine("#######  All edges loaded  #######");
+            Console.WriteLine("##################################");
+            if(this_server_id == 0)  Global.LocalStorage.SaveStorage();
         }
 
         public void ParallelReading(object par_part)
@@ -247,6 +274,11 @@ namespace BenchmarkServer
                     } while (part == num_parts || read_node < first_read_node);
                     current_node = read_node;
                   }
+              }
+              while(first_read_node > mapping1[vertices_position]){
+                long insertable_vertex = mapping1[vertices_position++];
+                //Console.WriteLine("Special Insert of " + insertable_vertex + " at " + mapping2[insertable_vertex]);
+                AddEdge(mapping2[insertable_vertex], -1, -1, true, read_thread);
               }
               Console.WriteLine("Finish Read Thread " + (part-1));
               Interlocked.Increment(ref finished_readers);
@@ -406,6 +438,7 @@ namespace BenchmarkServer
               distributedLoad.Loads[index] = new_load;
               index++;
               if(index >= 8192){
+                  Console.WriteLine("Send Load to Server " + senderThreadId);
                   using (var request = new DistributedLoadWriter(this_server_id, index, distributedLoad.Loads))
                   {
                     Global.CloudStorage.DistributedLoadMessageToBenchmarkServer(this_server_id, request);
@@ -419,10 +452,12 @@ namespace BenchmarkServer
             }
           }
           // Last Send
+          Console.WriteLine("Send LAST Load to Server " + senderThreadId);
           using (var request = new DistributedLoadWriter(this_server_id, index, distributedLoad.Loads))
           {
             Global.CloudStorage.DistributedLoadMessageToBenchmarkServer(this_server_id, request);
           }
+          finished = true;
         }
 
         public void startServerConsumerThreads(int serverid){
