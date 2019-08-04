@@ -241,8 +241,7 @@ namespace BenchmarkServer
           while(true){
             if(directed){
               if(finished){
-                finished = false;
-                return;
+                break;
               }
               Console.WriteLine("LINES: " + all_threads_read_lines + " ENQUEUED EDGES: " + all_threads_equeued_edges + " INSERTED EDGES: " + all_threads_inserted_edges);
             } else {
