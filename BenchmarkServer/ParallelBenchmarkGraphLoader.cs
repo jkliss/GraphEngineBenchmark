@@ -235,6 +235,12 @@ namespace BenchmarkServer
                     sr.ReadLine();
                     // READ FIRST LINE
                     line = sr.ReadLine();
+                    if(line == null){
+                      FinishCommunicator fc = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-(part-1));
+                      fc.startReading = Int64.MaxValue;
+                      Global.CloudStorage.SaveFinishCommunicator(Int64.MaxValue-(part-1), fc);
+                      return;
+                    }
                     fields = line.Split(' ');
                     read_node = long.Parse(fields[0]);
                     current_node = read_node;
