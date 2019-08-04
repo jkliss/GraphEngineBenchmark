@@ -399,7 +399,7 @@ namespace BenchmarkServer
           int senderThreadId = (int) nthread;
           Load new_load;
           DistributedLoad distributedLoad = new DistributedLoad();
-          distributedLoad.Loads = new List<Loads>();
+          distributedLoad.Loads = new Load[8192];
           int index = 0;
           while(finished_readers < num_threads || load_sender_queue[senderThreadId].Count > 0){
             if(load_sender_queue[senderThreadId].TryDequeue(out new_load)){
@@ -411,7 +411,7 @@ namespace BenchmarkServer
                     Global.CloudStorage.DistributedLoadMessageToBenchmarkServer(this_server_id, request);
                   }
                   distributedLoad = new DistributedLoad();
-                  distributedLoad.Loads = new List<Loads>();
+                  distributedLoad.Loads = new Load[8192];
                   index = 0;
               }
             } else {
