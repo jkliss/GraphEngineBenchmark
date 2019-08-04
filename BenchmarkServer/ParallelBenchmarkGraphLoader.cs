@@ -242,9 +242,9 @@ namespace BenchmarkServer
           Thread.Sleep(5000);
           while(!finished){
             if(directed){
-              Console.WriteLine("LINES: " + all_threads_read_lines + " ENQUEUED EDGES: " + all_threads_equeued_edges + " INSERTED EDGES: " + all_threads_inserted_edges);
+              Console.WriteLine("LINES: " + all_threads_read_lines + " ENQUEUED EDGES: " + all_threads_equeued_edges + " INSERTED NODES: " + all_threads_inserted_edges);
             } else {
-              Console.WriteLine("LINES: " + all_threads_read_lines + " ENQUEUED EDGES: " + all_threads_equeued_edges + " INSERTED EDGES: " + all_threads_inserted_edges + " LOAD EDGES: " + all_threads_sent_edges + " RECIEVED LOAD EDGES: " + all_threads_recieved_load_edges);
+              Console.WriteLine("LINES: " + all_threads_read_lines + " ENQUEUED EDGES: " + all_threads_equeued_edges + " INSERTED NODES: " + all_threads_inserted_edges + " LOAD EDGES: " + all_threads_sent_edges + " RECIEVED LOAD EDGES: " + all_threads_recieved_load_edges);
             }
             Thread.Sleep(5000);
           }
@@ -468,9 +468,9 @@ namespace BenchmarkServer
                   Thread.Sleep(50);
                 }
               }
-              /**for(int i = 0; i < num_servers; i++){
+              for(int i = 0; i < num_servers; i++){
                 Console.WriteLine("LOWER BOUND SERVER" + i + " " + all_starts[i]);
-              }**/
+              }
             }
             for(int i = 0; i < num_servers; i++){
               if(cell < all_starts[i]) return i-1;
