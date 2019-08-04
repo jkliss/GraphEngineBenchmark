@@ -131,7 +131,6 @@ namespace BenchmarkServer
         public void LoadGraph()
         {
           try{
-
             Thread reporter_thread = new Thread(new ThreadStart(Reporter));
             reporter_thread.Start();
             num_servers = Global.ServerCount;
@@ -169,7 +168,7 @@ namespace BenchmarkServer
               threads[i].Join();
             }
             Console.WriteLine("All Consumer on this Server Finished");
-            
+
             for(int i = 0; i < num_servers; i++){
               for(int j = 0; j < num_threads; j++){
                   long cellid_comm = (j+(i*num_threads));
@@ -493,9 +492,9 @@ namespace BenchmarkServer
                 index++;
                 if(index >= 8192){
                     Console.WriteLine("Send Load to Server " + senderThreadId);
-                    using (var request = new DistributedLoadWriter(this_server_id, index, distributedLoad.Loads))
+                    using (var request = new DistributedLoadWriter(senderThreadId, index, distributedLoad.Loads))
                     {
-                      Global.CloudStorage.DistributedLoadMessageToBenchmarkServer(this_server_id, request);
+                      Global.CloudStorage.DistributedLoadMessageToBenchmarkServer(senderThreadId, request);
                     }
                     distributedLoad = new DistributedLoad();
                     distributedLoad.Loads = new Load[8192];
@@ -512,9 +511,9 @@ namespace BenchmarkServer
           try{
             // Last Send
             Console.WriteLine("Send LAST Load to Server " + senderThreadId);
-            using (var request = new DistributedLoadWriter(this_server_id, index, distributedLoad.Loads))
+            using (var request = new DistributedLoadWriter(senderThreadId, index, distributedLoad.Loads))
             {
-              Global.CloudStorage.DistributedLoadMessageToBenchmarkServer(this_server_id, request);
+              Global.CloudStorage.DistributedLoadMessageToBenchmarkServer(senderThreadId, request);
             }
           } catch (Exception ex){
             Console.Error.WriteLine(ex.Message);
@@ -531,7 +530,6 @@ namespace BenchmarkServer
 
         public void addDistributedLoadToServer(DistributedLoad load){
           try{
-            this_server_id = load.serverID;
             Load this_load;
             for(int i = 0; i < load.num_elements; i++){
               this_load = load.Loads[i];
