@@ -327,7 +327,7 @@ namespace BenchmarkServer
                         line = sr.ReadLine();
                     } while (part == num_parts || read_node < first_read_node);
                     // DUMMY NODE TO CLEAR BUFFER NODE
-                    AddEdge(1, 1, -1, false, read_thread);
+                    if(part == num_parts)  AddEdge(1, 1, -1, false, read_thread);
                     current_node = read_node;
                   } catch (Exception ex){
                       Console.Error.WriteLine(ex.Message);
