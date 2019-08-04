@@ -114,6 +114,7 @@ namespace BenchmarkServer
             serverFinished[i] = false;
             all_starts[i] = -1;
             load_sender_queue[i] = new ConcurrentQueue<Load>();
+            Console.WriteLine("START LOAD SENDER " + i);
             load_sender_threads[i] = new Thread(new ParameterizedThreadStart(SenderThread));
             load_sender_threads[i].Start(i);
             for(int j = 0; j < num_threads+1; j++){
@@ -160,6 +161,7 @@ namespace BenchmarkServer
             }
             Console.WriteLine("All Reader on this Server Finished");
             for(int i = 0; i < num_servers; i++){
+              Console.WriteLine("WAIT FOR LOAD SENDER " + i);
               load_sender_threads[i].Join();
             }
             Console.WriteLine("All Sender on this Server Finished");
@@ -202,14 +204,14 @@ namespace BenchmarkServer
         }
 
         public void Reporter(){
-          Thread.Sleep(5000);
+          Thread.Sleep(10000);
           while(true){
             if(directed){
               Console.WriteLine("LINES: " + all_threads_read_lines + " ENQUEUED EDGES: " + all_threads_equeued_edges + " INSERTED EDGES: " + all_threads_inserted_edges);
             } else {
               Console.WriteLine("LINES: " + all_threads_read_lines + " ENQUEUED EDGES: " + all_threads_equeued_edges + " INSERTED EDGES: " + all_threads_inserted_edges + " LOAD EDGES: " + all_threads_sent_edges + " RECIEVED LOAD EDGES: " + all_threads_recieved_load_edges);
             }
-            Thread.Sleep(2000);
+            Thread.Sleep(5000);
           }
         }
 
@@ -418,7 +420,6 @@ namespace BenchmarkServer
 
         public void AddSimpleGraphNode(SimpleGraphNode new_node){
           Interlocked.Increment(ref all_threads_inserted_edges);
-          //Console.WriteLine("Add " + new_node.ID + " to " + new_node.Outlinks.ToString());
           SimpleGraphNode simpleGraphNode;
           if(!Global.LocalStorage.Contains(new_node.ID)){
             simpleGraphNode = new SimpleGraphNode();
@@ -428,16 +429,17 @@ namespace BenchmarkServer
           } else {
             simpleGraphNode = Global.LocalStorage.LoadSimpleGraphNode(new_node.ID);
           }
+          simpleGraphNode.ID = new_node.ID;
           if(hasWeight) {
             for(int i = 0; i < new_node.Outlinks.Count; i++){
               simpleGraphNode.Outlinks.Add(new_node.Outlinks[i]);
               simpleGraphNode.Weights.Add(new_node.Weights[i]);
-              Console.WriteLine("+->" + new_node.Outlinks[i]);
+              //Console.WriteLine("+->" + new_node.Outlinks[i]);
             }
           } else {
             for(int i = 0; i < new_node.Outlinks.Count; i++){
               simpleGraphNode.Outlinks.Add(new_node.Outlinks[i]);
-              Console.WriteLine("+->" + new_node.Outlinks[i]);
+              //Console.WriteLine("+->" + new_node.Outlinks[i]);
             }
           }
           printGraphNode(simpleGraphNode);
