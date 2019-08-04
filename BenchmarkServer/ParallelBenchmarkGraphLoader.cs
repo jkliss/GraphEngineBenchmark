@@ -383,7 +383,7 @@ namespace BenchmarkServer
             }
           } else {
             if(simpleBufferNode[threadid].ID != cellid1){
-                Console.WriteLine("[READ"+threadid+"] AddEdge (Cache to Queue) for " + cellid1);
+                Console.WriteLine("[READ"+threadid+"] AddEdge (Cache to Queue) for " + cellid1 + " OUT: " + String.Join(",", simpleBufferNode[threadid].Outlinks));
                 thread_cache[threadid].Enqueue(simpleBufferNode[threadid]);
                 Console.WriteLine("[READ"+threadid+"] AddEdge (to BufferNode) " + cellid1 + " -> " + cellid2);
                 simpleBufferNode[threadid] = new SimpleGraphNode();
@@ -443,7 +443,7 @@ namespace BenchmarkServer
         }
 
         public void printGraphNode(SimpleGraphNode node){
-          Console.WriteLine("Save Node " + node.CellId + " OUT: " + String.Join(",", node.Outlinks));
+          Console.WriteLine("Save Node " + node.ID + " OUT: " + String.Join(",", node.Outlinks));
         }
 
         public void ConsumerThread(object nthread){
