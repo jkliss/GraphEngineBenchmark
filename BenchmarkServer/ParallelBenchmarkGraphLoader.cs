@@ -544,7 +544,7 @@ namespace BenchmarkServer
                     Console.WriteLine("Send Load to Server " + senderThreadId);
                     using (var request = new DistributedLoadWriter(senderThreadId, index, distributedLoad.Loads, false))
                     {
-                      Global.CloudStorage.DistributedLoadMessageToBenchmarkServer(senderThreadId, request);
+                      //Global.CloudStorage.DistributedLoadMessageToBenchmarkServer(senderThreadId, request);
                     }
                     distributedLoad = new DistributedLoad();
                     distributedLoad.Loads = new Load[8192];
@@ -564,7 +564,7 @@ namespace BenchmarkServer
               Console.WriteLine("Send LAST Load to Server " + senderThreadId + " " + index);
               using (var request = new DistributedLoadWriter(senderThreadId, index, distributedLoad.Loads, true))
               {
-                Global.CloudStorage.DistributedLoadMessageToBenchmarkServer(senderThreadId, request);
+                //Global.CloudStorage.DistributedLoadMessageToBenchmarkServer(senderThreadId, request);
               }
             }
           } catch (Exception ex){
