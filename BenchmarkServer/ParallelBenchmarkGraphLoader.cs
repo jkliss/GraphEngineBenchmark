@@ -129,7 +129,8 @@ namespace BenchmarkServer
 
         public void LoadGraph()
         {
-            reporter_thread = new Thread(ThreadStart(Reporter));
+            Thread reporter_thread = new Thread(new ThreadStart(Reporter));
+            reporter_thread.Start();
             num_servers = Global.ServerCount;
             finished = false;
             Thread[] read_threads = new Thread[num_threads];
