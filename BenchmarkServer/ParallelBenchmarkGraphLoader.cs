@@ -154,7 +154,7 @@ namespace BenchmarkServer
         public void ParallelReading(object par_part)
         {
             int part = (int) par_part;
-            int read_thread = part-1+(this_server_id*num_threads);
+            int read_thread = part-1-(this_server_id*num_threads);
             Console.WriteLine("Start Read Thread " + read_thread + " for Part: " + (part-1));
             long length = new FileInfo(path).Length;
             string[] fields;
@@ -399,6 +399,7 @@ namespace BenchmarkServer
           int senderThreadId = (int) nthread;
           Load new_load;
           DistributedLoad distributedLoad = new DistributedLoad();
+          distributedLoad.Loads = new List<Loads>();
           int index = 0;
           while(finished_readers < num_threads || load_sender_queue[senderThreadId].Count > 0){
             if(load_sender_queue[senderThreadId].TryDequeue(out new_load)){
@@ -410,6 +411,7 @@ namespace BenchmarkServer
                     Global.CloudStorage.DistributedLoadMessageToBenchmarkServer(this_server_id, request);
                   }
                   distributedLoad = new DistributedLoad();
+                  distributedLoad.Loads = new List<Loads>();
                   index = 0;
               }
             } else {
