@@ -411,11 +411,13 @@ namespace BenchmarkServer
         }
 
         public int findServer(long cell){
-          while(all_starts[0] == -1){
+          if(all_starts[0] == -1){
             for(int i = num_servers-1; i >= 0; i--){
-              all_starts[i] = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-(num_threads*i)).startReading;
+              while(all_starts[i] == -1){
+                all_starts[i] = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-(num_threads*i)).startReading;
+                Thread.Sleep(50);
+              }
             }
-            Thread.Sleep(50);
           }
           for(int i = 1; i < num_servers; i++){
             if(i < all_starts[i]) return i-1;
