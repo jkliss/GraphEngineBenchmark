@@ -183,15 +183,14 @@ namespace BenchmarkServer
             for(int i = 0; i < num_threads; i++){
               long fcid = (i+(this_server_id*num_threads));
               Console.WriteLine("TRY TO ACCESS " + fcid);
-              using (var send_fc = Global.LocalStorage.UseFinishCommunicator(Int64.MaxValue-fcid))
-              {
-                  send_fc.FinishedSending = true;
-              }
+              FinishCommunicator fcr = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-fcid);
+              fcr.FinishedSending = true;
+              Global.CloudStorage.SaveFinishCommunicator(fcr);
             }
             Console.WriteLine("All Sender on this Server Finished");
             // CHECK GLOBAL SENDING THREADS
             while(!checkAllSenderGlobal()){
-              Thread.Sleep(100);
+              Thread.Sleep(1000);
             }
             Console.WriteLine("----> All Sender Global Finished <-------");
             while(all_sends < num_servers-1){
