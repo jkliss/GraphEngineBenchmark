@@ -68,6 +68,7 @@ namespace BenchmarkServer
           if(this_server_id == 0){
             prepareParallelRead();
           }
+          prepareServer();
           vertex_queue = new Queue<long>();
           var watch = System.Diagnostics.Stopwatch.StartNew();
           Console.WriteLine("Read Vertex File at: {0}", vpath);
@@ -111,12 +112,6 @@ namespace BenchmarkServer
         public void prepareParallelRead(){
           // Prepare Finish Communicators for all Server and Threads
           for(int i = 0; i < num_servers; i++){
-            serverFinished[i] = false;
-            all_starts[i] = -1;
-            load_sender_queue[i] = new ConcurrentQueue<Load>();
-            Console.WriteLine("START LOAD SENDER " + i);
-            load_sender_threads[i] = new Thread(new ParameterizedThreadStart(SenderThread));
-            load_sender_threads[i].Start(i);
             for(int j = 0; j < num_threads+1; j++){
               FinishCommunicator fc = new FinishCommunicator();
               fc.Finished = false;
@@ -128,6 +123,18 @@ namespace BenchmarkServer
             }
           }
           Console.WriteLine("Preparations for parallel done!");
+        }
+
+        public void prepareServer(){
+          for(int i = 0; i < num_servers; i++){
+            serverFinished[i] = false;
+            all_starts[i] = -1;
+            load_sender_queue[i] = new ConcurrentQueue<Load>();
+            Console.WriteLine("START LOAD SENDER " + i);
+            load_sender_threads[i] = new Thread(new ParameterizedThreadStart(SenderThread));
+            load_sender_threads[i].Start(i);
+          }
+          Console.WriteLine("Preparations for Server done!");
         }
 
         public void LoadGraph()
