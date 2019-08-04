@@ -77,7 +77,7 @@ namespace BenchmarkServer
       if(Global.MyServerID == 0){
         for(int i = 1; i < Global.ServerCount; i++){
           communicationThread = new Thread(new ParameterizedThreadStart(CommunicationThread));
-          communicationThread.Start();
+          communicationThread.Start(i);
         }
       }
       Console.WriteLine("NAME:" + this.input_vertex_path);
