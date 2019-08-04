@@ -207,7 +207,11 @@ namespace BenchmarkServer
 
         public void Reporter(){
           while(true){
-            Console.WriteLine("LINES: " + all_threads_read_lines + " ENQUEUED EDGES: " + all_threads_equeued_edges + " INSERTED EDGES: " + all_threads_inserted_edges + " LOAD EDGES: " + all_threads_sent_edges + " RECIEVED LOAD EDGES: " + all_threads_recieved_load_edges);
+            if(directed){
+              Console.WriteLine("LINES: " + all_threads_read_lines + " ENQUEUED EDGES: " + all_threads_equeued_edges + " INSERTED EDGES: " + all_threads_inserted_edges);
+            } else {
+              Console.WriteLine("LINES: " + all_threads_read_lines + " ENQUEUED EDGES: " + all_threads_equeued_edges + " INSERTED EDGES: " + all_threads_inserted_edges + " LOAD EDGES: " + all_threads_sent_edges + " RECIEVED LOAD EDGES: " + all_threads_recieved_load_edges);
+            }
             Thread.Sleep(1000);
           }
         }
@@ -401,7 +405,7 @@ namespace BenchmarkServer
 
         public void AddSimpleGraphNode(SimpleGraphNode new_node){
           Interlocked.Increment(ref all_threads_inserted_edges);
-          //Console.WriteLine("Add " + cellid1 + " to " + cellid2);
+          Console.WriteLine("Add " + new_node.ID + " to " + new_node.Outlinks.ToString());
           SimpleGraphNode simpleGraphNode;
           if(!Global.LocalStorage.Contains(new_node.ID)){
             simpleGraphNode = new SimpleGraphNode();
