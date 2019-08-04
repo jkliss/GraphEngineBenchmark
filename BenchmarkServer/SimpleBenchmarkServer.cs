@@ -71,6 +71,8 @@ namespace BenchmarkServer
     }
 
     public override void LoadGraphHandler(ConfigurationMessageReader request){
+      consumerThread = new Thread(new ThreadStart(LoadConsumerThread));
+      consumerThread.Start();
       if(Global.MyServerID == 0){
         Console.WriteLine("NAME:" + this.input_vertex_path);
         int myID = Global.MyServerID;
@@ -121,6 +123,7 @@ namespace BenchmarkServer
         loader[myID].LoadGraph();
         ranLoader = true;
       }
+
       //loader.dumpLoadCells();
     }
 
@@ -182,14 +185,6 @@ namespace BenchmarkServer
     public override void DistributedLoadMessageHandler(DistributedLoadReader request){
       try{
         //Console.WriteLine("Request at:" + request.serverID);
-        if(!isDedicatedLoader){
-            isDedicatedLoader = true;
-            // inititalize local loader
-            Console.WriteLine("[SERVER] Graph Loader for Server is being initialzed");
-            // start local consumer threads
-            consumerThread = new Thread(new ThreadStart(LoadConsumerThread));
-            consumerThread.Start();
-        }
         consumingQueue.Enqueue(request);
         Console.WriteLine("[SERVER] Request Enqueued");
         //multi_loaders[request.serverID].addDistributedLoadToServer(request);
@@ -209,7 +204,7 @@ namespace BenchmarkServer
           try{
             while(consumingQueue.TryDequeue(out dload)){
                 Console.WriteLine("[SERVER] ADD LOAD");
-                multi_loaders[dload.serverID].addDistributedLoadToServer(dload);
+                loader[dload.serverID].addDistributedLoadToServer(dload);
             }
             if(dload.lastLoad){
               break;
