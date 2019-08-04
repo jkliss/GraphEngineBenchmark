@@ -383,8 +383,10 @@ namespace BenchmarkServer
             }
           } else {
             if(simpleBufferNode[threadid].ID != cellid1){
-                Console.WriteLine("[READ"+threadid+"] AddEdge (Cache to Queue) for " + cellid1 + " OUT: " + String.Join(",", simpleBufferNode[threadid].Outlinks));
-                thread_cache[threadid].Enqueue(simpleBufferNode[threadid]);
+                if(simpleBufferNode[threadid].ID > 0){
+                  Console.WriteLine("[READ"+threadid+"] AddEdge (Cache to Queue) for " + cellid1 + " OUT: " + String.Join(",", simpleBufferNode[threadid].Outlinks));
+                  thread_cache[threadid].Enqueue(simpleBufferNode[threadid]);
+                }
                 Console.WriteLine("[READ"+threadid+"] AddEdge (to BufferNode) " + cellid1 + " -> " + cellid2);
                 simpleBufferNode[threadid] = new SimpleGraphNode();
                 simpleBufferNode[threadid].ID = cellid1;
