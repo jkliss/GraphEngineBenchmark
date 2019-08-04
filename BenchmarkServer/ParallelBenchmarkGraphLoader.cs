@@ -24,7 +24,8 @@ namespace BenchmarkServer
         public long elapsedTime_lastLoadVertex = 0;
         public bool hasWeight = false;
         public bool directed = false;
-        public static int num_threads = Environment.ProcessorCount;
+        //public static int num_threads = Environment.ProcessorCount;
+        public static int num_threads = 3;
         public static int num_servers = 2;
         public Thread[] threads = new Thread[num_threads];
         public ConcurrentQueue<SimpleGraphNode>[] thread_cache = new ConcurrentQueue<SimpleGraphNode>[num_threads];
@@ -40,6 +41,9 @@ namespace BenchmarkServer
         public long[] all_starts = new long[num_servers];
         public long[] thread_starts = new long[num_threads];
         int finished_readers = 0;
+
+        int all_threads_read_lines = 0;
+        int all_threads_inserted_edges = 0;
 
         public ConcurrentQueue<Load>[] load_sender_queue = new ConcurrentQueue<Load>[num_servers];
         public Thread[] load_sender_threads = new Thread[num_servers];
@@ -125,6 +129,7 @@ namespace BenchmarkServer
 
         public void LoadGraph()
         {
+            reporter_thread = new Thread(ThreadStart(Reporter));
             num_servers = Global.ServerCount;
             finished = false;
             Thread[] read_threads = new Thread[num_threads];
@@ -176,6 +181,13 @@ namespace BenchmarkServer
             Console.WriteLine("#######  All edges loaded  #######");
             Console.WriteLine("##################################");
             if(this_server_id == 0)  Global.LocalStorage.SaveStorage();
+        }
+
+        public void Reporter(){
+          while(true){
+            Console.WriteLine("LINES: " + all_threads_read_lines + " INSERTED EDGES: " + all_threads_inserted_edges);
+            Thread.Sleep(1000);
+          }
         }
 
         public void ParallelReading(object par_part)
@@ -244,6 +256,7 @@ namespace BenchmarkServer
                         if(part != num_parts && read_node >= first_read_node) break;
                         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                         //file.WriteLine(line);
+                        Interlocked.Increment(ref all_threads_read_lines);
                         if(current_node != read_node && read_node != 1){
                           vertices_position++;
                         }
@@ -350,6 +363,7 @@ namespace BenchmarkServer
         }
 
         public void AddSimpleGraphNode(SimpleGraphNode new_node){
+          Interlocked.Increment(ref all_threads_inserted_edges);
           //Console.WriteLine("Add " + cellid1 + " to " + cellid2);
           SimpleGraphNode simpleGraphNode;
           if(!Global.LocalStorage.Contains(new_node.ID)){
