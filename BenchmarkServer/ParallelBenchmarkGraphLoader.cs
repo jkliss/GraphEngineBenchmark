@@ -255,7 +255,10 @@ namespace BenchmarkServer
             for(int j = 0; j < num_threads; j++){
               long fcid = (i+(this_server_id*num_threads));
               FinishCommunicator fcr = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-fcid);
-              if(fcr.FinishedSending == false) return false;
+              if(fcr.FinishedSending == false){
+                 Console.WriteLine("[SENDER] Wait for " + fcid);
+                 return false;
+              }
             }
           }
           return true;
@@ -563,7 +566,6 @@ namespace BenchmarkServer
           }
         }
 
-
         public void SenderThread(object nthread){
           int senderThreadId = (int) nthread;
           Load new_load;
@@ -604,14 +606,12 @@ namespace BenchmarkServer
             }
           }
           try{
-            // Last Send
-            if(index > 0){
+              // Last Send
               Console.WriteLine("Send LAST Load to Server " + senderThreadId + " " + index);
               using (var request = new DistributedLoadWriter(senderThreadId, this_server_id, index, distributedLoad.cellid1, distributedLoad.cellid2, distributedLoad.weight, distributedLoad.single_element, false))
               {
                 Global.CloudStorage.DistributedLoadMessageToBenchmarkServer(senderThreadId, request);
               }
-            }
           } catch (Exception ex){
             Console.Error.WriteLine(ex.Message);
             Console.Error.WriteLine(ex.StackTrace.ToString());
