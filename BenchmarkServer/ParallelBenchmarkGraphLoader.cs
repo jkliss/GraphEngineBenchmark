@@ -130,6 +130,8 @@ namespace BenchmarkServer
 
         public void LoadGraph()
         {
+          try{
+
             Thread reporter_thread = new Thread(new ThreadStart(Reporter));
             reporter_thread.Start();
             num_servers = Global.ServerCount;
@@ -183,6 +185,10 @@ namespace BenchmarkServer
             Console.WriteLine("#######  All edges loaded  #######");
             Console.WriteLine("##################################");
             if(this_server_id == 0)  Global.LocalStorage.SaveStorage();
+          } catch (Exception ex){
+            Console.Error.WriteLine(ex.Message);
+            Console.Error.WriteLine(ex.StackTrace.ToString());
+          }
         }
 
         public void Reporter(){
