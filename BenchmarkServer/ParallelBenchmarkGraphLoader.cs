@@ -236,9 +236,9 @@ namespace BenchmarkServer
                     // READ FIRST LINE
                     line = sr.ReadLine();
                     if(line == null){
-                      FinishCommunicator fc = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-(part-1));
-                      fc.startReading = Int64.MaxValue;
-                      Global.CloudStorage.SaveFinishCommunicator(Int64.MaxValue-(part-1), fc);
+                      FinishCommunicator fc_spec = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-(part-1));
+                      fc_spec.startReading = Int64.MaxValue;
+                      Global.CloudStorage.SaveFinishCommunicator(Int64.MaxValue-(part-1), fc_spec);
                       return;
                     }
                     fields = line.Split(' ');
