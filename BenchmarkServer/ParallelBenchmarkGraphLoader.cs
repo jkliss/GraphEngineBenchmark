@@ -169,9 +169,9 @@ namespace BenchmarkServer
             for(int i = 0; i < num_threads; i++){
               read_threads[i].Join();
               long fcid = (i+(this_server_id*num_threads));
-              FinishCommunicator fcr = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-fcid);
-              fcr.FinishedReading = true;
-              Global.CloudStorage.SaveFinishCommunicator(fcr);
+              //FinishCommunicator fcr = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-fcid);
+              //fcr.FinishedReading = true;
+              //Global.CloudStorage.SaveFinishCommunicator(fcr);
             }
             Console.WriteLine("All Reader on this Server Finished");
             // SENDING THREADS
@@ -185,6 +185,7 @@ namespace BenchmarkServer
               Console.WriteLine("TRY TO ACCESS " + fcid);
               FinishCommunicator fcr = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-fcid);
               fcr.FinishedSending = true;
+              fcr.FinishedReading = true;
               Global.CloudStorage.SaveFinishCommunicator(fcr);
             }
             Console.WriteLine("All Sender on this Server Finished");
@@ -505,7 +506,7 @@ namespace BenchmarkServer
               //Console.WriteLine("+->" + new_node.Outlinks[i]);
             }
           }
-          printGraphNode(simpleGraphNode);
+          //printGraphNode(simpleGraphNode);
           Global.LocalStorage.SaveSimpleGraphNode(simpleGraphNode);
         }
 
