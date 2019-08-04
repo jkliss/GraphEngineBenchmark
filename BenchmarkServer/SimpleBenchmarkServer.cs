@@ -157,7 +157,9 @@ namespace BenchmarkServer
         dload.serverID = request.serverID;
         Console.WriteLine("ID SENT");
         dload.num_elements = request.num_elements;
+        Console.WriteLine("NUM ELEMENTS SENT");
         dload.Loads = request.Loads;
+        Console.WriteLine("LOADS SENT");
         dload.lastLoad = request.lastLoad;
         Console.WriteLine("[SERVER] Try Request Enqueued");
         consumingQueue.Enqueue(dload);
