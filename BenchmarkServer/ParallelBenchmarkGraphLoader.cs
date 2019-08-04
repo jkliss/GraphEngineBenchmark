@@ -158,6 +158,18 @@ namespace BenchmarkServer
             for(int i = 0; i < num_threads; i++){
               read_threads[i].Join();
             }
+            Console.WriteLine("All Reader on this Server Finished");
+            for(int i = 0; i < num_servers; i++){
+              if(i != this_server_id){
+                load_sender_threads[i].Join();
+              }
+            }
+            Console.WriteLine("All Sender on this Server Finished");
+            for(int i = 0; i < num_threads; i++){
+              threads[i].Join();
+            }
+            Console.WriteLine("All Consumer on this Server Finished");
+            
             for(int i = 0; i < num_servers; i++){
               for(int j = 0; j < num_threads; j++){
                   long cellid_comm = (j+(i*num_threads));
@@ -202,7 +214,7 @@ namespace BenchmarkServer
         {
             int part = (int) par_part;
             int read_thread = part-1-(this_server_id*num_threads);
-            Console.WriteLine("Start Read Thread " + read_thread + " for Part: " + (part-1));
+            Console.WriteLine("Start Read Thread " + read_thread + " for Part: " + part);
             long length = new FileInfo(path).Length;
             string[] fields;
             long read_node = -1;
@@ -248,9 +260,13 @@ namespace BenchmarkServer
                     fc.startReading = read_node;
                     Global.CloudStorage.SaveFinishCommunicator(Int64.MaxValue-(part-1), fc);
                   }
+                  bool msg_sent = false;
                   while(part < num_parts && Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-(part)).startReading == -1) {
                     Thread.Sleep(50);
-                    Console.WriteLine("["+part+"] WAIT FOR OTHER THREAD");
+                    if(msg_sent == false){
+                      Console.WriteLine("["+part+"] WAIT FOR OTHER THREAD");
+                      msg_sent = true;
+                    }
                   }
                   thread_starts[read_thread] = read_node;
                   first_read_node = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-(part)).startReading;
@@ -493,11 +509,16 @@ namespace BenchmarkServer
               Console.Error.WriteLine(ex.StackTrace.ToString());
             }
           }
-          // Last Send
-          Console.WriteLine("Send LAST Load to Server " + senderThreadId);
-          using (var request = new DistributedLoadWriter(this_server_id, index, distributedLoad.Loads))
-          {
-            Global.CloudStorage.DistributedLoadMessageToBenchmarkServer(this_server_id, request);
+          try{
+            // Last Send
+            Console.WriteLine("Send LAST Load to Server " + senderThreadId);
+            using (var request = new DistributedLoadWriter(this_server_id, index, distributedLoad.Loads))
+            {
+              Global.CloudStorage.DistributedLoadMessageToBenchmarkServer(this_server_id, request);
+            }
+          } catch (Exception ex){
+            Console.Error.WriteLine(ex.Message);
+            Console.Error.WriteLine(ex.StackTrace.ToString());
           }
         }
 
