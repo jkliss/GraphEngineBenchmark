@@ -361,8 +361,8 @@ namespace BenchmarkServer
               thread_cache[threadid].Enqueue(emptyGraphNode);
             } else {
               // Insert Inversion
-              Console.WriteLine("[READ"+threadid+"] AddEdge (INVERSION) " + cellid2 + " -> " + cellid1);
               int destination_server = findServer(cellid2);
+              Console.WriteLine("[READ"+threadid+"] AddEdge (INVERSION S["+destination_server+"]) " + cellid2 + " -> " + cellid1);
               if(destination_server == this_server_id){
                 SimpleGraphNode invGraphNode = new SimpleGraphNode();
                 invGraphNode.ID = cellid2;
