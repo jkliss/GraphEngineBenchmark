@@ -182,9 +182,10 @@ namespace BenchmarkServer
             }
             for(int i = 0; i < num_threads; i++){
               long fcid = (i+(this_server_id*num_threads));
-              FinishCommunicator fcr = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-fcid);
-              fcr.FinishedSending = true;
-              Global.CloudStorage.SaveFinishCommunicator(fcr);
+              using (var send_fc = Global.LocalStorage.UseFinishCommunicator(Int64.MaxValue-fcid))
+              {
+                  send_fc.FinishedSending = true;
+              }
             }
             Console.WriteLine("All Sender on this Server Finished");
             // CHECK GLOBAL SENDING THREADS
