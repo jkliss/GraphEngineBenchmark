@@ -219,6 +219,7 @@ namespace BenchmarkServer
               }
               Console.WriteLine("Remote Server " + i + " finished");
             }
+            finished = true;
             watch.Stop();
             vertex_queue = null;
             var elapsedMs = watch.ElapsedMilliseconds;
@@ -239,6 +240,10 @@ namespace BenchmarkServer
           Thread.Sleep(5000);
           while(true){
             if(directed){
+              if(finished){
+                finished = false;
+                return;
+              }
               Console.WriteLine("LINES: " + all_threads_read_lines + " ENQUEUED EDGES: " + all_threads_equeued_edges + " INSERTED EDGES: " + all_threads_inserted_edges);
             } else {
               Console.WriteLine("LINES: " + all_threads_read_lines + " ENQUEUED EDGES: " + all_threads_equeued_edges + " INSERTED EDGES: " + all_threads_inserted_edges + " LOAD EDGES: " + all_threads_sent_edges + " RECIEVED LOAD EDGES: " + all_threads_recieved_load_edges);
