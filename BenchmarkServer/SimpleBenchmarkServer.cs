@@ -201,7 +201,7 @@ namespace BenchmarkServer
         DistributedLoad dload;
         while(true){
           while(consumingQueue.TryDequeue(out dload)){
-              //multi_loaders[dload.serverID].addDistributedLoadToServer(dload);
+              multi_loaders[dload.serverID].addDistributedLoadToServer(dload);
           }
           if(dload.lastLoad){
             break;

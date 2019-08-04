@@ -457,7 +457,6 @@ namespace BenchmarkServer
           {
             Global.CloudStorage.DistributedLoadMessageToBenchmarkServer(this_server_id, request);
           }
-          finished = true;
         }
 
         public void startServerConsumerThreads(int serverid){
