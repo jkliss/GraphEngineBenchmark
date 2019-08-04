@@ -418,21 +418,26 @@ namespace BenchmarkServer
         }
 
         public int findServer(long cell){
-          if(all_starts[0] == -1){
-            for(int i = num_servers-1; i >= 0; i--){
-              while(all_starts[i] == -1){
-                all_starts[i] = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-(num_threads*i)).startReading;
-                Thread.Sleep(50);
+          try{
+            if(all_starts[0] == -1){
+              for(int i = num_servers-1; i >= 0; i--){
+                while(all_starts[i] == -1){
+                  all_starts[i] = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-(num_threads*i)).startReading;
+                  Thread.Sleep(50);
+                }
+              }
+              for(int i = 0; i < num_servers; i++){
+                Console.WriteLine("LOWER BOUND SERVER" + i + " " + all_starts[i]);
               }
             }
-            for(int i = 0; i < num_servers; i++){
-              Console.WriteLine("LOWER BOUND SERVER" + i + " " + all_starts[i]);
+            for(int i = 1; i < num_servers; i++){
+              if(i < all_starts[i]) return i-1;
             }
+            return num_servers-1;
+          }  catch {
+            Console.WriteLine("ERROR UNABLE TO GET SERVERID");
           }
-          for(int i = 1; i < num_servers; i++){
-            if(i < all_starts[i]) return i-1;
-          }
-          return num_servers-1;
+          return -1;
         }
 
         public void AddSimpleGraphNode(SimpleGraphNode new_node){
