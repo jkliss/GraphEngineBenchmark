@@ -25,7 +25,7 @@ namespace BenchmarkServer
         public bool hasWeight = false;
         public bool directed = false;
         //public static int num_threads = Environment.ProcessorCount;
-        public static int num_threads = 6;
+        public static int num_threads = 12;
         public static int num_servers = 2;
         public Thread[] threads = new Thread[num_threads];
         public ConcurrentQueue<SimpleGraphNode>[] thread_cache = new ConcurrentQueue<SimpleGraphNode>[num_threads];
@@ -247,7 +247,7 @@ namespace BenchmarkServer
             } else {
               Console.WriteLine("LINES: " + all_threads_read_lines + " ENQUEUED EDGES: " + all_threads_equeued_edges + " INSERTED NODES: " + all_threads_inserted_edges + " QUEUELOAD EDGES: " + all_threads_equeued_load_edges + " LOAD EDGES: " + all_threads_sent_edges + " RECIEVED LOAD EDGES: " + all_threads_recieved_load_edges);
             }
-            Thread.Sleep(5000);
+            Thread.Sleep(15000);
           }
         }
 
@@ -572,10 +572,10 @@ namespace BenchmarkServer
           int senderThreadId = (int) nthread;
           Load new_load;
           DistributedLoad distributedLoad = new DistributedLoad();
-          distributedLoad.cellid1 = new long[1048576];
-          distributedLoad.cellid2 = new long[1048576];
-          distributedLoad.weight = new float[1048576];
-          distributedLoad.single_element = new bool[1048576];
+          distributedLoad.cellid1 = new long[8388608];
+          distributedLoad.cellid2 = new long[8388608];
+          distributedLoad.weight = new float[8388608];
+          distributedLoad.single_element = new bool[8388608];
           int index = 0;
           while(finished_readers < num_threads || load_sender_queue[senderThreadId].Count > 0){
             try{
@@ -586,17 +586,17 @@ namespace BenchmarkServer
                 distributedLoad.single_element[index] = new_load.single_element;
                 Interlocked.Increment(ref all_threads_sent_edges);
                 index++;
-                if(index >= 1040000){
+                if(index >= 8380000){
                     //Console.WriteLine("Send Load to Server " + senderThreadId);
                     using (var request = new DistributedLoadWriter(senderThreadId, this_server_id ,index, distributedLoad.cellid1, distributedLoad.cellid2, distributedLoad.weight, distributedLoad.single_element, false))
                     {
                       Global.CloudStorage.DistributedLoadMessageToBenchmarkServer(senderThreadId, request);
                     }
                     distributedLoad = new DistributedLoad();
-                    distributedLoad.cellid1 = new long[1048576];
-                    distributedLoad.cellid2 = new long[1048576];
-                    distributedLoad.weight = new float[1048576];
-                    distributedLoad.single_element = new bool[1048576];
+                    distributedLoad.cellid1 = new long[8388608];
+                    distributedLoad.cellid2 = new long[8388608];
+                    distributedLoad.weight = new float[8388608];
+                    distributedLoad.single_element = new bool[8388608];
                     index = 0;
                 }
               } else {
