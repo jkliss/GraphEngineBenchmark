@@ -291,15 +291,27 @@ namespace BenchmarkServer
           Global.CloudStorage.StartBFSToBenchmarkServer(i, msg);
         }
       }
+      Thread.Sleep(30000);
       while(running > 0){
-        Thread.Sleep(1000);
+          Thread.Sleep(50);
+      }
+      using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"out_BFS_1",true))
+      {
+        for(int i = 0; i < depths.Length; i++){
+          file.WriteLine(i + " " + loader[Global.MyServerID].mapping1[i] + " " + depths[i]);
+        }
       }
       Console.WriteLine("Finsihed?");
     }
 
+    public long[] depths;
 
     public override void StartBFSHandler(StartBFSMessageReader request) {
       Console.WriteLine("BFS Started on:" + Global.MyServerID);
+      depths = new long[loader[Global.MyServerID].getMaxNode()];
+      for(int i = 0; i < depths.Length; i++){
+        depths[i] = Int64.MaxValue;
+      }
       if (Global.CloudStorage.IsLocalCell(request.root)) {
         Console.WriteLine("First Node on this Server");
         using (var rootCell = Global.LocalStorage.UseSimpleGraphNode(request.root)) {
@@ -322,6 +334,7 @@ namespace BenchmarkServer
                 if (cell.Depth > request.level + 1) {
                   cell.Depth = request.level + 1;
                   cell.parent = request.senderId;
+                  depths[cell.ID] = cell.Depth;
                   //Console.WriteLine("CELL:" + cellId + " DEPTH:" + cell.Depth);
                   List<long> aliveNeighbors = new List<long>();
                   for (int i = 0; i < cell.Outlinks.Count; i++) {
@@ -339,7 +352,6 @@ namespace BenchmarkServer
                 }
               }
             }
-
           });
           Interlocked.Decrement(ref running);
     }
