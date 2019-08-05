@@ -478,8 +478,10 @@ namespace BenchmarkServer
               if(cell < all_starts[i]) return i-1;
             }
             return num_servers-1;
-          }  catch {
+          }  catch (Exception ex) {
             Console.WriteLine("ERROR UNABLE TO GET SERVERID");
+            Console.Error.WriteLine(ex.Message);
+            Console.Error.WriteLine(ex.StackTrace.ToString());
           }
           return -1;
         }
