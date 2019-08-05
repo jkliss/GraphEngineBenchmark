@@ -563,9 +563,9 @@ namespace BenchmarkServer
           }
           // transfer all cells to global space
           Console.WriteLine("["+ ThreadNumber +"] Start Saving to Cloud");
-          /**foreach (long i in set){
+          foreach (long i in set){
             Global.CloudStorage.SaveSimpleGraphNode(i, Global.LocalStorage.LoadSimpleGraphNode(i));
-          }**/
+          }
           long cellid_comm = (ThreadNumber+(this_server_id*num_threads));
           Console.WriteLine("["+ ThreadNumber +"] setting finished to " + cellid_comm);
           FinishCommunicator fc = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-cellid_comm);
@@ -587,10 +587,10 @@ namespace BenchmarkServer
           int senderThreadId = (int) nthread;
           Load new_load;
           DistributedLoad distributedLoad = new DistributedLoad();
-          distributedLoad.cellid1 = new long[1048576];
-          distributedLoad.cellid2 = new long[1048576];
-          distributedLoad.weight = new float[1048576];
-          distributedLoad.single_element = new bool[1048576];
+          distributedLoad.cellid1 = new long[4194304];
+          distributedLoad.cellid2 = new long[4194304];
+          distributedLoad.weight = new float[4194304];
+          distributedLoad.single_element = new bool[4194304];
           int index = 0;
           while(finished_readers < num_threads || load_sender_queue[senderThreadId].Count > 0){
             try{
@@ -601,17 +601,17 @@ namespace BenchmarkServer
                 distributedLoad.single_element[index] = new_load.single_element;
                 Interlocked.Increment(ref all_threads_sent_edges);
                 index++;
-                if(index >= 1048000){
+                if(index >= 4194000){
                     //Console.WriteLine("Send Load to Server " + senderThreadId);
                     using (var request = new DistributedLoadWriter(senderThreadId, this_server_id ,index, distributedLoad.cellid1, distributedLoad.cellid2, distributedLoad.weight, distributedLoad.single_element, false))
                     {
                       Global.CloudStorage.DistributedLoadMessageToBenchmarkServer(senderThreadId, request);
                     }
                     distributedLoad = new DistributedLoad();
-                    distributedLoad.cellid1 = new long[1048576];
-                    distributedLoad.cellid2 = new long[1048576];
-                    distributedLoad.weight = new float[1048576];
-                    distributedLoad.single_element = new bool[1048576];
+                    distributedLoad.cellid1 = new long[4194304];
+                    distributedLoad.cellid2 = new long[4194304];
+                    distributedLoad.weight = new float[4194304];
+                    distributedLoad.single_element = new bool[4194304];
                     index = 0;
                 }
               } else {
