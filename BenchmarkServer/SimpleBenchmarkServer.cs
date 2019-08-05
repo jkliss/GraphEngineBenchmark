@@ -299,7 +299,6 @@ namespace BenchmarkServer
         using (var rootCell = Global.LocalStorage.UseSimpleGraphNode(request.root)) {
           rootCell.Depth = 0;
           rootCell.parent = request.root;
-
           MessageSorter sorter = new MessageSorter(rootCell.Outlinks);
           for (int i = 0; i < Global.ServerCount; i++) {
             BFSUpdateMessageWriter msg = new BFSUpdateMessageWriter(rootCell.CellId, 0, sorter.GetCellRecipientList(i));
@@ -323,7 +322,6 @@ namespace BenchmarkServer
                       aliveNeighbors.Add(cell.Outlinks[i]);
                     }
                   }
-
                   //MessageSorter sorter = new MessageSorter(cell.neighbors);
                   MessageSorter sorter = new MessageSorter(aliveNeighbors);
 
