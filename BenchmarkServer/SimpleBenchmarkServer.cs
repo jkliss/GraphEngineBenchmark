@@ -316,7 +316,7 @@ namespace BenchmarkServer
                 if (cell.Depth > request.level + 1) {
                   cell.Depth = request.level + 1;
                   cell.parent = request.senderId;
-                  Console.WriteLine("CELL:" + cell.ID + " DEPTH:" + cell.Depth);
+                  Console.WriteLine("CELL:" + cellId + " DEPTH:" + cell.Depth);
                   List<long> aliveNeighbors = new List<long>();
                   for (int i = 0; i < cell.Outlinks.Count; i++) {
                     if (Global.CloudStorage.Contains(cell.Outlinks[i])) {
