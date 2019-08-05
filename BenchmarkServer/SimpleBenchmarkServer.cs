@@ -285,6 +285,7 @@ namespace BenchmarkServer
     private static void StartBFS(long root) {
       for (int i = 0; i < Global.ServerCount; i++) {
         using (var msg = new StartBFSMessageWriter(root)) {
+          Console.WriteLine("SEND BFS START TO " + i);
           Global.CloudStorage.StartBFSToBenchmarkServer(i, msg);
         }
       }
@@ -294,6 +295,7 @@ namespace BenchmarkServer
     public override void StartBFSHandler(StartBFSMessageReader request) {
       Console.WriteLine("Started on:" + Global.MyServerID);
       if (Global.CloudStorage.IsLocalCell(request.root)) {
+        Console.WriteLine("HAS THIS NODE");
         using (var rootCell = Global.LocalStorage.UseSimpleGraphNode(request.root)) {
           rootCell.Depth = 0;
           rootCell.parent = request.root;
@@ -331,7 +333,6 @@ namespace BenchmarkServer
               }
             }
           });
-
     }
   }
 }
