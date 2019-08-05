@@ -190,6 +190,7 @@ namespace BenchmarkServer
             }
           }
         } else {
+          Console.WriteLine("[?] ASK FOR " + current_node);
           using (var request = new NodeRequestWriter(current_node))
           {
             using (var response = Global.CloudStorage.NodeCollectionToBenchmarkServer(send_to, request))
