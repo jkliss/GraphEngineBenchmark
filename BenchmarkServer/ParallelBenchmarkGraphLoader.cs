@@ -464,13 +464,13 @@ namespace BenchmarkServer
 
         public int findServer(long cell){
           try{
-            if(cell == -1){
-              return this_server_id;
-            }
             if(all_starts[0] == -1){
               for(int i = num_servers-1; i >= 0; i--){
                 while(all_starts[i] == -1){
-                  all_starts[i] = mapping2[Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-(num_threads*i)).startReading];
+                  long node_number = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-(num_threads*i)).startReading;
+                  if(node_number > -1){
+                    all_starts[i] = mapping2[node_number];
+                  }
                   Thread.Sleep(50);
                 }
               }
