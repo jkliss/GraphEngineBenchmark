@@ -59,7 +59,7 @@ namespace BenchmarkServer
       long nodes_visited = 0;
       while (queue.Count > 0)
       {
-        SimpleGraphNode current_node = (SimpleGraphNode)queue.Dequeue();
+        SimpleGraphNode current_node = (SimpleGraphNode) queue.Dequeue();
         //Console.WriteLine(current_node.CellId);
         foreach (var out_edge_id in current_node.Outlinks)
         {

@@ -159,6 +159,11 @@ cell struct FinishCommunicator
     long endReading;
 }
 
+cell struct SyncDepth
+{
+    List<long> Depths;
+}
+
 cell struct FinishCounter
 {
     int count;
