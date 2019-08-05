@@ -257,7 +257,7 @@ namespace BenchmarkServer
               long fcid = (j+(i*num_threads));
               FinishCommunicator fcr = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-fcid);
               if(fcr.FinishedSending == false){
-                 Console.WriteLine("[SENDER] Wait for " + fcid);
+                 //Console.WriteLine("[SENDER] Wait for " + fcid);
                  return false;
               }
             }
@@ -475,7 +475,7 @@ namespace BenchmarkServer
                 }
               }
               for(int i = 0; i < num_servers; i++){
-                Console.WriteLine("LOWER BOUND SERVER" + i + " " + all_starts[i]);
+                //Console.WriteLine("LOWER BOUND SERVER" + i + " " + all_starts[i]);
               }
             }
             for(int i = 0; i < num_servers; i++){
