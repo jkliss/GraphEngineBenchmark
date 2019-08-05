@@ -56,6 +56,8 @@ namespace BenchmarkServer
     public int finishCounter = 0;
     public ConcurrentQueue<bool> msgQueue = new ConcurrentQueue<bool>();
 
+    public int running = 0;
+
     public override void SynPingHandler(ConfigurationMessageReader request)
     {
       Console.WriteLine("Received Graph: {0}", request.graph_name);
@@ -282,20 +284,24 @@ namespace BenchmarkServer
       Console.WriteLine("Termination Log Path: {0}", t_log_path);
     }
 
-    private static void StartBFS(long root) {
+    private void StartBFS(long root) {
       for (int i = 0; i < Global.ServerCount; i++) {
         using (var msg = new StartBFSMessageWriter(root)) {
           Console.WriteLine("SEND BFS START TO " + i);
           Global.CloudStorage.StartBFSToBenchmarkServer(i, msg);
         }
       }
+      while(running > 0){
+        Thread.Sleep(1000);
+      }
+      Console.WriteLine("Finsihed?");
     }
 
 
     public override void StartBFSHandler(StartBFSMessageReader request) {
-      Console.WriteLine("Started on:" + Global.MyServerID);
+      Console.WriteLine("BFS Started on:" + Global.MyServerID);
       if (Global.CloudStorage.IsLocalCell(request.root)) {
-        Console.WriteLine("HAS THIS NODE");
+        Console.WriteLine("First Node on this Server");
         using (var rootCell = Global.LocalStorage.UseSimpleGraphNode(request.root)) {
           rootCell.Depth = 0;
           rootCell.parent = request.root;
@@ -309,6 +315,7 @@ namespace BenchmarkServer
     }
 
     public override void BFSUpdateHandler(BFSUpdateMessageReader request) {
+          Interlocked.Increment(ref running);
           request.recipients.ForEach((cellId) => {
             if(Global.CloudStorage.IsLocalCell(cellId)){
               using (var cell = Global.LocalStorage.UseSimpleGraphNode(cellId)) {
@@ -334,6 +341,7 @@ namespace BenchmarkServer
             }
 
           });
+          Interlocked.Decrement(ref running);
     }
   }
 }
