@@ -411,7 +411,7 @@ namespace BenchmarkServer
             } else {
               // Insert Inversion
               int destination_server = findServer(cellid1);
-              Console.WriteLine("[READ"+threadid+"] AddEdge{"+this_server_id+"} (INVERSION S["+destination_server+"]) " + cellid1 + " -> " + cellid2);
+              //Console.WriteLine("[READ"+threadid+"] AddEdge{"+this_server_id+"} (INVERSION S["+destination_server+"]) " + cellid1 + " -> " + cellid2);
               if(destination_server == this_server_id){
                 //Console.WriteLine("[READ"+threadid+"] AddEdge (INVERSION LOCAL) " + cellid1 + " -> " + cellid2);
                 SimpleGraphNode invGraphNode = new SimpleGraphNode();
@@ -583,7 +583,7 @@ namespace BenchmarkServer
                 distributedLoad.single_element[index] = new_load.single_element;
                 Interlocked.Increment(ref all_threads_sent_edges);
                 index++;
-                if(index >= 65536){
+                if(index >= 65535){
                     Console.WriteLine("Send Load to Server " + senderThreadId);
                     using (var request = new DistributedLoadWriter(senderThreadId, this_server_id ,index, distributedLoad.cellid1, distributedLoad.cellid2, distributedLoad.weight, distributedLoad.single_element, false))
                     {
