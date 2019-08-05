@@ -312,6 +312,7 @@ namespace BenchmarkServer
     public override void BFSUpdateHandler(BFSUpdateMessageReader request) {
           request.recipients.ForEach((cellId) => {
             using (var cell = Global.LocalStorage.UseSimpleGraphNode(cellId)) {
+              Console.WriteLine("Hello");
               if (cell.Depth > request.level + 1) {
                 cell.Depth = request.level + 1;
                 cell.parent = request.senderId;
