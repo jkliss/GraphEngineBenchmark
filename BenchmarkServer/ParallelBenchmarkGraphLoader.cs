@@ -498,6 +498,7 @@ namespace BenchmarkServer
             simpleGraphNode.CellId = new_node.ID;
             simpleGraphNode.Weights = new List<float>();
             simpleGraphNode.Outlinks = new List<long>();
+            simpleGraphNode.Depth = Int64.MaxValue;
             if(hasWeight) {
               for(int i = 0; i < new_node.Outlinks.Count; i++){
                 simpleGraphNode.Outlinks.Add(new_node.Outlinks[i]);

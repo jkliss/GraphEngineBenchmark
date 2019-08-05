@@ -311,28 +311,30 @@ namespace BenchmarkServer
 
     public override void BFSUpdateHandler(BFSUpdateMessageReader request) {
           request.recipients.ForEach((cellId) => {
-            using (var cell = Global.LocalStorage.UseSimpleGraphNode(cellId)) {
-              Console.WriteLine("Hello");
-              if (cell.Depth > request.level + 1) {
-                cell.Depth = request.level + 1;
-                cell.parent = request.senderId;
-
-                List<long> aliveNeighbors = new List<long>();
-                for (int i = 0; i < cell.Outlinks.Count; i++) {
-                  if (Global.CloudStorage.Contains(cell.Outlinks[i])) {
-                    aliveNeighbors.Add(cell.Outlinks[i]);
+            if(Global.CloudStorage.IsLocalCell(cellId)){
+              using (var cell = Global.LocalStorage.UseSimpleGraphNode(cellId)) {
+                if (cell.Depth > request.level + 1) {
+                  cell.Depth = request.level + 1;
+                  cell.parent = request.senderId;
+                  Console.WriteLine("CELL:" + cell.ID + " DEPTH:" + cell.Depth);
+                  List<long> aliveNeighbors = new List<long>();
+                  for (int i = 0; i < cell.Outlinks.Count; i++) {
+                    if (Global.CloudStorage.Contains(cell.Outlinks[i])) {
+                      aliveNeighbors.Add(cell.Outlinks[i]);
+                    }
                   }
-                }
 
-                //MessageSorter sorter = new MessageSorter(cell.neighbors);
-                MessageSorter sorter = new MessageSorter(aliveNeighbors);
+                  //MessageSorter sorter = new MessageSorter(cell.neighbors);
+                  MessageSorter sorter = new MessageSorter(aliveNeighbors);
 
-                for (int i = 0; i < Global.ServerCount; i++) {
-                  BFSUpdateMessageWriter msg = new BFSUpdateMessageWriter(cell.CellId, cell.Depth, sorter.GetCellRecipientList(i));
-                  Global.CloudStorage.BFSUpdateToBenchmarkServer(i, msg);
+                  for (int i = 0; i < Global.ServerCount; i++) {
+                    BFSUpdateMessageWriter msg = new BFSUpdateMessageWriter(cell.CellId, cell.Depth, sorter.GetCellRecipientList(i));
+                    Global.CloudStorage.BFSUpdateToBenchmarkServer(i, msg);
+                  }
                 }
               }
             }
+
           });
     }
   }
