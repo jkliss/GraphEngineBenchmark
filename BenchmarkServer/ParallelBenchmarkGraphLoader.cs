@@ -411,6 +411,9 @@ namespace BenchmarkServer
             } else {
               // Insert Inversion
               int destination_server = findServer(cellid1);
+              if(cellid1 < all_starts[1]){
+                Console.WriteLine("[READ"+threadid+"] AddEdge{"+this_server_id+"} (INVERSION S["+destination_server+"]) " + cellid1 + " -> " + cellid2);
+              }
               //Console.WriteLine("[READ"+threadid+"] AddEdge{"+this_server_id+"} (INVERSION S["+destination_server+"]) " + cellid1 + " -> " + cellid2);
               if(destination_server == this_server_id){
                 //Console.WriteLine("[READ"+threadid+"] AddEdge (INVERSION LOCAL) " + cellid1 + " -> " + cellid2);
@@ -532,7 +535,7 @@ namespace BenchmarkServer
                   AddSimpleGraphNode(dequeued_node);
                   set.Add(dequeued_node.ID);
               }
-              if(no_action && exponential_delay <= 65536){
+              if(no_action && exponential_delay <= 5000){
                 exponential_delay = exponential_delay * 2;
               } else if (!no_action){
                 exponential_delay = 1;
