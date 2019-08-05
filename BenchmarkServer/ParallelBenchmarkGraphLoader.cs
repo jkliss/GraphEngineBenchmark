@@ -563,9 +563,9 @@ namespace BenchmarkServer
           }
           // transfer all cells to global space
           Console.WriteLine("["+ ThreadNumber +"] Start Saving to Cloud");
-          foreach (long i in set){
-            Global.CloudStorage.SaveSimpleGraphNode(i, Global.LocalStorage.LoadSimpleGraphNode(i));
-          }
+          //foreach (long i in set){
+          //  Global.CloudStorage.SaveSimpleGraphNode(i, Global.LocalStorage.LoadSimpleGraphNode(i));
+          //}
           long cellid_comm = (ThreadNumber+(this_server_id*num_threads));
           Console.WriteLine("["+ ThreadNumber +"] setting finished to " + cellid_comm);
           FinishCommunicator fc = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-cellid_comm);
