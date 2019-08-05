@@ -179,7 +179,7 @@ namespace BenchmarkServer
       while (queue.Count > 0)
       {
         long current_node = queue.Dequeue();
-        if(Global.CloudStorage.IsLocalCell(current_node)) {
+        if(Global.LocalStorage.Contains(current_node)) {
           using (var tempCell = Global.LocalStorage.UseSimpleGraphNode(current_node)) {
             for(int i = 0; i < tempCell.Outlinks.Count; i++){
               if (depth[tempCell.Outlinks[i]] > depth[current_node] + 1){
