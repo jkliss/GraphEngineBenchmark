@@ -35,9 +35,6 @@ protocol NodeCollection {
   Response:  NodeList;
 }
 
-
-
-
 protocol DistributedLoadMessage {
   Type: Syn;
   Request: DistributedLoad;
