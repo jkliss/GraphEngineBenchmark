@@ -193,11 +193,11 @@ namespace BenchmarkServer
             Console.WriteLine("All Sender on this Server Finished");
             // CHECK GLOBAL SENDING THREADS
             while(!checkAllSenderGlobal()){
-              Thread.Sleep(1000);
+              Thread.Sleep(100);
             }
             Console.WriteLine("----> All Sender Global Finished <-------");
             while(all_sends < num_servers-1){
-              Thread.Sleep(1000);
+              Thread.Sleep(100);
             }
             all_sent = true;
             // CONSUMING THREADS
@@ -232,7 +232,7 @@ namespace BenchmarkServer
             Console.WriteLine("##################################");
             Console.WriteLine("#######  All edges loaded  #######");
             Console.WriteLine("##################################");
-            if(this_server_id == 0)  Global.LocalStorage.SaveStorage();
+            //if(this_server_id == 0)  Global.LocalStorage.SaveStorage();
           } catch (Exception ex){
             Console.Error.WriteLine(ex.Message);
             Console.Error.WriteLine(ex.StackTrace.ToString());
@@ -550,7 +550,7 @@ namespace BenchmarkServer
                   AddSimpleGraphNode(dequeued_node);
                   set.Add(dequeued_node.ID);
               }
-              if(no_action && exponential_delay <= 5000){
+              if(no_action && exponential_delay <= 2000){
                 exponential_delay = exponential_delay * 2;
               } else if (!no_action){
                 exponential_delay = 1;
@@ -563,9 +563,9 @@ namespace BenchmarkServer
           }
           // transfer all cells to global space
           Console.WriteLine("["+ ThreadNumber +"] Start Saving to Cloud");
-          foreach (long i in set){
+          /**foreach (long i in set){
             Global.CloudStorage.SaveSimpleGraphNode(i, Global.LocalStorage.LoadSimpleGraphNode(i));
-          }
+          }**/
           long cellid_comm = (ThreadNumber+(this_server_id*num_threads));
           Console.WriteLine("["+ ThreadNumber +"] setting finished to " + cellid_comm);
           FinishCommunicator fc = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-cellid_comm);
