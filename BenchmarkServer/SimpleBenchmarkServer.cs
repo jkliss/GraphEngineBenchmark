@@ -316,14 +316,18 @@ namespace BenchmarkServer
     public long[] depths;
 
     public override void NodeCollectionHandler(NodeRequestReader request, NodeListWriter response){
-      using (var requestedCell = Global.LocalStorage.UseSimpleGraphNode(request.cellnum)) {
-        int index = 0;
-        for(int i = 0; i < requestedCell.Outlinks.Count; i++){
-          if(i > 8000) Console.WriteLine("TOO MANY Outlinks");
-          response.Outlinks[i] = requestedCell.Outlinks[i];
-          index++;
+      if(Global.CloudStorage.IsLocalCell(request.cellnum)){
+        using (var requestedCell = Global.LocalStorage.UseSimpleGraphNode(request.cellnum)) {
+          int index = 0;
+          for(int i = 0; i < requestedCell.Outlinks.Count; i++){
+            if(i > 8000) Console.WriteLine("TOO MANY Outlinks");
+            response.Outlinks[i] = requestedCell.Outlinks[i];
+            index++;
+          }
+          response.num_elements = index;
         }
-        response.num_elements = index;
+      } else {
+        Console.WriteLine("CELL " + request.cellnum + " not found");
       }
     }
 
