@@ -572,10 +572,10 @@ namespace BenchmarkServer
           int senderThreadId = (int) nthread;
           Load new_load;
           DistributedLoad distributedLoad = new DistributedLoad();
-          distributedLoad.cellid1 = new long[8388608];
-          distributedLoad.cellid2 = new long[8388608];
-          distributedLoad.weight = new float[8388608];
-          distributedLoad.single_element = new bool[8388608];
+          distributedLoad.cellid1 = new long[1048576];
+          distributedLoad.cellid2 = new long[1048576];
+          distributedLoad.weight = new float[1048576];
+          distributedLoad.single_element = new bool[1048576];
           int index = 0;
           while(finished_readers < num_threads || load_sender_queue[senderThreadId].Count > 0){
             try{
@@ -586,17 +586,17 @@ namespace BenchmarkServer
                 distributedLoad.single_element[index] = new_load.single_element;
                 Interlocked.Increment(ref all_threads_sent_edges);
                 index++;
-                if(index >= 8380000){
+                if(index >= 1048000){
                     //Console.WriteLine("Send Load to Server " + senderThreadId);
                     using (var request = new DistributedLoadWriter(senderThreadId, this_server_id ,index, distributedLoad.cellid1, distributedLoad.cellid2, distributedLoad.weight, distributedLoad.single_element, false))
                     {
                       Global.CloudStorage.DistributedLoadMessageToBenchmarkServer(senderThreadId, request);
                     }
                     distributedLoad = new DistributedLoad();
-                    distributedLoad.cellid1 = new long[8388608];
-                    distributedLoad.cellid2 = new long[8388608];
-                    distributedLoad.weight = new float[8388608];
-                    distributedLoad.single_element = new bool[8388608];
+                    distributedLoad.cellid1 = new long[1048576];
+                    distributedLoad.cellid2 = new long[1048576];
+                    distributedLoad.weight = new float[1048576];
+                    distributedLoad.single_element = new bool[1048576];
                     index = 0;
                 }
               } else {
