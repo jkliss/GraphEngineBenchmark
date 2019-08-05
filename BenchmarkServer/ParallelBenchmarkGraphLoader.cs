@@ -654,6 +654,7 @@ namespace BenchmarkServer
                 compress_index++;
               }
             }
+            Console.WriteLine("Recieved Compressed Load (reduction)" + reduction + " compressed Nodes:" + compress_index);
             for(int i = 0; i < compress_index; i++){
               thread_cache[findThread(thisLoadCompressedNodes[compress_index].ID)].Enqueue(thisLoadCompressedNodes[compress_index]);
             }
