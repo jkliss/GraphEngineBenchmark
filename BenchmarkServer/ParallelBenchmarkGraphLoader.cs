@@ -498,24 +498,36 @@ namespace BenchmarkServer
             simpleGraphNode.CellId = new_node.ID;
             simpleGraphNode.Weights = new List<float>();
             simpleGraphNode.Outlinks = new List<long>();
-          } else {
-            simpleGraphNode = Global.LocalStorage.LoadSimpleGraphNode(new_node.ID);
-          }
-          simpleGraphNode.ID = new_node.ID;
-          if(hasWeight) {
-            for(int i = 0; i < new_node.Outlinks.Count; i++){
-              simpleGraphNode.Outlinks.Add(new_node.Outlinks[i]);
-              simpleGraphNode.Weights.Add(new_node.Weights[i]);
-              //Console.WriteLine("+->" + new_node.Outlinks[i]);
+            if(hasWeight) {
+              for(int i = 0; i < new_node.Outlinks.Count; i++){
+                simpleGraphNode.Outlinks.Add(new_node.Outlinks[i]);
+                simpleGraphNode.Weights.Add(new_node.Weights[i]);
+                //Console.WriteLine("+->" + new_node.Outlinks[i]);
+              }
+            } else {
+              for(int i = 0; i < new_node.Outlinks.Count; i++){
+                simpleGraphNode.Outlinks.Add(new_node.Outlinks[i]);
+                //Console.WriteLine("+->" + new_node.Outlinks[i]);
+              }
             }
+            Global.LocalStorage.SaveSimpleGraphNode(simpleGraphNode);
           } else {
-            for(int i = 0; i < new_node.Outlinks.Count; i++){
-              simpleGraphNode.Outlinks.Add(new_node.Outlinks[i]);
-              //Console.WriteLine("+->" + new_node.Outlinks[i]);
+            using(var accessNode = Global.LocalStorage.UseSimpleGraphNode(new_node.ID))
+            {
+              if(hasWeight) {
+                for(int i = 0; i < new_node.Outlinks.Count; i++){
+                  accessNode.Outlinks.Add(new_node.Outlinks[i]);
+                  accessNode.Weights.Add(new_node.Weights[i]);
+                  //Console.WriteLine("+->" + new_node.Outlinks[i]);
+                }
+              } else {
+                for(int i = 0; i < new_node.Outlinks.Count; i++){
+                  accessNode.Outlinks.Add(new_node.Outlinks[i]);
+                  //Console.WriteLine("+->" + new_node.Outlinks[i]);
+                }
+              }
             }
           }
-          //printGraphNode(simpleGraphNode);
-          Global.LocalStorage.SaveSimpleGraphNode(simpleGraphNode);
         }
 
         public void printGraphNode(SimpleGraphNode node){
