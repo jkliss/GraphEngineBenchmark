@@ -410,6 +410,7 @@ namespace BenchmarkServer
               thread_cache[threadid].Enqueue(emptyGraphNode);
             } else {
               // Insert Inversion
+              if(cellid1 == -1) return;
               int destination_server = findServer(cellid1);
               //Console.WriteLine("[READ"+threadid+"] AddEdge{"+this_server_id+"} (INVERSION S["+destination_server+"]) " + cellid1 + " -> " + cellid2);
               if(destination_server == this_server_id){
@@ -571,10 +572,10 @@ namespace BenchmarkServer
           int senderThreadId = (int) nthread;
           Load new_load;
           DistributedLoad distributedLoad = new DistributedLoad();
-          distributedLoad.cellid1 = new long[65536];
-          distributedLoad.cellid2 = new long[65536];
-          distributedLoad.weight = new float[65536];
-          distributedLoad.single_element = new bool[65536];
+          distributedLoad.cellid1 = new long[1048576];
+          distributedLoad.cellid2 = new long[1048576];
+          distributedLoad.weight = new float[1048576];
+          distributedLoad.single_element = new bool[1048576];
           int index = 0;
           while(finished_readers < num_threads || load_sender_queue[senderThreadId].Count > 0){
             try{
@@ -585,17 +586,17 @@ namespace BenchmarkServer
                 distributedLoad.single_element[index] = new_load.single_element;
                 Interlocked.Increment(ref all_threads_sent_edges);
                 index++;
-                if(index >= 65500){
+                if(index >= 1040000){
                     //Console.WriteLine("Send Load to Server " + senderThreadId);
                     using (var request = new DistributedLoadWriter(senderThreadId, this_server_id ,index, distributedLoad.cellid1, distributedLoad.cellid2, distributedLoad.weight, distributedLoad.single_element, false))
                     {
                       Global.CloudStorage.DistributedLoadMessageToBenchmarkServer(senderThreadId, request);
                     }
                     distributedLoad = new DistributedLoad();
-                    distributedLoad.cellid1 = new long[65536];
-                    distributedLoad.cellid2 = new long[65536];
-                    distributedLoad.weight = new float[65536];
-                    distributedLoad.single_element = new bool[65536];
+                    distributedLoad.cellid1 = new long[1048576];
+                    distributedLoad.cellid2 = new long[1048576];
+                    distributedLoad.weight = new float[1048576];
+                    distributedLoad.single_element = new bool[1048576];
                     index = 0;
                 }
               } else {
@@ -628,17 +629,33 @@ namespace BenchmarkServer
 
         public void addDistributedLoadToServer(DistributedLoad load){
           try{
+            Dictionary<long, int> position = new Dictionary<long, int>();
+            SimpleGraphNode[] thisLoadCompressedNodes = new SimpleGraphNode[load.num_elements];
+            int reduction = 0;
+            int compress_index = 0;
             for(int i = 0; i < load.num_elements; i++){
               Interlocked.Increment(ref all_threads_recieved_load_edges);
-              SimpleGraphNode simpleGraphNode = new SimpleGraphNode();
-              simpleGraphNode.ID = load.cellid1[i];
-              simpleGraphNode.Outlinks = new List<long>();
-              simpleGraphNode.Outlinks.Add(load.cellid2[i]);
-              if(load.weight[i] != -1){
-                 simpleGraphNode.Weights = new List<float>();
-                 simpleGraphNode.Weights.Add(load.weight[i]);
+              if(position.ContainsKey(load.cellid1[i])){
+                  thisLoadCompressedNodes[position[load.cellid1[i]]].Outlinks.Add(load.cellid2[i]);
+                  if(load.weight[i] != -1){
+                     thisLoadCompressedNodes[position[load.cellid1[i]]].Weights.Add(load.weight[i]);
+                  }
+                  reduction++;
+              } else {
+                position[load.cellid1[i]] = compress_index;
+                thisLoadCompressedNodes[compress_index] = new SimpleGraphNode();
+                thisLoadCompressedNodes[compress_index].ID = load.cellid1[i];
+                thisLoadCompressedNodes[compress_index].Outlinks = new List<long>();
+                thisLoadCompressedNodes[compress_index].Outlinks.Add(load.cellid2[i]);
+                if(load.weight[i] != -1){
+                   thisLoadCompressedNodes[compress_index].Weights = new List<float>();
+                   thisLoadCompressedNodes[compress_index].Weights.Add(load.weight[i]);
+                }
+                compress_index++;
               }
-              thread_cache[findThread(load.cellid1[i])].Enqueue(simpleGraphNode);
+            }
+            for(int i = 0; i < compress_index; i++){
+              thread_cache[findThread(thisLoadCompressedNodes[compress_index].ID)].Enqueue(thisLoadCompressedNodes[compress_index]);
             }
             if(load.lastLoad){
                Console.WriteLine("Last Load Arrived of Server:" + load.fromServerID);
