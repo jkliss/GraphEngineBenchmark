@@ -468,7 +468,7 @@ namespace BenchmarkServer
             if(all_starts[0] == -1){
               for(int i = num_servers-1; i >= 0; i--){
                 while(all_starts[i] == -1){
-                  all_starts[i] = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-(num_threads*i)).startReading;
+                  all_starts[i] = mapping2[Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-(num_threads*i)).startReading];
                   Thread.Sleep(50);
                 }
               }
