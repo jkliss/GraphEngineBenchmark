@@ -656,8 +656,8 @@ namespace BenchmarkServer
             }
             Console.WriteLine("Recieved Compressed Load (reduction)" + reduction + " compressed Nodes:" + compress_index);
             for(int i = 0; i < compress_index; i++){
-              Console.WriteLine("RCV THREAD" + thisLoadCompressedNodes[compress_index].ID);
-              thread_cache[findThread(thisLoadCompressedNodes[compress_index].ID)].Enqueue(thisLoadCompressedNodes[compress_index]);
+              Console.WriteLine("RCV THREAD" + thisLoadCompressedNodes[i].ID);
+              thread_cache[findThread(thisLoadCompressedNodes[i].ID)].Enqueue(thisLoadCompressedNodes[i]);
             }
             if(load.lastLoad){
                Console.WriteLine("Last Load Arrived of Server:" + load.fromServerID);
