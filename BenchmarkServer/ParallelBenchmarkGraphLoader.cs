@@ -411,9 +411,6 @@ namespace BenchmarkServer
             } else {
               // Insert Inversion
               int destination_server = findServer(cellid1);
-              if(cellid1 < all_starts[1]){
-                Console.WriteLine("[READ"+threadid+"] AddEdge{"+this_server_id+"} (INVERSION S["+destination_server+"]) " + cellid1 + " -> " + cellid2);
-              }
               //Console.WriteLine("[READ"+threadid+"] AddEdge{"+this_server_id+"} (INVERSION S["+destination_server+"]) " + cellid1 + " -> " + cellid2);
               if(destination_server == this_server_id){
                 //Console.WriteLine("[READ"+threadid+"] AddEdge (INVERSION LOCAL) " + cellid1 + " -> " + cellid2);
@@ -587,7 +584,7 @@ namespace BenchmarkServer
                 Interlocked.Increment(ref all_threads_sent_edges);
                 index++;
                 if(index >= 65500){
-                    Console.WriteLine("Send Load to Server " + senderThreadId);
+                    //Console.WriteLine("Send Load to Server " + senderThreadId);
                     using (var request = new DistributedLoadWriter(senderThreadId, this_server_id ,index, distributedLoad.cellid1, distributedLoad.cellid2, distributedLoad.weight, distributedLoad.single_element, false))
                     {
                       Global.CloudStorage.DistributedLoadMessageToBenchmarkServer(senderThreadId, request);
