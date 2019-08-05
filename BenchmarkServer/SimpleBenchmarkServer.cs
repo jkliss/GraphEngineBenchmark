@@ -287,6 +287,7 @@ namespace BenchmarkServer
     private void StartBFS(long root) {
       Console.WriteLine("CREATE SYNC DEPTH");
       SyncDepth syncDepth = new SyncDepth();
+      syncDepth.Depths = new List<long>();
       for(int i = 0; i <= loader[Global.MyServerID].getMaxNode(); i++){
         syncDepth.Depths.Add(Int64.MaxValue);
       }
