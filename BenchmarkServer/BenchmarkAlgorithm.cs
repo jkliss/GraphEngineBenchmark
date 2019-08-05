@@ -184,6 +184,7 @@ namespace BenchmarkServer
             for(int i = 0; i < tempCell.Outlinks.Count; i++){
               if (depth[tempCell.Outlinks[i]] > depth[current_node] + 1){
                 depth[tempCell.Outlinks[i]] = depth[current_node] + 1;
+                Console.WriteLine(tempCell.Outlinks[i] + " depth " + depth[tempCell.Outlinks[i]]);
                 queue.Enqueue(tempCell.Outlinks[i]);
               }
             }
@@ -196,6 +197,7 @@ namespace BenchmarkServer
               for(int i = 0; i < response.num_elements; i++){
                 if (depth[response.Outlinks[i]] > depth[current_node] + 1){
                   depth[response.Outlinks[i]] = depth[current_node] + 1;
+                  Console.WriteLine(response.Outlinks[i] + " depth " + depth[response.Outlinks[i]]);
                   queue.Enqueue(response.Outlinks[i]);
                 }
               }
