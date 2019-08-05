@@ -25,7 +25,7 @@ namespace BenchmarkServer
         public bool hasWeight = false;
         public bool directed = false;
         //public static int num_threads = Environment.ProcessorCount;
-        public static int num_threads = 6;
+        public static int num_threads = 1;
         public static int num_servers = 2;
         public Thread[] threads = new Thread[num_threads];
         public ConcurrentQueue<SimpleGraphNode>[] thread_cache = new ConcurrentQueue<SimpleGraphNode>[num_threads];
@@ -600,7 +600,7 @@ namespace BenchmarkServer
                 Thread.Sleep(50);
               }
             } catch (Exception ex){
-              Console.Error.WriteLine(ex.Message);
+              Console.Error.WriteLine(ex.Message + " INDEX:" + index);
               Console.Error.WriteLine(ex.StackTrace.ToString());
             }
           }
