@@ -20,6 +20,24 @@ struct DistributedLoad {
   bool lastLoad;
 }
 
+struct NodeList {
+  long[8192] Outlinks;
+  int num_elements;
+}
+
+struct NodeRequest {
+  long cellnum;
+}
+
+protocol NodeCollection {
+  Type: Syn;
+  Request: NodeRequest;
+  Response:  NodeList;
+}
+
+
+
+
 protocol DistributedLoadMessage {
   Type: Syn;
   Request: DistributedLoad;
@@ -136,6 +154,7 @@ server BenchmarkServer {
   protocol DistributedLoadMessage;
   protocol StartBFS;
   protocol BFSUpdate;
+  protocol NodeCollection;
 }
 
 cell struct SimpleGraphNode

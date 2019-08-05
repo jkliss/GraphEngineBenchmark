@@ -150,6 +150,124 @@ namespace BenchmarkServer
       Console.WriteLine("##################################");
     }
 
+    public void BFSLocal(SimpleGraphNode root)
+    {
+      Start_time_Stamp = (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds;
+      var watch = System.Diagnostics.Stopwatch.StartNew();
+      //init array with max distances --> requires amount of elements
+      int graph_size = (int) max_node;
+      Console.WriteLine("Size of Array: {0}", graph_size);
+      Console.WriteLine("Try to access: {0}", root.CellId);
+
+      Int64[] depth = new Int64[graph_size + 1];
+      for (int i = 1; i <= graph_size; i++)
+      {
+        depth[i] = Int64.MaxValue;
+      }
+
+      Queue<long> queue = new Queue<long>();
+
+      queue.Enqueue(root.CellId);
+
+      depth[root.CellId] = 0;
+      long nodes_visited = 0;
+
+      while (queue.Count > 0)
+      {
+        long current_node = queue.Dequeue();
+        if(Global.CloudStorage.IsLocalCell(current_node)) {
+          using (var tempCell = Global.LocalStorage.UseSimpleGraphNode(current_node)) {
+            for(int i = 0; i < tempCell.Outlinks.Count; i++){
+              if (depth[tempCell.Outlinks[i]] > depth[current_node] + 1){
+                depth[tempCell.Outlinks[i]] = depth[current_node] + 1;
+                queue.Enqueue(tempCell.Outlinks[i]);
+              }
+            }
+          }
+        } else {
+          using (var request = new NodeRequestWriter(current_node))
+          {
+            using (var response = Global.CloudStorage.NodeCollectionToBenchmarkServer(0, request))
+            {
+              for(int i = 0; i <= response.num_elements; i++){
+                if (depth[response.Outlinks[i]] > depth[current_node] + 1){
+                  depth[response.Outlinks[i]] = depth[current_node] + 1;
+                  queue.Enqueue(response.Outlinks[i]);
+                }
+              }
+            }
+          }
+        }
+      }
+      ////////////////////////// END ////////////////////////////////777
+      End_time_Stamp = (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds;
+      watch.Stop();
+      var elapsedMs = watch.ElapsedMilliseconds;
+      elapsedTime_lastRun = elapsedMs;
+      Console.WriteLine("----------------------------------");
+      Console.WriteLine("Runtime: {0} (ms)", elapsedTime_lastRun);
+      using (System.IO.StreamWriter file = new System.IO.StreamWriter("benchmark.info"))
+      {
+        file.WriteLine("Algorithm: " + graph_name + " Runtime:" + elapsedTime_lastRun);
+      }
+
+      /**using (System.IO.StreamWriter file = new System.IO.StreamWriter(@output_path))
+      {
+        file.WriteLine("Algorithm: " + graph_name);
+      }**/
+      if(output_path == null || output_path == ""){
+        output_path = "output.txt";
+      }
+      Console.WriteLine("Write File to " + output_path);
+
+        try{
+          using (System.IO.StreamWriter file = new System.IO.StreamWriter(@output_path,true))
+          {
+            /**if(!silent)
+            {
+              if (depth[i] != Int64.MaxValue){
+                Console.WriteLine("Depth of " + i + " (from " + root.CellId + ") is " + depth[i] + " Mapped to: " + mapping1[i]);
+              }
+              //file.WriteLine("Depth of " + i + " (from " + root.CellId + ") is " + depth[i] + " Mapped to: " + mapping1[i]);
+            }**/
+            for (int i = 1; i <= graph_size; i++)
+            {
+              //file.WriteLine(mapping1_array[i] + " " + depth[i]);
+              file.WriteLine(mapping1[i-1] + " " + depth[i]); // hash alternative
+            }
+          }
+        } catch (Exception ex){
+          TextWriter errorWriter = Console.Error;
+          errorWriter.WriteLine(ex.Message);
+        }
+
+
+      if(e_log_path == null || e_log_path == ""){
+        e_log_path = "metrics.txt";
+      } else {
+        e_log_path = e_log_path + "/metrics.txt";
+      }
+      Console.WriteLine("Write Log File to " + e_log_path);
+
+      try{
+        using (System.IO.StreamWriter file = new System.IO.StreamWriter(@e_log_path,true))
+        {
+          file.WriteLine("Processing starts at " + Start_time_Stamp);
+          file.WriteLine("Processing ends at " + End_time_Stamp);
+        }
+      } catch (Exception ex){
+        TextWriter errorWriter = Console.Error;
+        errorWriter.WriteLine(ex.Message);
+      }
+
+      Console.WriteLine("##################################");
+      Console.WriteLine("#######    Finished Run    #######");
+      Console.WriteLine("##################################");
+    }
+
+
+
+
     public void output_server(){
 
     }

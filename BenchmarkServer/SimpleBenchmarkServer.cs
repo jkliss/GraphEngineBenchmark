@@ -119,7 +119,7 @@ namespace BenchmarkServer
         mapped_node = (int) loader[Global.MyServerID].mapping2[this.source_vertex];
         Console.WriteLine("Start at {0}", mapped_node);
         SimpleGraphNode rootNode = Global.CloudStorage.LoadSimpleGraphNode(mapped_node);
-        //benchmarkAlgorithm.BFS(rootNode);
+        benchmarkAlgorithm.BFSLocal(rootNode);
         ranLoader = true;
         /**
         //Distributed Try with Message Sorter
@@ -132,7 +132,7 @@ namespace BenchmarkServer
           Global.CloudStorage.SaveFinishCommunicator(Int64.MaxValue-fcid, fc);
         }
         **/
-        StartBFS(mapped_node);
+        //StartBFS(mapped_node);
       }
       /**
       Thread.Sleep(1000);
@@ -291,6 +291,7 @@ namespace BenchmarkServer
       for(int i = 0; i <= loader[Global.MyServerID].getMaxNode(); i++){
         syncDepth.Depths.Add(Int64.MaxValue);
       }
+      Global.CloudStorage.SaveSyncDepth(Int64.MaxValue, syncDepth);
       Console.WriteLine("CREATED SYNC DEPTH");
 
       for (int i = 0; i < Global.ServerCount; i++) {
@@ -314,12 +315,21 @@ namespace BenchmarkServer
 
     public long[] depths;
 
+    public override void NodeCollectionHandler(NodeRequestReader request, NodeListWriter response){
+      using (var requestedCell = Global.LocalStorage.UseSimpleGraphNode(request.cellnum)) {
+        int index = 0;
+        for(int i = 0; i < requestedCell.Outlinks.Count; i++){
+          if(i > 8000) Console.WriteLine("TOO MANY Outlinks");
+          response.Outlinks[i] = requestedCell.Outlinks[i];
+          index = i;
+        }
+        response.num_elements = index;
+      }
+    }
+
     public override void StartBFSHandler(StartBFSMessageReader request) {
       Console.WriteLine("BFS Started on:" + Global.MyServerID);
-      depths = new long[loader[Global.MyServerID].getMaxNode()];
-      for(int i = 0; i < depths.Length; i++){
-        depths[i] = Int64.MaxValue;
-      }
+
       if (Global.CloudStorage.IsLocalCell(request.root)) {
         Console.WriteLine("First Node on this Server");
         using (var rootCell = Global.LocalStorage.UseSimpleGraphNode(request.root)) {
@@ -334,19 +344,26 @@ namespace BenchmarkServer
       }
     }
 
+    Queue<long> queue_nodes = new Queue<long>();
+
     public override void BFSUpdateHandler(BFSUpdateMessageReader request) {
-          Interlocked.Increment(ref running);
           request.recipients.ForEach((cellId) => {
+            Queue<long> queue_nodes = new Queue<long>();
             if(Global.CloudStorage.IsLocalCell(cellId)){
               using (var cell = Global.LocalStorage.UseSimpleGraphNode(cellId)) {
                 if (cell.Depth > request.level + 1) {
                   cell.Depth = request.level + 1;
-                  cell.parent = request.senderId;
                   depths[cell.ID] = cell.Depth;
                   //Console.WriteLine("CELL:" + cellId + " DEPTH:" + cell.Depth);
                   List<long> aliveNeighbors = new List<long>();
                   for (int i = 0; i < cell.Outlinks.Count; i++) {
-                    if (Global.CloudStorage.Contains(cell.Outlinks[i])) {
+                    if (Global.CloudStorage.IsLocalCell(cellId)) {
+                      using (var nested_cell = Global.LocalStorage.UseSimpleGraphNode(cellId)) {
+                          if(nested_cell.Depth > request.level + 2){
+                            cell.Depth = request.level + 1;
+                          }
+                      }
+                    } else {
                       aliveNeighbors.Add(cell.Outlinks[i]);
                     }
                   }
@@ -361,7 +378,6 @@ namespace BenchmarkServer
               }
             }
           });
-          Interlocked.Decrement(ref running);
     }
   }
 }
