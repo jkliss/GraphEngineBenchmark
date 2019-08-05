@@ -164,7 +164,11 @@ namespace BenchmarkServer
       {
         depth[i] = Int64.MaxValue;
       }
-
+      int this_server_id = Global.MyServerID;
+      int send_to = 0;
+      if(this_server_id == 0){
+        send_to = 1;
+      }
       Queue<long> queue = new Queue<long>();
 
       queue.Enqueue(root.CellId);
@@ -187,9 +191,9 @@ namespace BenchmarkServer
         } else {
           using (var request = new NodeRequestWriter(current_node))
           {
-            using (var response = Global.CloudStorage.NodeCollectionToBenchmarkServer(0, request))
+            using (var response = Global.CloudStorage.NodeCollectionToBenchmarkServer(send_to, request))
             {
-              for(int i = 0; i <= response.num_elements; i++){
+              for(int i = 0; i < response.num_elements; i++){
                 if (depth[response.Outlinks[i]] > depth[current_node] + 1){
                   depth[response.Outlinks[i]] = depth[current_node] + 1;
                   queue.Enqueue(response.Outlinks[i]);

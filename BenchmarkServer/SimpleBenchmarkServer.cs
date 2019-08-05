@@ -321,7 +321,7 @@ namespace BenchmarkServer
         for(int i = 0; i < requestedCell.Outlinks.Count; i++){
           if(i > 8000) Console.WriteLine("TOO MANY Outlinks");
           response.Outlinks[i] = requestedCell.Outlinks[i];
-          index = i;
+          index++;
         }
         response.num_elements = index;
       }
