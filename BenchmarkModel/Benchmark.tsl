@@ -26,11 +26,22 @@ cell struct NodeList {
   List<long> Outlinks;
 }
 
+struct BFSDummy {
+  long cellid;
+  long depth;
+}
+
 struct NodeRequest {
   long cellnum;
 }
 
 protocol NodeCollection {
+  Type: Syn;
+  Request: NodeList;
+  Response:  NodeList;
+}
+
+protocol BatchNodeCollection {
   Type: Syn;
   Request: NodeList;
   Response:  NodeList;
@@ -150,9 +161,8 @@ server BenchmarkServer {
   protocol Terminate;
   protocol DeleteGraph;
   protocol DistributedLoadMessage;
-  protocol StartBFS;
-  protocol BFSUpdate;
   protocol NodeCollection;
+  protocol BatchNodeCollection;
 }
 
 cell struct SimpleGraphNode
@@ -184,28 +194,4 @@ cell struct SyncDepth
 cell struct FinishCounter
 {
     int count;
-}
-
-// Johannes Thiel BFS
-
-struct StartBFSMessage {
-  long root;
-}
-
-struct BFSUpdateMessage {
-  long senderId;
-  long level;
-  List<long> recipients;
-}
-
-protocol StartBFS {
-  type: Asyn;
-  Request: StartBFSMessage;
-  Response: void;
-}
-
-protocol BFSUpdate {
-  Type: Asyn;
-  Request: BFSUpdateMessage;
-  Response: void;
 }

@@ -190,14 +190,20 @@ namespace BenchmarkServer
 
       Queue<long> queue = new Queue<long>();
 
-      queue.Enqueue(root.CellId);
+      Queue<BFSDummy> bfsqueue = new Queue<BFSDummy>();
+      BFSDummy dummy = new BFSDummy();
+      dummy.cellid = root.CellId;
+      dummy.depth = 0;
+      bfsqueue.Enqueue(dummy);
+      HashSet<long> remoteSet = new HashSet<long>();
+      long last_level = 0;
 
+      queue.Enqueue(root.CellId);
       depth[root.CellId] = 0;
-      long nodes_visited = 0;
 
       while (queue.Count > 0)
       {
-        long current_node = queue.Dequeue();
+        /**long current_node = queue.Dequeue();
         if(!visited[current_node]){
           visited[current_node] = true;
           //Console.WriteLine("Dequeued " + current_node);
@@ -234,8 +240,63 @@ namespace BenchmarkServer
               }
             }
           }
+        }**/
+        ///////////////////////////////////////////// DUMMY IMPLEMENTATION /////////////////////////////////
+        BFSDummy current_dummy = bfsqueue.Dequeue();
+        if(current_dummy.depth > last_level){
+          /////////// GATHER REMOTE (currently only one server!) -> HashSet[num_server] -> Check each HashSet.Count > 0
+          List<long> listToSend = new List<long>();
+          foreach (long i in remoteSet)
+          {
+            listToSend.Add(i);
+          }
+          remoteSet = new HashSet<long>();
+          using (var request = new NodeListWriter(-1, 0, listToSend))
+          {
+            using (var response = Global.CloudStorage.BatchNodeCollectionToBenchmarkServer(1, request))
+            {
+              List<long> array = response.Outlinks;
+              for(int i = 0; i < response.num_elements; i++){
+                int outlink = (int) array[i];
+                //Console.WriteLine("Cell " + outlink);
+                //Console.WriteLine("CNODE " + current_node + " has depth " + depth[current_node]);
+                if (depth[outlink] > last_level + 1){
+                  depth[outlink] = last_level + 1;
+                  BFSDummy new_node = new BFSDummy();
+                  new_node.cellid = outlink;
+                  new_node.depth = last_level + 1;
+                  //Console.WriteLine(response.Outlinks[i] + " depth " + depth[response.Outlinks[i]]);
+                  bfsqueue.Enqueue(new_node);
+                }
+              }
+            }
+          }
+          ////// FINISHED GATHERING STEP
         }
-
+        if(!visited[current_dummy.cellid]){
+          visited[current_dummy.cellid] = true;
+          //Console.WriteLine("Dequeued " + current_node);
+          int onServer = findServer(current_dummy.cellid);
+          //Console.WriteLine("Outgoing From: " + current_node + " on Server" + onServer);
+          if(onServer == this_server_id){
+            //Console.WriteLine("[!] LOCAL " + current_node);
+            using (var tempCell = Global.LocalStorage.UseSimpleGraphNode(current_dummy.cellid)) {
+              for(int i = 0; i < tempCell.Outlinks.Count; i++){
+                if (depth[tempCell.Outlinks[i]] > depth[current_dummy.cellid] + 1){
+                  depth[tempCell.Outlinks[i]] = depth[current_dummy.cellid] + 1;
+                  //Console.WriteLine(tempCell.Outlinks[i] + " depth " + depth[tempCell.Outlinks[i]]);
+                  BFSDummy new_dummy = new BFSDummy();
+                  new_dummy.cellid = tempCell.Outlinks[i];
+                  new_dummy.depth = depth[current_dummy.cellid] + 1;
+                  bfsqueue.Enqueue(new_dummy);
+                }
+              }
+            }
+          } else {
+            remoteSet.Add(current_dummy.cellid);
+          }
+        }
+        last_level = current_dummy.depth;
       }
       ////////////////////////// END ////////////////////////////////777
       End_time_Stamp = (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds;
@@ -248,11 +309,6 @@ namespace BenchmarkServer
       {
         file.WriteLine("Algorithm: " + graph_name + " Runtime:" + elapsedTime_lastRun);
       }
-
-      /**using (System.IO.StreamWriter file = new System.IO.StreamWriter(@output_path))
-      {
-        file.WriteLine("Algorithm: " + graph_name);
-      }**/
       if(output_path == null || output_path == ""){
         output_path = "output.txt";
       }
@@ -261,16 +317,8 @@ namespace BenchmarkServer
         try{
           using (System.IO.StreamWriter file = new System.IO.StreamWriter(@output_path,true))
           {
-            /**if(!silent)
-            {
-              if (depth[i] != Int64.MaxValue){
-                Console.WriteLine("Depth of " + i + " (from " + root.CellId + ") is " + depth[i] + " Mapped to: " + mapping1[i]);
-              }
-              //file.WriteLine("Depth of " + i + " (from " + root.CellId + ") is " + depth[i] + " Mapped to: " + mapping1[i]);
-            }**/
             for (int i = 1; i <= graph_size; i++)
             {
-              //file.WriteLine(mapping1_array[i] + " " + depth[i]);
               file.WriteLine(mapping1[i-1] + " " + depth[i]); // hash alternative
             }
           }
@@ -278,15 +326,12 @@ namespace BenchmarkServer
           TextWriter errorWriter = Console.Error;
           errorWriter.WriteLine(ex.Message);
         }
-
-
       if(e_log_path == null || e_log_path == ""){
         e_log_path = "metrics.txt";
       } else {
         e_log_path = e_log_path + "/metrics.txt";
       }
       Console.WriteLine("Write Log File to " + e_log_path);
-
       try{
         using (System.IO.StreamWriter file = new System.IO.StreamWriter(@e_log_path,true))
         {
@@ -297,7 +342,6 @@ namespace BenchmarkServer
         TextWriter errorWriter = Console.Error;
         errorWriter.WriteLine(ex.Message);
       }
-
       Console.WriteLine("##################################");
       Console.WriteLine("#######    Finished Run    #######");
       Console.WriteLine("##################################");
@@ -305,6 +349,9 @@ namespace BenchmarkServer
 
 
 
+    public void gatherRemote(){
+
+    }
 
     public void output_server(){
 
