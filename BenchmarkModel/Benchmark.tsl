@@ -21,7 +21,8 @@ struct DistributedLoad {
 }
 
 struct NodeList {
-  long[1024] Outlinks;
+  long[8196] Outlinks;
+  long link;
   int num_elements;
 }
 
