@@ -219,9 +219,9 @@ namespace BenchmarkServer
             using (var response = Global.CloudStorage.NodeCollectionToBenchmarkServer(onServer, request))
             {
               for(int i = 0; i < response.num_elements; i++){
-                if (depth[response.Outlinks[i]] > depth[current_node] + 1){
-                  long outlink = response.Outlinks[i];
-                  int output_int = (int) outlink;
+                long outlink = response.Outlinks[i];
+                int output_int = (int) outlink;
+                if (depth[output_int] > depth[current_node] + 1){
                   depth[output_int] = depth[current_node] + 1;
                   Console.WriteLine(response.Outlinks[i] + " depth " + depth[response.Outlinks[i]]);
                   queue.Enqueue(response.Outlinks[i]);
