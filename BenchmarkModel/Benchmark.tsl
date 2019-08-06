@@ -23,7 +23,7 @@ struct DistributedLoad {
 cell struct NodeList {
   long cellnum;
   int num_elements;
-  int[8196] Outlinks;
+  List<long> Outlinks;
 }
 
 struct NodeRequest {

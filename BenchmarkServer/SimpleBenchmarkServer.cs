@@ -331,6 +331,7 @@ namespace BenchmarkServer
           response.num_elements = index;
           Console.WriteLine("Response has " + index + " Elements");
         }
+        //Global.CloudStorage.SaveNodeList(response);
       } else {
         Console.WriteLine("CELL " + request.cellnum + " not found");
       }

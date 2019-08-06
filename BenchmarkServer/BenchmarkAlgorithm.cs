@@ -213,18 +213,18 @@ namespace BenchmarkServer
           }
         } else {
           Console.WriteLine("[?] ASK FOR " + current_node);
-          int[] empty_array = new int[8196];
+          List<long> empty_array = new List<long>();
           for(int i = 0; i < 8196; i++){
-            empty_array[i] = i;
+            empty_array.Add(i);
           }
           using (var request = new NodeListWriter(current_node, 0, empty_array))
           {
             using (var response = Global.CloudStorage.NodeCollectionToBenchmarkServer(onServer, request))
             {
               Console.WriteLine("Response contains " + response.num_elements + "elements");
-              int[] array = response.Outlinks;
+              List<long> array = response.Outlinks;
               for(int i = 0; i < response.num_elements; i++){
-                int outlink = array[i];
+                int outlink = (int) array[i];
                 Console.WriteLine("Cell " + outlink);
                 Console.WriteLine("CNODE " + current_node + " has depth " + depth[current_node]);
                 if (depth[outlink] > depth[current_node] + 1){
