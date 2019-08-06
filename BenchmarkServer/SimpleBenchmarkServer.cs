@@ -321,6 +321,7 @@ namespace BenchmarkServer
         response.Outlinks.Add(cell);
         index++;
       }
+      Console.WriteLine("SENDING " + index + " Elements");
       response.num_elements = index;
     }
   }

@@ -253,7 +253,7 @@ namespace BenchmarkServer
         if(!dequed || current_dummy.depth > last_level){
           /////////// GATHER REMOTE (currently only one server!) -> HashSet[num_server] -> Check each HashSet.Count > 0
           if(remoteSet.Count > 0){
-            //Console.WriteLine("Remote Query");
+            Console.WriteLine("Remote Query");
             List<long> listToSend = new List<long>();
             foreach (long i in remoteSet)
             {
