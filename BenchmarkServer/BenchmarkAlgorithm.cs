@@ -219,12 +219,11 @@ namespace BenchmarkServer
             {
               Console.WriteLine("Response contains " + response.num_elements + "elements");
               for(int i = 0; i < response.num_elements; i++){
-                long outlink = (long) response.Outlinks[i];
-                int output_int = (int) outlink;
+                int outlink = response.Outlinks[i];
                 Console.WriteLine("Cell " + outlink);
                 Console.WriteLine("CNODE " + current_node + " has depth " + depth[current_node]);
-                if (depth[output_int] > depth[current_node] + 1){
-                  depth[output_int] = depth[current_node] + 1;
+                if (depth[outlink] > depth[current_node] + 1){
+                  depth[outlink] = depth[current_node] + 1;
                   Console.WriteLine(response.Outlinks[i] + " depth " + depth[response.Outlinks[i]]);
                   queue.Enqueue(response.Outlinks[i]);
                 }
