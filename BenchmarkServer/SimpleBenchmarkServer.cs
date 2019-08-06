@@ -316,7 +316,7 @@ namespace BenchmarkServer
 
     public long[] depths;
 
-    public override void NodeCollectionHandler(NodeRequestReader request, NodeListWriter response){
+    public override void NodeCollectionHandler(NodeListReader request, NodeListWriter response){
       if(Global.LocalStorage.Contains(request.cellnum)){
         Console.WriteLine("Get Cell " + request.cellnum);
         using (var requestedCell = Global.LocalStorage.UseSimpleGraphNode(request.cellnum)) {

@@ -21,8 +21,9 @@ struct DistributedLoad {
 }
 
 struct NodeList {
-  int[8196] Outlinks;
+  long cellnum;
   int num_elements;
+  int[8196] Outlinks;
 }
 
 struct NodeRequest {
@@ -31,7 +32,7 @@ struct NodeRequest {
 
 protocol NodeCollection {
   Type: Syn;
-  Request: NodeRequest;
+  Request: NodeList;
   Response:  NodeList;
 }
 
