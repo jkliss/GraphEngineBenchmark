@@ -262,7 +262,7 @@ namespace BenchmarkServer
             remoteSet = new HashSet<long>();
             while(queueToSend.Count > 0){
               List<long> listToSend = new List<long>();
-              for(int i = 0; i < 100; i++){
+              for(int i = 0; i < 10; i++){
                 if(queueToSend.Count == 0) break;
                 listToSend.Add(queueToSend.Dequeue());
               }
