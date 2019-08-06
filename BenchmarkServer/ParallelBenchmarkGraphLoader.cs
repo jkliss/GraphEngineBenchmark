@@ -479,7 +479,7 @@ namespace BenchmarkServer
               }
             }
             for(int i = 1; i < num_servers; i++){
-              if(cell <= all_starts[i]) return i-1;
+              if(cell < all_starts[i]) return i-1;
             }
             return num_servers-1;
           }  catch (Exception ex) {
