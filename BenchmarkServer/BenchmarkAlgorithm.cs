@@ -245,28 +245,30 @@ namespace BenchmarkServer
         BFSDummy current_dummy = bfsqueue.Dequeue();
         if(current_dummy.depth > last_level){
           /////////// GATHER REMOTE (currently only one server!) -> HashSet[num_server] -> Check each HashSet.Count > 0
-          List<long> listToSend = new List<long>();
-          foreach (long i in remoteSet)
-          {
-            listToSend.Add(i);
-          }
-          remoteSet = new HashSet<long>();
-          using (var request = new NodeListWriter(-1, 0, listToSend))
-          {
-            using (var response = Global.CloudStorage.BatchNodeCollectionToBenchmarkServer(1, request))
+          if(remoteSet.Count > 0){
+            List<long> listToSend = new List<long>();
+            foreach (long i in remoteSet)
             {
-              List<long> array = response.Outlinks;
-              for(int i = 0; i < response.num_elements; i++){
-                int outlink = (int) array[i];
-                //Console.WriteLine("Cell " + outlink);
-                //Console.WriteLine("CNODE " + current_node + " has depth " + depth[current_node]);
-                if (depth[outlink] > last_level + 1){
-                  depth[outlink] = last_level + 1;
-                  BFSDummy new_node = new BFSDummy();
-                  new_node.cellid = outlink;
-                  new_node.depth = last_level + 1;
-                  //Console.WriteLine(response.Outlinks[i] + " depth " + depth[response.Outlinks[i]]);
-                  bfsqueue.Enqueue(new_node);
+              listToSend.Add(i);
+            }
+            remoteSet = new HashSet<long>();
+            using (var request = new NodeListWriter(-1, 0, listToSend))
+            {
+              using (var response = Global.CloudStorage.BatchNodeCollectionToBenchmarkServer(1, request))
+              {
+                List<long> array = response.Outlinks;
+                for(int i = 0; i < response.num_elements; i++){
+                  int outlink = (int) array[i];
+                  //Console.WriteLine("Cell " + outlink);
+                  //Console.WriteLine("CNODE " + current_node + " has depth " + depth[current_node]);
+                  if (depth[outlink] > last_level + 1){
+                    depth[outlink] = last_level + 1;
+                    BFSDummy new_node = new BFSDummy();
+                    new_node.cellid = outlink;
+                    new_node.depth = last_level + 1;
+                    //Console.WriteLine(response.Outlinks[i] + " depth " + depth[response.Outlinks[i]]);
+                    bfsqueue.Enqueue(new_node);
+                  }
                 }
               }
             }
