@@ -242,9 +242,15 @@ namespace BenchmarkServer
           }
         }**/
         ///////////////////////////////////////////// DUMMY IMPLEMENTATION /////////////////////////////////
-        BFSDummy current_dummy = bfsqueue.Dequeue();
-        Console.WriteLine("NODE:" + current_dummy.cellid);
-        if(current_dummy.depth > last_level){
+        bool dequed = false;
+        BFSDummy current_dummy = new BFSDummy();
+        if(bfsqueue.Count > 0){
+          dequed = true;
+          current_dummy = bfsqueue.Dequeue();
+          Console.WriteLine("NODE:" + current_dummy.cellid);
+        }
+
+        if(!dequed || current_dummy.depth > last_level){
           /////////// GATHER REMOTE (currently only one server!) -> HashSet[num_server] -> Check each HashSet.Count > 0
           if(remoteSet.Count > 0){
             Console.WriteLine("Remote Query");
@@ -276,30 +282,32 @@ namespace BenchmarkServer
           }
           ////// FINISHED GATHERING STEP
         }
-        if(!visited[current_dummy.cellid]){
-          visited[current_dummy.cellid] = true;
-          //Console.WriteLine("Dequeued " + current_node);
-          int onServer = findServer(current_dummy.cellid);
-          //Console.WriteLine("Outgoing From: " + current_node + " on Server" + onServer);
-          if(onServer == this_server_id){
-            Console.WriteLine("[!] LOCAL " + current_dummy.cellid);
-            using (var tempCell = Global.LocalStorage.UseSimpleGraphNode(current_dummy.cellid)) {
-              for(int i = 0; i < tempCell.Outlinks.Count; i++){
-                if (depth[tempCell.Outlinks[i]] > depth[current_dummy.cellid] + 1){
-                  depth[tempCell.Outlinks[i]] = depth[current_dummy.cellid] + 1;
-                  //Console.WriteLine(tempCell.Outlinks[i] + " depth " + depth[tempCell.Outlinks[i]]);
-                  BFSDummy new_dummy = new BFSDummy();
-                  new_dummy.cellid = tempCell.Outlinks[i];
-                  new_dummy.depth = depth[current_dummy.cellid] + 1;
-                  bfsqueue.Enqueue(new_dummy);
+        if(dequed){
+          if(!visited[current_dummy.cellid]){
+            visited[current_dummy.cellid] = true;
+            //Console.WriteLine("Dequeued " + current_node);
+            int onServer = findServer(current_dummy.cellid);
+            //Console.WriteLine("Outgoing From: " + current_node + " on Server" + onServer);
+            if(onServer == this_server_id){
+              Console.WriteLine("[!] LOCAL " + current_dummy.cellid);
+              using (var tempCell = Global.LocalStorage.UseSimpleGraphNode(current_dummy.cellid)) {
+                for(int i = 0; i < tempCell.Outlinks.Count; i++){
+                  if (depth[tempCell.Outlinks[i]] > depth[current_dummy.cellid] + 1){
+                    depth[tempCell.Outlinks[i]] = depth[current_dummy.cellid] + 1;
+                    //Console.WriteLine(tempCell.Outlinks[i] + " depth " + depth[tempCell.Outlinks[i]]);
+                    BFSDummy new_dummy = new BFSDummy();
+                    new_dummy.cellid = tempCell.Outlinks[i];
+                    new_dummy.depth = depth[current_dummy.cellid] + 1;
+                    bfsqueue.Enqueue(new_dummy);
+                  }
                 }
               }
+            } else {
+              remoteSet.Add(current_dummy.cellid);
             }
-          } else {
-            remoteSet.Add(current_dummy.cellid);
           }
-        }
-        last_level = current_dummy.depth;
+          last_level = current_dummy.depth;
+        }  
       }
       ////////////////////////// END ////////////////////////////////777
       End_time_Stamp = (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds;
