@@ -220,6 +220,8 @@ namespace BenchmarkServer
               for(int i = 0; i < response.num_elements; i++){
                 long outlink = response.Outlinks[i];
                 int output_int = (int) outlink;
+                Console.WriteLine("Cell " + output_int + " has depth " + depth[output_int]);
+                Console.WriteLine("CNODE " + current_node + " has depth " + depth[current_node]);
                 if (depth[output_int] > depth[current_node] + 1){
                   depth[output_int] = depth[current_node] + 1;
                   Console.WriteLine(response.Outlinks[i] + " depth " + depth[response.Outlinks[i]]);
