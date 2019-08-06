@@ -186,10 +186,7 @@ namespace BenchmarkServer
         depth[i] = Int64.MaxValue;
       }
       int this_server_id = Global.MyServerID;
-      int send_to = 0;
-      if(this_server_id == 0){
-        send_to = 1;
-      }
+
       Queue<long> queue = new Queue<long>();
 
       queue.Enqueue(root.CellId);
@@ -202,6 +199,7 @@ namespace BenchmarkServer
         long current_node = queue.Dequeue();
         Console.WriteLine("Dequeued " + current_node);
         int onServer = findServer(current_node);
+        Console.WriteLine("Outgoing From: " + current_node + " on Server" + onServer);
         if(onServer == this_server_id)
          {
           Console.WriteLine("[!] LOCAL " + current_node);
