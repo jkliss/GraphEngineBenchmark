@@ -201,7 +201,7 @@ namespace BenchmarkServer
       queue.Enqueue(root.CellId);
       depth[root.CellId] = 0;
 
-      while (queue.Count > 0)
+      while (bfsqueue.Count > 0)
       {
         /**long current_node = queue.Dequeue();
         if(!visited[current_node]){
