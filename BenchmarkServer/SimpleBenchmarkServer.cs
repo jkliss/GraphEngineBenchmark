@@ -322,6 +322,7 @@ namespace BenchmarkServer
         using (var requestedCell = Global.LocalStorage.UseSimpleGraphNode(request.cellnum)) {
           int index = 0;
           for(int i = 0; i < requestedCell.Outlinks.Count; i++){
+            Console.WriteLine("ARRAY" + request.Outlinks[i]);
             if(i > 8000) Console.WriteLine("TOO MANY Outlinks");
             response.Outlinks[i] = (int) requestedCell.Outlinks[i];
             Console.WriteLine("Added " + response.Outlinks[i] + " at " + i);
