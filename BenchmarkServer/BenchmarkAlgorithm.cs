@@ -196,23 +196,23 @@ namespace BenchmarkServer
       while (queue.Count > 0)
       {
         long current_node = queue.Dequeue();
-        Console.WriteLine("Dequeued " + current_node);
+        //Console.WriteLine("Dequeued " + current_node);
         int onServer = findServer(current_node);
-        Console.WriteLine("Outgoing From: " + current_node + " on Server" + onServer);
+        //Console.WriteLine("Outgoing From: " + current_node + " on Server" + onServer);
         if(onServer == this_server_id)
          {
-          Console.WriteLine("[!] LOCAL " + current_node);
+          //Console.WriteLine("[!] LOCAL " + current_node);
           using (var tempCell = Global.LocalStorage.UseSimpleGraphNode(current_node)) {
             for(int i = 0; i < tempCell.Outlinks.Count; i++){
               if (depth[tempCell.Outlinks[i]] > depth[current_node] + 1){
                 depth[tempCell.Outlinks[i]] = depth[current_node] + 1;
-                Console.WriteLine(tempCell.Outlinks[i] + " depth " + depth[tempCell.Outlinks[i]]);
+                //Console.WriteLine(tempCell.Outlinks[i] + " depth " + depth[tempCell.Outlinks[i]]);
                 queue.Enqueue(tempCell.Outlinks[i]);
               }
             }
           }
         } else {
-          Console.WriteLine("[?] ASK FOR " + current_node);
+          //Console.WriteLine("[?] ASK FOR " + current_node);
           List<long> empty_array = new List<long>();
           for(int i = 0; i < 8196; i++){
             empty_array.Add(i);
@@ -221,15 +221,15 @@ namespace BenchmarkServer
           {
             using (var response = Global.CloudStorage.NodeCollectionToBenchmarkServer(onServer, request))
             {
-              Console.WriteLine("Response contains " + response.num_elements + "elements");
+              //Console.WriteLine("Response contains " + response.num_elements + "elements");
               List<long> array = response.Outlinks;
               for(int i = 0; i < response.num_elements; i++){
                 int outlink = (int) array[i];
-                Console.WriteLine("Cell " + outlink);
-                Console.WriteLine("CNODE " + current_node + " has depth " + depth[current_node]);
+                //Console.WriteLine("Cell " + outlink);
+                //Console.WriteLine("CNODE " + current_node + " has depth " + depth[current_node]);
                 if (depth[outlink] > depth[current_node] + 1){
                   depth[outlink] = depth[current_node] + 1;
-                  Console.WriteLine(response.Outlinks[i] + " depth " + depth[response.Outlinks[i]]);
+                  //Console.WriteLine(response.Outlinks[i] + " depth " + depth[response.Outlinks[i]]);
                   queue.Enqueue(response.Outlinks[i]);
                 }
               }
