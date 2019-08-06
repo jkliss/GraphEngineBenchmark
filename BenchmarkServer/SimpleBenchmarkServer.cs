@@ -119,6 +119,7 @@ namespace BenchmarkServer
         mapped_node = (int) loader[Global.MyServerID].mapping2[this.source_vertex];
         Console.WriteLine("Start at {0}", mapped_node);
         SimpleGraphNode rootNode = Global.CloudStorage.LoadSimpleGraphNode(mapped_node);
+        benchmarkAlgorithm.all_starts = loader[Global.MyServerID].all_starts;
         benchmarkAlgorithm.BFSLocal(rootNode);
         ranLoader = true;
         /**

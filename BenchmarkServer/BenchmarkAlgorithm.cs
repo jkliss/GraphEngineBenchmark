@@ -24,6 +24,8 @@ namespace BenchmarkServer
     public static int num_threads = Environment.ProcessorCount;
     public Thread[] threads = new Thread[num_threads];
 
+    public long[] all_starts;
+
     public void setMaxNode(long new_max_node){
       max_node = new_max_node;
     }
@@ -150,8 +152,24 @@ namespace BenchmarkServer
       Console.WriteLine("##################################");
     }
 
+    int num_servers;
+    public int findServer(long cell){
+      try{
+        for(int i = 0; i < num_servers; i++){
+          if(cell <= all_starts[i]) return i-1;
+        }
+        return num_servers-1;
+      }  catch (Exception ex) {
+        Console.WriteLine("ERROR UNABLE TO GET SERVERID");
+        Console.Error.WriteLine(ex.Message);
+        Console.Error.WriteLine(ex.StackTrace.ToString());
+      }
+      return -1;
+    }
+
     public void BFSLocal(SimpleGraphNode root)
     {
+      num_servers = Global.ServerCount;
       Start_time_Stamp = (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds;
       var watch = System.Diagnostics.Stopwatch.StartNew();
       //init array with max distances --> requires amount of elements
@@ -180,7 +198,9 @@ namespace BenchmarkServer
       {
         long current_node = queue.Dequeue();
         Console.WriteLine("Dequeued " + current_node);
-        if(Global.LocalStorage.Contains(current_node) && Global.LocalStorage.LoadSimpleGraphNode(current_node).ID == current_node) {
+        int onServer = findServer(current_node);
+        if(onServer == this_server_id)
+         {
           Console.WriteLine("[!] LOCAL " + current_node);
           using (var tempCell = Global.LocalStorage.UseSimpleGraphNode(current_node)) {
             for(int i = 0; i < tempCell.Outlinks.Count; i++){
@@ -195,7 +215,7 @@ namespace BenchmarkServer
           Console.WriteLine("[?] ASK FOR " + current_node);
           using (var request = new NodeRequestWriter(current_node))
           {
-            using (var response = Global.CloudStorage.NodeCollectionToBenchmarkServer(send_to, request))
+            using (var response = Global.CloudStorage.NodeCollectionToBenchmarkServer(onServer, request))
             {
               for(int i = 0; i < response.num_elements; i++){
                 if (depth[response.Outlinks[i]] > depth[current_node] + 1){
