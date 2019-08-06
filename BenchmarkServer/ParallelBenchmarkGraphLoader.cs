@@ -547,7 +547,7 @@ namespace BenchmarkServer
               no_action = true;
               while(thread_cache[ThreadNumber].TryDequeue(out dequeued_node)){
                   no_action = false;
-                  //Console.WriteLine("[CONSUMER"+ThreadNumber+"] Add Node: " + dequeued_node.ID + " OUT: " + String.Join(",", dequeued_node.Outlinks));
+                  Console.WriteLine("[CONSUMER"+ThreadNumber+"] Add Node: " + dequeued_node.ID + " OUT: " + String.Join(",", dequeued_node.Outlinks));
                   AddSimpleGraphNode(dequeued_node);
                   set.Add(dequeued_node.ID);
               }
