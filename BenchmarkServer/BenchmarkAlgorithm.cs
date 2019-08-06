@@ -180,7 +180,7 @@ namespace BenchmarkServer
       {
         long current_node = queue.Dequeue();
         Console.WriteLine("Dequeued " + current_node);
-        if(Global.LocalStorage.Contains(current_node) && current_node != 1612) {
+        if(Global.LocalStorage.Contains(current_node) && Global.LocalStorage.LoadSimpleGraphNode(current_node).ID == current_node) {
           Console.WriteLine("[!] LOCAL " + current_node);
           using (var tempCell = Global.LocalStorage.UseSimpleGraphNode(current_node)) {
             for(int i = 0; i < tempCell.Outlinks.Count; i++){
