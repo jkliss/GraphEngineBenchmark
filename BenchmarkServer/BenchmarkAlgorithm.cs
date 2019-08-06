@@ -218,7 +218,7 @@ namespace BenchmarkServer
             using (var response = Global.CloudStorage.NodeCollectionToBenchmarkServer(onServer, request))
             {
               Console.WriteLine("Response contains " + response.num_elements + "elements");
-              for(int i = 0; i < response.num_elements; i++){
+              for(int i = 1; i < response.num_elements; i++){
                 int outlink = response.Outlinks[i];
                 Console.WriteLine("Cell " + outlink);
                 Console.WriteLine("CNODE " + current_node + " has depth " + depth[current_node]);
