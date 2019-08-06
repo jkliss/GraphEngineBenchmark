@@ -260,6 +260,7 @@ namespace BenchmarkServer
               listToSend.Add(i);
             }
             remoteSet = new HashSet<long>();
+            Console.WriteLine("Send Conains " + listToSend.Count);
             using (var request = new NodeListWriter(-1, 0, listToSend))
             {
               using (var response = Global.CloudStorage.BatchNodeCollectionToBenchmarkServer(1, request))
