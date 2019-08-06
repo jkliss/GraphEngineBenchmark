@@ -320,11 +320,11 @@ namespace BenchmarkServer
       if(Global.LocalStorage.Contains(request.cellnum)){
         Console.WriteLine("Get Cell " + request.cellnum);
         using (var requestedCell = Global.LocalStorage.UseSimpleGraphNode(request.cellnum)) {
-          int index = 0;
+          int index = 1;
           for(int i = 0; i < requestedCell.Outlinks.Count; i++){
             if(i > 8000) Console.WriteLine("TOO MANY Outlinks");
-            response.Outlinks[i+1] = (int) requestedCell.Outlinks[i];
-            Console.WriteLine("Added " + response.Outlinks[i+1] + " at " + i);
+            response.Outlinks[index] = (int) requestedCell.Outlinks[i];
+            Console.WriteLine("Added " + response.Outlinks[index] + " at " + i);
             index++;
           }
           response.num_elements = index;
