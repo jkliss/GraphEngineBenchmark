@@ -185,9 +185,11 @@ namespace BenchmarkServer
       {
         depth[i] = Int64.MaxValue;
       }
+      bool[] visited = new bool[graph_size + 1];
       int this_server_id = Global.MyServerID;
 
       Queue<long> queue = new Queue<long>();
+
       queue.Enqueue(root.CellId);
 
       depth[root.CellId] = 0;
@@ -196,46 +198,44 @@ namespace BenchmarkServer
       while (queue.Count > 0)
       {
         long current_node = queue.Dequeue();
-        //Console.WriteLine("Dequeued " + current_node);
-        int onServer = findServer(current_node);
-        //Console.WriteLine("Outgoing From: " + current_node + " on Server" + onServer);
-        if(onServer == this_server_id)
-         {
-          //Console.WriteLine("[!] LOCAL " + current_node);
-          using (var tempCell = Global.LocalStorage.UseSimpleGraphNode(current_node)) {
-            for(int i = 0; i < tempCell.Outlinks.Count; i++){
-              if (depth[tempCell.Outlinks[i]] > depth[current_node] + 1){
-                depth[tempCell.Outlinks[i]] = depth[current_node] + 1;
-                //Console.WriteLine(tempCell.Outlinks[i] + " depth " + depth[tempCell.Outlinks[i]]);
-                queue.Enqueue(tempCell.Outlinks[i]);
+        if(!visited[current_node]){
+          visited[current_node] = true;
+          //Console.WriteLine("Dequeued " + current_node);
+          int onServer = findServer(current_node);
+          //Console.WriteLine("Outgoing From: " + current_node + " on Server" + onServer);
+          if(onServer == this_server_id){
+            //Console.WriteLine("[!] LOCAL " + current_node);
+            using (var tempCell = Global.LocalStorage.UseSimpleGraphNode(current_node)) {
+              for(int i = 0; i < tempCell.Outlinks.Count; i++){
+                if (depth[tempCell.Outlinks[i]] > depth[current_node] + 1){
+                  depth[tempCell.Outlinks[i]] = depth[current_node] + 1;
+                  //Console.WriteLine(tempCell.Outlinks[i] + " depth " + depth[tempCell.Outlinks[i]]);
+                  queue.Enqueue(tempCell.Outlinks[i]);
+                }
               }
             }
-          }
-        } else {
-          //Console.WriteLine("[?] ASK FOR " + current_node);
-          List<long> empty_array = new List<long>();
-          for(int i = 0; i < 8196; i++){
-            empty_array.Add(i);
-          }
-          using (var request = new NodeListWriter(current_node, 0, empty_array))
-          {
-            using (var response = Global.CloudStorage.NodeCollectionToBenchmarkServer(onServer, request))
+          } else {
+            using (var request = new NodeListWriter(current_node, 0))
             {
-              //Console.WriteLine("Response contains " + response.num_elements + "elements");
-              List<long> array = response.Outlinks;
-              for(int i = 0; i < response.num_elements; i++){
-                int outlink = (int) array[i];
-                //Console.WriteLine("Cell " + outlink);
-                //Console.WriteLine("CNODE " + current_node + " has depth " + depth[current_node]);
-                if (depth[outlink] > depth[current_node] + 1){
-                  depth[outlink] = depth[current_node] + 1;
-                  //Console.WriteLine(response.Outlinks[i] + " depth " + depth[response.Outlinks[i]]);
-                  queue.Enqueue(response.Outlinks[i]);
+              using (var response = Global.CloudStorage.NodeCollectionToBenchmarkServer(onServer, request))
+              {
+                //Console.WriteLine("Response contains " + response.num_elements + "elements");
+                List<long> array = response.Outlinks;
+                for(int i = 0; i < response.num_elements; i++){
+                  int outlink = (int) array[i];
+                  //Console.WriteLine("Cell " + outlink);
+                  //Console.WriteLine("CNODE " + current_node + " has depth " + depth[current_node]);
+                  if (depth[outlink] > depth[current_node] + 1){
+                    depth[outlink] = depth[current_node] + 1;
+                    //Console.WriteLine(response.Outlinks[i] + " depth " + depth[response.Outlinks[i]]);
+                    queue.Enqueue(response.Outlinks[i]);
+                  }
                 }
               }
             }
           }
         }
+
       }
       ////////////////////////// END ////////////////////////////////777
       End_time_Stamp = (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds;
