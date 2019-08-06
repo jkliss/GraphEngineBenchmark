@@ -547,7 +547,7 @@ namespace BenchmarkServer
               no_action = true;
               while(thread_cache[ThreadNumber].TryDequeue(out dequeued_node)){
                   no_action = false;
-                  Console.WriteLine("[CONSUMER"+ThreadNumber+"] Add Node: " + dequeued_node.ID + " OUT: " + String.Join(",", dequeued_node.Outlinks));
+                  //Console.WriteLine("[CONSUMER"+ThreadNumber+"] Add Node: " + dequeued_node.ID + " OUT: " + String.Join(",", dequeued_node.Outlinks));
                   AddSimpleGraphNode(dequeued_node);
                   set.Add(dequeued_node.ID);
               }
@@ -564,9 +564,13 @@ namespace BenchmarkServer
           }
           // transfer all cells to global space
           Console.WriteLine("["+ ThreadNumber +"] Start Saving to Cloud");
-          //foreach (long i in set){
+          foreach (long i in set){
           //  Global.CloudStorage.SaveSimpleGraphNode(i, Global.LocalStorage.LoadSimpleGraphNode(i));
-          //}
+            using(var accessNode = Global.LocalStorage.UseSimpleGraphNode(i))
+            {
+              Console.WriteLine("[CONSUMER"+ThreadNumber+"] Add Node: " + accessNode.ID + " OUT: " + String.Join(",", accessNode.Outlinks));
+            }
+          }
           long cellid_comm = (ThreadNumber+(this_server_id*num_threads));
           Console.WriteLine("["+ ThreadNumber +"] setting finished to " + cellid_comm);
           FinishCommunicator fc = Global.CloudStorage.LoadFinishCommunicator(Int64.MaxValue-cellid_comm);
