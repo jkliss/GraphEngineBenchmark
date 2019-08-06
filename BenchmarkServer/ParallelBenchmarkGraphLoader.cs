@@ -515,6 +515,7 @@ namespace BenchmarkServer
           } else {
             using(var accessNode = Global.LocalStorage.UseSimpleGraphNode(new_node.ID))
             {
+              accessNode.ID = new_node.ID;
               if(hasWeight) {
                 for(int i = 0; i < new_node.Outlinks.Count; i++){
                   accessNode.Outlinks.Add(new_node.Outlinks[i]);
