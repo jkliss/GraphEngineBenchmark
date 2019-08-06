@@ -217,7 +217,7 @@ namespace BenchmarkServer
           for(int i = 0; i < 8196; i++){
             empty_array[i] = i;
           }
-          using (var request = new NodeListWriter(current_node, 0, empty_array))
+          using (var request = new NodeListWriter(current_node))
           {
             using (var response = Global.CloudStorage.NodeCollectionToBenchmarkServer(onServer, request))
             {
