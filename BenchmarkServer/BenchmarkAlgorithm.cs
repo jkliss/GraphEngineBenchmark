@@ -247,6 +247,7 @@ namespace BenchmarkServer
         if(current_dummy.depth > last_level){
           /////////// GATHER REMOTE (currently only one server!) -> HashSet[num_server] -> Check each HashSet.Count > 0
           if(remoteSet.Count > 0){
+            Console.WriteLine("Remote Query");
             List<long> listToSend = new List<long>();
             foreach (long i in remoteSet)
             {
@@ -261,7 +262,6 @@ namespace BenchmarkServer
                 for(int i = 0; i < response.num_elements; i++){
                   int outlink = (int) array[i];
                   //Console.WriteLine("Cell " + outlink);
-                  //Console.WriteLine("CNODE " + current_node + " has depth " + depth[current_node]);
                   if (depth[outlink] > last_level + 1){
                     depth[outlink] = last_level + 1;
                     BFSDummy new_node = new BFSDummy();
