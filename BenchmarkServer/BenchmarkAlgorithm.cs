@@ -282,7 +282,7 @@ namespace BenchmarkServer
           int onServer = findServer(current_dummy.cellid);
           //Console.WriteLine("Outgoing From: " + current_node + " on Server" + onServer);
           if(onServer == this_server_id){
-            //Console.WriteLine("[!] LOCAL " + current_node);
+            Console.WriteLine("[!] LOCAL " + current_dummy.cellid);
             using (var tempCell = Global.LocalStorage.UseSimpleGraphNode(current_dummy.cellid)) {
               for(int i = 0; i < tempCell.Outlinks.Count; i++){
                 if (depth[tempCell.Outlinks[i]] > depth[current_dummy.cellid] + 1){
