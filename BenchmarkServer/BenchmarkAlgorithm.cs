@@ -170,6 +170,9 @@ namespace BenchmarkServer
     public void BFSLocal(SimpleGraphNode root)
     {
       num_servers = Global.ServerCount;
+      for(int i = 0; i < num_servers; i++){
+        Console.WriteLine("SERVER" + i + " at " + all_starts[i]);
+      }
       Start_time_Stamp = (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds;
       var watch = System.Diagnostics.Stopwatch.StartNew();
       //init array with max distances --> requires amount of elements
