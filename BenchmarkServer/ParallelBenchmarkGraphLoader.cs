@@ -478,7 +478,7 @@ namespace BenchmarkServer
                 //Console.WriteLine("LOWER BOUND SERVER" + i + " " + all_starts[i]);
               }
             }
-            for(int i = 0; i < num_servers; i++){
+            for(int i = 1; i < num_servers; i++){
               if(cell <= all_starts[i]) return i-1;
             }
             return num_servers-1;
