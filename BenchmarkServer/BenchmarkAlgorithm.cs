@@ -188,7 +188,6 @@ namespace BenchmarkServer
       int this_server_id = Global.MyServerID;
 
       Queue<long> queue = new Queue<long>();
-
       queue.Enqueue(root.CellId);
 
       depth[root.CellId] = 0;
