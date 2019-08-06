@@ -243,6 +243,7 @@ namespace BenchmarkServer
         }**/
         ///////////////////////////////////////////// DUMMY IMPLEMENTATION /////////////////////////////////
         BFSDummy current_dummy = bfsqueue.Dequeue();
+        Console.WriteLine("NODE:" + current_dummy.cellid);
         if(current_dummy.depth > last_level){
           /////////// GATHER REMOTE (currently only one server!) -> HashSet[num_server] -> Check each HashSet.Count > 0
           if(remoteSet.Count > 0){
