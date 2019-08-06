@@ -569,7 +569,7 @@ namespace BenchmarkServer
           //  Global.CloudStorage.SaveSimpleGraphNode(i, Global.LocalStorage.LoadSimpleGraphNode(i));
             using(var accessNode = Global.LocalStorage.UseSimpleGraphNode(i))
             {
-              Console.WriteLine("[CONSUMER"+ThreadNumber+"] Add Node: " + accessNode.ID + " OUT: " + String.Join(",", accessNode.Outlinks));
+              //Console.WriteLine("[CONSUMER"+ThreadNumber+"] Add Node: " + accessNode.ID + " OUT: " + String.Join(",", accessNode.Outlinks));
             }
           }
           long cellid_comm = (ThreadNumber+(this_server_id*num_threads));
