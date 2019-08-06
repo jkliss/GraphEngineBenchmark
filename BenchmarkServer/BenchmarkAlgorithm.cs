@@ -254,28 +254,35 @@ namespace BenchmarkServer
           /////////// GATHER REMOTE (currently only one server!) -> HashSet[num_server] -> Check each HashSet.Count > 0
           if(remoteSet.Count > 0){
             Console.WriteLine("Remote Query");
-            List<long> listToSend = new List<long>();
+            Queue<long> queueToSend = new Queue<long>();
             foreach (long i in remoteSet)
             {
-              listToSend.Add(i);
+              queueToSend.Enqueue(i);
             }
             remoteSet = new HashSet<long>();
-            Console.WriteLine("Send Conains " + listToSend.Count);
-            using (var request = new NodeListWriter(-1, 0, listToSend))
-            {
-              using (var response = Global.CloudStorage.BatchNodeCollectionToBenchmarkServer(1, request))
+            while(queueToSend.Count > 0){
+              List<long> listToSend = new List<long>();
+              for(int i = 0; i < 100; i++){
+                if(queueToSend.Count == 0) break;
+                listToSend.Add(queueToSend.Dequeue());
+              }
+              Console.WriteLine("Send Conains " + listToSend.Count);
+              using (var request = new NodeListWriter(-1, 0, listToSend))
               {
-                List<long> array = response.Outlinks;
-                for(int i = 0; i < response.num_elements; i++){
-                  int outlink = (int) array[i];
-                  //Console.WriteLine("Cell " + outlink);
-                  if (depth[outlink] > last_level + 1){
-                    depth[outlink] = last_level + 1;
-                    BFSDummy new_node = new BFSDummy();
-                    new_node.cellid = outlink;
-                    new_node.depth = last_level + 1;
-                    //Console.WriteLine(response.Outlinks[i] + " depth " + depth[response.Outlinks[i]]);
-                    bfsqueue.Enqueue(new_node);
+                using (var response = Global.CloudStorage.BatchNodeCollectionToBenchmarkServer(1, request))
+                {
+                  List<long> array = response.Outlinks;
+                  for(int i = 0; i < response.num_elements; i++){
+                    int outlink = (int) array[i];
+                    //Console.WriteLine("Cell " + outlink);
+                    if (depth[outlink] > last_level + 1){
+                      depth[outlink] = last_level + 1;
+                      BFSDummy new_node = new BFSDummy();
+                      new_node.cellid = outlink;
+                      new_node.depth = last_level + 1;
+                      //Console.WriteLine(response.Outlinks[i] + " depth " + depth[response.Outlinks[i]]);
+                      bfsqueue.Enqueue(new_node);
+                    }
                   }
                 }
               }
