@@ -122,6 +122,7 @@ namespace BenchmarkServer
         benchmarkAlgorithm.all_starts = loader[Global.MyServerID].all_starts;
         benchmarkAlgorithm.BFSLocal(rootNode);
         ranLoader = true;
+        
         /**
         //Distributed Try with Message Sorter
         for(int i = 0; i < Global.ServerCount; i++){
