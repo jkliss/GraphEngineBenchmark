@@ -20,7 +20,7 @@ struct DistributedLoad {
   bool lastLoad;
 }
 
-struct cell NodeList {
+cell struct NodeList {
   long cellnum;
   int num_elements;
   int[8196] Outlinks;
