@@ -310,7 +310,6 @@ namespace BenchmarkServer
         if(Global.LocalStorage.Contains(cell_request)){
           using (var requestedCell = Global.LocalStorage.UseSimpleGraphNode(cell_request)) {
             for(int i = 0; i < requestedCell.Outlinks.Count; i++){
-
               send_set.Add(requestedCell.Outlinks[i]);
             }
           }
@@ -321,12 +320,15 @@ namespace BenchmarkServer
       List<long> outlinks = new List<long>();
       foreach(long cell in send_set){
         if(outlinks.Count >= 10000){
+          Console.WriteLine("Send Package with " + outlinks.Count);
           using (var request2 = new NodeListWriter(0, outlinks.Count, outlinks))
           {
             Global.CloudStorage.NodeSenderToBenchmarkServer(0, request2);
           }
           outlinks = new List<long>();
+          index = 0;
         }
+        Console.WriteLine("Add " + cell);
         outlinks.Add(cell);
         //response.Outlinks.Add(cell);
         index++;
