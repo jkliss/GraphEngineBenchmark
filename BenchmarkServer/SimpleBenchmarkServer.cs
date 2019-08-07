@@ -320,7 +320,7 @@ namespace BenchmarkServer
       List<long> outlinks = new List<long>();
       foreach(long cell in send_set){
         if(outlinks.Count >= 10000){
-          Console.WriteLine("Send Package with " + outlinks.Count);
+          //Console.WriteLine("Send Package with " + outlinks.Count);
           using (var request2 = new NodeListWriter(0, outlinks.Count, outlinks))
           {
             Global.CloudStorage.NodeSenderToBenchmarkServer(0, request2);
@@ -333,7 +333,7 @@ namespace BenchmarkServer
         //response.Outlinks.Add(cell);
         index++;
       }
-      Console.WriteLine("Send Package with " + outlinks.Count);
+      //Console.WriteLine("Send Package with " + outlinks.Count);
       using (var request2 = new NodeListWriter(0, outlinks.Count, outlinks))
       {
         Global.CloudStorage.NodeSenderToBenchmarkServer(0, request2);
@@ -343,7 +343,7 @@ namespace BenchmarkServer
     }
 
     public override void NodeSenderHandler (NodeListReader request){
-      Console.WriteLine("RECIEVED PART CONTAINING " + request.num_elements);
+      //Console.WriteLine("RECIEVED PART CONTAINING " + request.num_elements);
       List<long> array = request.Outlinks;
       for(int i = 0; i < request.num_elements; i++){
         //Console.WriteLine("Cell " + outlink);
