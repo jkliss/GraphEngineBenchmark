@@ -328,7 +328,7 @@ namespace BenchmarkServer
           outlinks = new List<long>();
           index = 0;
         }
-        Console.WriteLine("Add " + cell);
+        //Console.WriteLine("Add " + cell);
         outlinks.Add(cell);
         //response.Outlinks.Add(cell);
         index++;
