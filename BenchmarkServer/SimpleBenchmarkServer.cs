@@ -333,6 +333,11 @@ namespace BenchmarkServer
         //response.Outlinks.Add(cell);
         index++;
       }
+      Console.WriteLine("Send Package with " + outlinks.Count);
+      using (var request2 = new NodeListWriter(0, outlinks.Count, outlinks))
+      {
+        Global.CloudStorage.NodeSenderToBenchmarkServer(0, request2);
+      }
       //Console.WriteLine("SENDING " + index + " Elements");
       //response.num_elements = index;
     }
