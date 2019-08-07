@@ -271,7 +271,7 @@ namespace BenchmarkServer
               {
                 using (var response = Global.CloudStorage.BatchNodeCollectionToBenchmarkServer(1, request))
                 {
-                  List<long> array = response.Outlinks;
+                  /**List<long> array = response.Outlinks;
                   for(int i = 0; i < response.num_elements; i++){
                     int outlink = (int) array[i];
                     //Console.WriteLine("Cell " + outlink);
@@ -283,7 +283,19 @@ namespace BenchmarkServer
                       //Console.WriteLine(response.Outlinks[i] + " depth " + depth[response.Outlinks[i]]);
                       bfsqueue.Enqueue(new_node);
                     }
-                  }
+                  }**/
+                }
+              }
+              while(remote_outlinks.Count > 0){
+                int outlink = (int) remote_outlinks.Dequeue();
+                //Console.WriteLine("Cell " + outlink);
+                if (depth[outlink] > last_level + 1){
+                  depth[outlink] = last_level + 1;
+                  BFSDummy new_node = new BFSDummy();
+                  new_node.cellid = outlink;
+                  new_node.depth = last_level + 1;
+                  //Console.WriteLine(response.Outlinks[i] + " depth " + depth[response.Outlinks[i]]);
+                  bfsqueue.Enqueue(new_node);
                 }
               }
             }
@@ -367,10 +379,7 @@ namespace BenchmarkServer
     }
 
 
-
-    public void gatherRemote(){
-
-    }
+    public Queue<long> remote_outlinks = new Queue<long>();
 
     public void output_server(){
 

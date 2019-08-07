@@ -41,6 +41,12 @@ protocol NodeCollection {
   Response:  NodeList;
 }
 
+protocol NodeSender {
+  Type: Syn;
+  Request: NodeList;
+  Response: void;
+}
+
 protocol BatchNodeCollection {
   Type: Syn;
   Request: NodeList;
@@ -163,6 +169,7 @@ server BenchmarkServer {
   protocol DistributedLoadMessage;
   protocol NodeCollection;
   protocol BatchNodeCollection;
+  protocol NodeSender;
 }
 
 cell struct SimpleGraphNode

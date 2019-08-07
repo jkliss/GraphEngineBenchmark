@@ -310,6 +310,7 @@ namespace BenchmarkServer
         if(Global.LocalStorage.Contains(cell_request)){
           using (var requestedCell = Global.LocalStorage.UseSimpleGraphNode(cell_request)) {
             for(int i = 0; i < requestedCell.Outlinks.Count; i++){
+
               send_set.Add(requestedCell.Outlinks[i]);
             }
           }
@@ -317,12 +318,30 @@ namespace BenchmarkServer
           Console.WriteLine("CELL " + request.cellnum + " not found");
         }
       }
+      List<long> outlinks = new List<long>();
       foreach(long cell in send_set){
-        response.Outlinks.Add(cell);
+        if(outlinks.Count >= 10000){
+          using (var request2 = new NodeListWriter(0, outlinks.Count, outlinks))
+          {
+            Global.CloudStorage.NodeSenderToBenchmarkServer(0, request2);
+          }
+          outlinks = new List<long>();
+        }
+        outlinks.Add(cell);
+        //response.Outlinks.Add(cell);
         index++;
       }
-      Console.WriteLine("SENDING " + index + " Elements");
-      response.num_elements = index;
+      //Console.WriteLine("SENDING " + index + " Elements");
+      //response.num_elements = index;
+    }
+
+    public override void NodeSenderHandler (NodeListReader request){
+      Console.WriteLine("RECIEVED PART CONTAINING " + request.num_elements);
+      List<long> array = request.Outlinks;
+      for(int i = 0; i < request.num_elements; i++){
+        //Console.WriteLine("Cell " + outlink);
+        benchmarkAlgorithm.remote_outlinks.Enqueue(array[i]);
+      }
     }
   }
 }
