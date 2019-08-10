@@ -145,7 +145,7 @@ namespace BenchmarkServer
 
         public void LoadGraph()
         {
-          try{
+          try {
             Thread reporter_thread = new Thread(new ThreadStart(Reporter));
             reporter_thread.Start();
             num_servers = Global.ServerCount;
@@ -232,6 +232,14 @@ namespace BenchmarkServer
             Console.WriteLine("##################################");
             Console.WriteLine("#######  All edges loaded  #######");
             Console.WriteLine("##################################");
+            for(int i = 0; i < num_servers; i++){
+              if(this_server_id != i){
+                load_sender_queue[i] = new ConcurrentQueue<Load>();
+              }
+            }
+            for(int i = 0; i < num_threads; i++){
+              thread_cache[i] = new ConcurrentQueue<SimpleGraphNode>();
+            }
             //if(this_server_id == 0)  Global.LocalStorage.SaveStorage();
           } catch (Exception ex){
             Console.Error.WriteLine(ex.Message);
